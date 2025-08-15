@@ -20,8 +20,8 @@ public class RobotContainer {
     }
 
     private void configureBindings() {
-        xboxDrv.a().onTrue(CatzArm.Instance.Arm_Up());
-        xboxDrv.b().onTrue(CatzArm.Instance.Arm_Stow());
+        xboxDrv.a().onTrue(CatzArm.Instance.armUp());
+        xboxDrv.b().onTrue(CatzArm.Instance.armStow());
     }
 
     public Command getAutonomousCommand() {

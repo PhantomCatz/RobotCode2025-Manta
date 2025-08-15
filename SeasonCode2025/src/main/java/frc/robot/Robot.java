@@ -18,14 +18,21 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.CatzConstants.RobotHardwareMode;
 import frc.robot.CatzConstants.RobotID;
 import frc.robot.CatzSubsystems.CatzArm.CatzArm;
+import lombok.Getter;
 
 public class Robot extends LoggedRobot {
     private Command m_autonomousCommand;
+
+    // Timer related variables
+    public static double autoStart;
+    @Getter
+    private static double autoElapsedTime = 0.0;
 
     private static Pose3d[] simMechanismPoses = {new Pose3d()};
 
@@ -167,6 +174,7 @@ public class Robot extends LoggedRobot {
 
     @Override
     public void autonomousInit() {
+        autoStart = Timer.getFPGATimestamp();
         m_autonomousCommand = RobotContainer.Instance.getAutonomousCommand();
 
         if (m_autonomousCommand != null) {
@@ -175,7 +183,9 @@ public class Robot extends LoggedRobot {
     }
 
     @Override
-    public void autonomousPeriodic() {}
+    public void autonomousPeriodic() {
+        autoElapsedTime = Timer.getFPGATimestamp() - autoStart;
+    }
 
     @Override
     public void autonomousExit() {}
