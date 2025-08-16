@@ -14,7 +14,7 @@ public class ArmConstants {
     public static final double CURRENT_LIMIT = 40.0;
 
     public static double ARM_GEAR_REDUCTION = 1;
-    public static double ARM_JKG_SQUARED = 0.025;
+    public static double ARM_JKG_SQUARED = 0.0025;
     public static double ARM_LENGTH_INCHES = 30;
     public static double ARM_MIN_DEGREES = 0;
     public static double ARM_MAX_DEGREES = 180;

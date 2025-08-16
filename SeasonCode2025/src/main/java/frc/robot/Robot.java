@@ -154,7 +154,13 @@ public class Robot extends LoggedRobot {
         }
 
         // DELETE forcing instantiation because of lazy initialization, idk how to fix
+        // while (CatzArm.Instance == null) {
+        //     System.out.println("Waiting for arm to initialize");
+        // }
         System.out.println("Forcing arm instance: " + CatzArm.Instance);
+        while (RobotContainer.Instance == null) {
+            System.out.println("Waiting for robot container to initialize");
+        }
         System.out.println("Forcing robot container instance" + RobotContainer.Instance);
     }
 
