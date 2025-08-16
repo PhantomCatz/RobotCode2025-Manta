@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.CatzSubsystems.CatzArm.CatzArm;
+import frc.robot.CatzSubsystems.CatzWrist.CatzWrist;
 
 public class RobotContainer {
 
@@ -22,6 +23,10 @@ public class RobotContainer {
     private void configureBindings() {
         xboxDrv.a().onTrue(CatzArm.Instance.armUp());
         xboxDrv.b().onTrue(CatzArm.Instance.armStow());
+
+        xboxDrv.x().onTrue(CatzWrist.Instance.extendWrist());
+        xboxDrv.y().onTrue(CatzWrist.Instance.Wrist_Home());
+
     }
 
     public Command getAutonomousCommand() {
