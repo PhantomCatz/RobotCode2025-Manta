@@ -34,7 +34,7 @@ public class Robot extends LoggedRobot {
     @Getter
     private static double autoElapsedTime = 0.0;
 
-    private static Pose3d[] simMechanismPoses = {new Pose3d()};
+    private static Pose3d[] simMechanismPoses = {new Pose3d(), new Pose3d(), new Pose3d()};
 
     // public static final AutoFactory autoFactory = new AutoFactory(
     //                                               CatzRobotTracker.Instance::getEstimatedPose,
