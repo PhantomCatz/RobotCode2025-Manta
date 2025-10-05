@@ -15,6 +15,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import frc.robot.Robot;
+import frc.robot.CatzSubsystems.SubystemVisualizer;
 
 public class ElevatorIOSim implements ElevatorIO{
 
@@ -60,7 +61,7 @@ public class ElevatorIOSim implements ElevatorIO{
     inputs.positionInch = Units.metersToInches(m_elevatorSim.getPositionMeters());
     Logger.recordOutput("Elevator/SimCurrentSpeedInchesPerSecond", inputs.velocityInchPerSec);
     Logger.recordOutput("Elevator/SimCurrentPositionInches", inputs.positionInch);
-    Robot.setSimPose(ELEVATOR_INDEX, new Pose3d(new Translation3d(0.0, 0.0, Units.inchesToMeters(inputs.positionInch/2)).plus(ElevatorConstants.ELEVATOR_SIM_OFFSET), new Rotation3d(0.0, Math.PI / 2, 0.0)));
+    SubystemVisualizer.setSimPose(ELEVATOR_INDEX, new Pose3d(new Translation3d(0.0, 0.0, Units.inchesToMeters(inputs.positionInch/2)).plus(ElevatorConstants.ELEVATOR_SIM_OFFSET), new Rotation3d(0.0, Math.PI / 2, 0.0)));
     // mechanismElevator.setLength(0.5 + Units.inchesToMeters(inputs.positionInch));
     // Logger.recordOutput("Mechanism2d/Elevator", mechanism);
   }

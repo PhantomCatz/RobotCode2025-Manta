@@ -84,4 +84,8 @@ public class CatzArm extends SubsystemBase {
         System.out.println("set pose");
         targetPosition = target;
     }
+
+    public double getArmPos() {
+        return inputs.positionDegreesFinalShaft;
+    }
 }

@@ -3,13 +3,6 @@ package frc.robot.CatzSubsystems.CatzWrist;
 import static frc.robot.CatzSubsystems.CatzWrist.WristConstants.*;
 
 
-import com.ctre.phoenix6.BaseStatusSignal;
-import com.ctre.phoenix6.StatusSignal;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
-import com.ctre.phoenix6.controls.VoltageOut;
-import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -23,6 +16,7 @@ import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import frc.robot.Robot;
+import frc.robot.CatzSubsystems.SubystemVisualizer;
 import frc.robot.CatzSubsystems.CatzArm.ArmConstants;
 
 /** Add your docs here. */
@@ -56,7 +50,7 @@ public class WristIOSim implements WristIO {
     m_wristMotorSim.update(0.02);
     m_wristMotorSim.setInputVoltage(setVoltage);
 
-    Robot.setSimPose(WRIST_MOTOR_INDEX, new Pose3d(ArmConstants.ARM_SIM_OFFSET, new Rotation3d(0, Units.degreesToRadians(inputs.positionDegrees), 0)));
+    SubystemVisualizer.setSimPose(WRIST_MOTOR_INDEX, new Pose3d(ArmConstants.ARM_SIM_OFFSET, new Rotation3d(0, Units.degreesToRadians(inputs.positionDegrees), 0)));
   }
 
   @Override

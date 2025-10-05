@@ -7,6 +7,7 @@ public interface ArmIO {
     @AutoLog
     public static class ArmIOInputs {
         public double positionDegreesFinalShaft = 0.0;
+        public double positionDegCTRE = 0.0;
         public boolean isArmMotorConnected = false;
         public boolean isBotLimitSwitched = false;
         public double velocityRPM = 0.0;

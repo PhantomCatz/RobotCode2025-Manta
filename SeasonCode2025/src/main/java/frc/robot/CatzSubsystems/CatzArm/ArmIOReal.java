@@ -1,5 +1,6 @@
 package frc.robot.CatzSubsystems.CatzArm;
 
+import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.CatzSubsystems.CatzArm.ArmConstants.ARM_GEAR_REDUCTION;
 import static frc.robot.CatzSubsystems.CatzArm.ArmConstants.ARM_INITIAL_DEGREES;
 import static frc.robot.CatzSubsystems.CatzArm.ArmConstants.ARM_MOTOR_ID;
@@ -17,13 +18,19 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.sim.ChassisReference;
 
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+import frc.robot.CatzConstants;
+import frc.robot.Robot;
 
 public class ArmIOReal implements ArmIO{
     private TalonFX armMotor = new TalonFX(ARM_MOTOR_ID);
@@ -39,6 +46,13 @@ public class ArmIOReal implements ArmIO{
     private final StatusSignal<Current> armSupplyCurrent;
     private final StatusSignal<Current> armTorqueCurrent;
     private final StatusSignal<Temperature> armTempCelsius;
+
+    private final DCMotorSim m_motorSimModel = new DCMotorSim(
+        LinearSystemId.createDCMotorSystem(
+            DCMotor.getKrakenX60Foc(1), 0.001, ARM_GEAR_REDUCTION
+        ),
+        DCMotor.getKrakenX60Foc(1)
+    );
 
     public ArmIOReal() {
         armPosition = armMotor.getPosition();
@@ -91,6 +105,7 @@ public class ArmIOReal implements ArmIO{
 
     @Override
     public void updateInputs(ArmIOInputs inputs) {
+
         inputs.isArmMotorConnected =
             BaseStatusSignal.refreshAll(
                     armPosition,

@@ -139,6 +139,10 @@ public class CatzWrist extends SubsystemBase {
     targetPosition = target;
   }
 
+  public double getWristPos() {
+    return inputs.positionDegrees;
+  }
+
   public void wristSemiManual(double manualSemiPwr) {
     double previousPos = position;
     position += manualSemiPwr * MANUAL_SCALE;

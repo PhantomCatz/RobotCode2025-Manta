@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.CatzConstants.RobotHardwareMode;
 import frc.robot.CatzConstants.RobotID;
 import frc.robot.CatzSubsystems.CatzArm.CatzArm;
+import frc.robot.Utilities.VirtualSubsystem;
 import lombok.Getter;
 
 public class Robot extends LoggedRobot {
@@ -34,7 +35,6 @@ public class Robot extends LoggedRobot {
     @Getter
     private static double autoElapsedTime = 0.0;
 
-    private static Pose3d[] simMechanismPoses = {new Pose3d(), new Pose3d(), new Pose3d()};
 
     // public static final AutoFactory autoFactory = new AutoFactory(
     //                                               CatzRobotTracker.Instance::getEstimatedPose,
@@ -166,6 +166,7 @@ public class Robot extends LoggedRobot {
 
     @Override
     public void robotPeriodic() {
+        VirtualSubsystem.periodicAll();
         CommandScheduler.getInstance().run();
     }
 
@@ -222,10 +223,6 @@ public class Robot extends LoggedRobot {
 
     @Override
     public void simulationPeriodic() {
-        Logger.recordOutput("FinalComponentPoses", simMechanismPoses);
     }
 
-    public static void setSimPose(int index, Pose3d pose) {
-        simMechanismPoses[index] = pose;
-    }
 }
