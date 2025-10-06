@@ -3,9 +3,6 @@ package frc.robot.CatzSubsystems.CatzElevator;
 import static frc.robot.CatzSubsystems.CatzElevator.ElevatorConstants.FINAL_RATIO;
 
 import org.littletonrobotics.junction.Logger;
-import org.littletonrobotics.junction.mechanism.LoggedMechanism2d;
-import org.littletonrobotics.junction.mechanism.LoggedMechanismLigament2d;
-import org.littletonrobotics.junction.mechanism.LoggedMechanismRoot2d;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -14,7 +11,6 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
-import frc.robot.Robot;
 import frc.robot.CatzSubsystems.SubystemVisualizer;
 
 public class ElevatorIOSim implements ElevatorIO{
