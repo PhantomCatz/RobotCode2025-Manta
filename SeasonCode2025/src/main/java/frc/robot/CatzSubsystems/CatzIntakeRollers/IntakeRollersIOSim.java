@@ -28,16 +28,17 @@ public class IntakeRollersIOSim implements IntakeRollersIO {
     // CTRE Motor + Sim State
     private final TalonFX m_intakeRollerMotor = new TalonFX(0); // CAN ID 0, adjust as needed
 
-    private final DCMotor m_intakeGearbox = DCMotor.getKrakenX60Foc(1); // TODO: confirm motor type
     private double targetDegreesFinalShaft;
 
     private PIDController simPIDController = new PIDController(0.0005, 0.0, 0.0);
+
+    private final DCMotor m_intakeGearbox = DCMotor.getKrakenX60Foc(1); // TODO: confirm motor type
 
     private final LinearSystem<N2, N1, N2> plantIntakeMotorSys =
         LinearSystemId.createDCMotorSystem(
             DCMotor.getKrakenX60(1), 0.025, DriveConstants.MODULE_GAINS_AND_RATIOS.driveReduction());
 
-    private final DCMotorSim m_IntakeRollersSim = new DCMotorSim(plantIntakeMotorSys, m_intakeGearbox, null);
+    private final DCMotorSim m_IntakeRollersSim = new DCMotorSim(plantIntakeMotorSys, m_intakeGearbox, 0.0, 0.0);
 
 
     public IntakeRollersIOSim() {
@@ -54,9 +55,9 @@ public class IntakeRollersIOSim implements IntakeRollersIO {
         m_armSimState.Orientation = ChassisReference.CounterClockwise_Positive;
 
         // Feed input into WPILib sim
-        m_IntakeRollersSim.setInputVoltage(setVoltage);
         m_IntakeRollersSim.update(0.02);
 
+        inputs.velocityRpmLeft = Units.radiansPerSecondToRotationsPerMinute(m_IntakeRollersSim.getAngularVelocityRadPerSec());
 
         // Sync CTRE Sim State with WPILib Sim
         m_armSimState.setSupplyVoltage(12.0); // battery voltage
@@ -70,8 +71,6 @@ public class IntakeRollersIOSim implements IntakeRollersIO {
     @Override
     public void runIntakeRampMotor(double speed) {
         // Set the motor speed in simulation
-        
-        m_intakeRollerMotor.getSimState().setRotorVelocity(speed);
         m_IntakeRollersSim.setInputVoltage(speed * 12.0); // Assuming speed is between -1 and 1
     }
 
