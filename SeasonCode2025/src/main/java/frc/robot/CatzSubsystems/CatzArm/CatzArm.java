@@ -15,7 +15,7 @@ public class CatzArm extends SubsystemBase {
     public static final CatzArm Instance = new CatzArm();
 
     private final ArmIO io;
-    private final ArmIOInputsAutoLogged inputs = new ArmIOInputsAutoLogged();
+    //private final ArmIOInputsAutoLogged inputs = new ArmIOInputsAutoLogged();
 
     private static ArmPosition targetPosition = ArmPosition.STOW;
 
@@ -59,8 +59,8 @@ public class CatzArm extends SubsystemBase {
 
     @Override
     public void periodic() {
-        io.updateInputs(inputs);
-        Logger.processInputs("RealInputs/Arm", inputs);
+        //io.updateInputs(inputs);
+        //Logger.processInputs("RealInputs/Arm", inputs);
 
         if (DriverStation.isDisabled()) {
             io.setPercentOutput(0.0);
@@ -85,7 +85,7 @@ public class CatzArm extends SubsystemBase {
         targetPosition = target;
     }
 
-    public double getArmPos() {
-        return inputs.positionDegreesFinalShaft;
-    }
+    //public double getArmPos() {
+    //    return inputs.positionDegreesFinalShaft;
+    //}
 }

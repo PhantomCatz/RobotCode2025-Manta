@@ -49,7 +49,7 @@ public class IntakeRollersIOSim implements IntakeRollersIO {
     @Override
     public void updateInputs(IntakeRollersIOInputs inputs) {
         // PID -> Voltage Command
-        double setVoltage = simPIDController.calculate(inputs.positionDegreesFinalShaft, targetDegreesFinalShaft) * 12.0;
+        //double setVoltage = simPIDController.calculate(inputs.positionDegreesFinalShaft, targetDegreesFinalShaft) * 12.0;
 
         var m_armSimState = m_intakeRollerMotor.getSimState();
         m_armSimState.Orientation = ChassisReference.CounterClockwise_Positive;
@@ -62,7 +62,7 @@ public class IntakeRollersIOSim implements IntakeRollersIO {
         // Sync CTRE Sim State with WPILib Sim
         m_armSimState.setSupplyVoltage(12.0); // battery voltage
         m_armSimState.setRawRotorPosition(Units.radiansToRotations(m_IntakeRollersSim.getAngularPositionRad()) * ArmConstants.ARM_GEAR_REDUCTION);
-        m_armSimState.setRotorVelocity((Units.radiansPerSecondToRotationsPerMinute(m_IntakeRollersSim.get) * ArmConstants.ARM_GEAR_REDUCTION)/60.0);
+        //m_armSimState.setRotorVelocity((Units.radiansPerSecondToRotationsPerMinute(m_IntakeRollersSim.get) * ArmConstants.ARM_GEAR_REDUCTION)/60.0);
 
         // Fill IO inputs
 
