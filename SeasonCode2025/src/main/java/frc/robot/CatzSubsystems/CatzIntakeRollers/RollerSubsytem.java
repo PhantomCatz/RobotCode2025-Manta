@@ -1,12 +1,15 @@
 package frc.robot.CatzSubsystems.CatzIntakeRollers;
 
 import frc.robot.Bases.MotorIOReal;
+import frc.robot.Bases.MotorIO;
 import frc.robot.Bases.MotorSubsystem;
 
 public class RollerSubsytem extends MotorSubsystem{
     public static final RollerSubsytem Instance = new RollerSubsytem();
 
     private static final MotorIOReal RollerIO = RollerConstants.getRollerIO();
+
+    private static final MotorIO io = RollerConstants.getRollerIO(); // Use this implementation for writing the "Io" object into your subsystem. 
 
     public RollerSubsytem() {
         super(RollerIO, "skibidi");
