@@ -4,15 +4,19 @@ import frc.robot.Bases.MotorIOReal;
 import frc.robot.Bases.MotorIO;
 import frc.robot.Bases.MotorSubsystem;
 
+import static frc.robot.CatzSubsystems.CatzIntakeRollers.RollerConstants.*;
+
+
 public class RollerSubsytem extends MotorSubsystem{
-    public static final RollerSubsytem Instance = new RollerSubsytem();
+    private static final MotorIO io = new MotorIOReal(RollerMotor, Final_Ratio, s0g, s1g);
 
-    private static final MotorIOReal RollerIO = RollerConstants.getRollerIO();
+    public static final RollerSubsytem Instance = new RollerSubsytem(io);
 
-    private static final MotorIO io = RollerConstants.getRollerIO(); // Use this implementation for writing the "Io" object into your subsystem. 
 
-    public RollerSubsytem() {
-        super(RollerIO, "skibidi");
+
+    public RollerSubsytem(MotorIO io) {
+        super(io, "skibidi"); 
+        System.out.println(io == null);
     }
 
     public enum intakeRollersStates {
@@ -25,20 +29,12 @@ public class RollerSubsytem extends MotorSubsystem{
     private intakeRollersStates currentState = intakeRollersStates.STOP;
     private intakeRollersStates previousState = intakeRollersStates.STOP;
 
-    @Override
-    public void periodic() {
-        RollerIO.updateInputs(RollerIO.getMotorIOInputs());
-    }
-
-    public static MotorIOReal getRollerIO() {
-        return RollerIO;
-    }
 
     public static RollerSubsytem getInstance() {
         return Instance;
     }
 
     public static void setSpeed() {
-        RollerIO.runMotor(1);
+        io.runMotor(1);
     }
 }

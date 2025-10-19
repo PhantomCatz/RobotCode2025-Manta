@@ -225,17 +225,17 @@ public class MotorIOReal implements MotorIO {
         tempCelsius = List.of(leaderTalon.getDeviceTemp());
 
         
-        BaseStatusSignal.setUpdateFrequencyForAll(
-        100,
-        internalPositionRotations,
-        velocityRps,
-        appliedVoltage.get(0),
-        supplyCurrent.get(0),
-        supplyCurrent.get(1),
-        torqueCurrent.get(0),
-        torqueCurrent.get(1),
-        tempCelsius.get(0),
-        tempCelsius.get(1));
+        // BaseStatusSignal.setUpdateFrequencyForAll(
+        // 100,
+        // internalPositionRotations,
+        // velocityRps,
+        // appliedVoltage.get(0),
+        // supplyCurrent.get(0),
+        // supplyCurrent.get(1),
+        // torqueCurrent.get(0),
+        // torqueCurrent.get(1),
+        // tempCelsius.get(0),
+        // tempCelsius.get(1));
     
         
 
@@ -362,13 +362,13 @@ public class MotorIOReal implements MotorIO {
                 tempCelsius.get(0))
             .isOK();
 
-        inputs.isFollowerMotorConnected = // TODO Some mechanisms may not have a followerer for their subtsystem rendering this redundant
-            BaseStatusSignal.refreshAll(
-                appliedVoltage.get(1),
-                supplyCurrent.get(1),
-                torqueCurrent.get(1),
-                tempCelsius.get(1))
-            .isOK();
+        // inputs.isFollowerMotorConnected = // TODO Some mechanisms may not have a followerer for their subtsystem rendering this redundant
+        //     BaseStatusSignal.refreshAll(
+        //         appliedVoltage.get(1),
+        //         supplyCurrent.get(1),
+        //         torqueCurrent.get(1),
+        //         tempCelsius.get(1))
+        //     .isOK();
 
         inputs.positionInch = internalPositionRotations.getValueAsDouble() * Final_Ratio; //TODO Constants should be ALL_CAPS // Yuyhun said that because we get it from constructor that it should be lowercase
         inputs.velocityInchPerSec = velocityRps.getValueAsDouble() * Final_Ratio;

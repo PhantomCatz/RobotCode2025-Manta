@@ -8,15 +8,18 @@ public class MotorSubsystem extends SubsystemBase {
     protected final MotorIO io;
 	protected final String name;
 
+	protected final MotorIOInputsAutoLogged inputs = new MotorIOInputsAutoLogged();
+
     public MotorSubsystem(MotorIO io, String name) {
 		super(name);
-		this.io = io;
+		this.io = io; // This is null when you run it TODO
+
 		this.name = name;
 	}
 
     @Override
 	public void periodic() {
-		io.updateInputs(io.getMotorIOInputs());
+		io.updateInputs(inputs);
 		System.out.println("it worked!!!! base");
 	}
 

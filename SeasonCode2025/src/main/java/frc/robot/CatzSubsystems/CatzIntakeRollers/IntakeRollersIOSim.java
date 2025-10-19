@@ -24,7 +24,7 @@ import frc.robot.CatzSubsystems.SubystemVisualizer;
 import frc.robot.CatzSubsystems.CatzArm.ArmConstants;
 import frc.robot.CatzSubsystems.CatzDriveAndRobotOrientation.Drivetrain.DriveConstants;
 
-public class IntakeRollersIOSim implements IntakeRollersIO {
+public class IntakeRollersIOSim  {
     // CTRE Motor + Sim State
     private final TalonFX m_intakeRollerMotor = new TalonFX(0); // CAN ID 0, adjust as needed
 
@@ -46,47 +46,47 @@ public class IntakeRollersIOSim implements IntakeRollersIO {
         m_intakeRollerMotor.setNeutralMode(NeutralModeValue.Brake);
     }
 
-    @Override
-    public void updateInputs(IntakeRollersIOInputs inputs) {
-        // PID -> Voltage Command
-        //double setVoltage = simPIDController.calculate(inputs.positionDegreesFinalShaft, targetDegreesFinalShaft) * 12.0;
+    // @Override
+    // public void updateInputs(IntakeRollersIOInputs inputs) {
+    //     // PID -> Voltage Command
+    //     //double setVoltage = simPIDController.calculate(inputs.positionDegreesFinalShaft, targetDegreesFinalShaft) * 12.0;
 
-        var m_armSimState = m_intakeRollerMotor.getSimState();
-        m_armSimState.Orientation = ChassisReference.CounterClockwise_Positive;
+    //     var m_armSimState = m_intakeRollerMotor.getSimState();
+    //     m_armSimState.Orientation = ChassisReference.CounterClockwise_Positive;
 
-        // Feed input into WPILib sim
-        m_IntakeRollersSim.update(0.02);
+    //     // Feed input into WPILib sim
+    //     m_IntakeRollersSim.update(0.02);
 
-        inputs.velocityRpmLeft = Units.radiansPerSecondToRotationsPerMinute(m_IntakeRollersSim.getAngularVelocityRadPerSec());
+    //     inputs.velocityRpmLeft = Units.radiansPerSecondToRotationsPerMinute(m_IntakeRollersSim.getAngularVelocityRadPerSec());
 
-        // Sync CTRE Sim State with WPILib Sim
-        m_armSimState.setSupplyVoltage(12.0); // battery voltage
-        m_armSimState.setRawRotorPosition(Units.radiansToRotations(m_IntakeRollersSim.getAngularPositionRad()) * ArmConstants.ARM_GEAR_REDUCTION);
-        //m_armSimState.setRotorVelocity((Units.radiansPerSecondToRotationsPerMinute(m_IntakeRollersSim.get) * ArmConstants.ARM_GEAR_REDUCTION)/60.0);
+    //     // Sync CTRE Sim State with WPILib Sim
+    //     m_armSimState.setSupplyVoltage(12.0); // battery voltage
+    //     m_armSimState.setRawRotorPosition(Units.radiansToRotations(m_IntakeRollersSim.getAngularPositionRad()) * ArmConstants.ARM_GEAR_REDUCTION);
+    //     //m_armSimState.setRotorVelocity((Units.radiansPerSecondToRotationsPerMinute(m_IntakeRollersSim.get) * ArmConstants.ARM_GEAR_REDUCTION)/60.0);
 
-        // Fill IO inputs
+    //     // Fill IO inputs
 
-    }
+    // }
 
-    @Override
-    public void runIntakeRampMotor(double speed) {
-        // Set the motor speed in simulation
-        m_IntakeRollersSim.setInputVoltage(speed * 12.0); // Assuming speed is between -1 and 1
-    }
+    // @Override
+    // public void runIntakeRampMotor(double speed) {
+    //     // Set the motor speed in simulation
+    //     m_IntakeRollersSim.setInputVoltage(speed * 12.0); // Assuming speed is between -1 and 1
+    // }
 
-    @Override
-    public void setPIDF(double kP, double kI, double kD, double kF) {
-        // Update the PID controller gains
-        simPIDController.setP(kP);
-        simPIDController.setI(kI);
-        simPIDController.setD(kD);
-        // Note: kF is not used in WPILib's PIDController, but can be implemented manually if needed
-    }
+    // @Override
+    // public void setPIDF(double kP, double kI, double kD, double kF) {
+    //     // Update the PID controller gains
+    //     simPIDController.setP(kP);
+    //     simPIDController.setI(kI);
+    //     simPIDController.setD(kD);
+    //     // Note: kF is not used in WPILib's PIDController, but can be implemented manually if needed
+    // }
 
-    @Override
-    public void adjustIntakeRamp(double setpointRotations) {
-        // Adjust the target position for the intake ramp
-        targetDegreesFinalShaft = setpointRotations * 360.0; // Convert rotations to degrees
-    }
+    // @Override
+    // public void adjustIntakeRamp(double setpointRotations) {
+    //     // Adjust the target position for the intake ramp
+    //     targetDegreesFinalShaft = setpointRotations * 360.0; // Convert rotations to degrees
+    // }
 
 }
