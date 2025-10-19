@@ -1,7 +1,8 @@
 package frc.robot.Bases;
 
 
-import edu.wpi.first.units.measure.Angle;
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class MotorSubsystem extends SubsystemBase {
@@ -20,7 +21,9 @@ public class MotorSubsystem extends SubsystemBase {
     @Override
 	public void periodic() {
 		io.updateInputs(inputs);
-		System.out.println("it worked!!!! base");
+		Logger.processInputs("RealInputs/"+name, inputs);
+		//System.out.println(inputs.absoluteEncoderPositionRads);
+		//System.out.println("it worked!!!! base");
 	}
 
 }

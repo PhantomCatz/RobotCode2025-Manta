@@ -16,7 +16,6 @@ public class RollerSubsytem extends MotorSubsystem{
 
     public RollerSubsytem(MotorIO io) {
         super(io, "skibidi"); 
-        System.out.println(io == null);
     }
 
     public enum intakeRollersStates {
