@@ -32,7 +32,7 @@ import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.Bases.MotorIO.MotorIOInputs;
-import frc.robot.Bases.MotorIOReal.ControlRequestGetter;
+import frc.robot.Bases.TalonFXIOReal.ControlRequestGetter;
 import frc.robot.Utilities.MotorUtil.Gains;
 import frc.robot.Utilities.MotorUtil.MotionMagicParameters;
 
@@ -256,20 +256,9 @@ public class ServoMotorIOReal implements ServoMotorIO{
                 tempCelsius.get(1))
             .isOK();
 
-        inputs.positionInch = internalPositionRotations.getValueAsDouble() * Final_Ratio; //TODO Constants should be ALL_CAPS // Yuyhun said that because we get it from constructor that it should be lowercase
+        inputs.motorRotations = internalPositionRotations.getValueAsDouble() * Final_Ratio; //TODO Constants should be ALL_CAPS // Yuyhun said that because we get it from constructor that it should be lowercase
         inputs.velocityInchPerSec = velocityRps.getValueAsDouble() * Final_Ratio;
-        inputs.appliedVolts =     appliedVoltage.stream()
-                                                .mapToDouble(StatusSignal::getValueAsDouble)
-                                                .toArray();
-        inputs.supplyCurrentAmps = supplyCurrent.stream()
-                                                .mapToDouble(StatusSignal::getValueAsDouble)
-                                                .toArray();
-        inputs.torqueCurrentAmps = torqueCurrent.stream()
-                                                .mapToDouble(StatusSignal::getValueAsDouble)
-                                                .toArray();
-        inputs.tempCelcius =         tempCelsius.stream()
-                                                .mapToDouble(StatusSignal::getValueAsDouble)
-                                                .toArray();
+        
     }
 
     @Override

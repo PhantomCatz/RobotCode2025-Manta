@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.CatzSubsystems.CatzSuperstructure;
 import frc.robot.CatzSubsystems.CatzArm.CatzArm;
+import frc.robot.CatzSubsystems.CatzDriveAndRobotOrientation.Drivetrain.CatzDrivetrain;
 import frc.robot.CatzSubsystems.CatzElevator.CatzElevator;
 import frc.robot.CatzSubsystems.CatzIntakeRollers.RollerSubsytem;
 import frc.robot.CatzSubsystems.CatzWrist.CatzWrist;
@@ -22,6 +23,16 @@ public class RobotContainer {
     private final CatzSuperstructure superstructure = CatzSuperstructure.Instance; // Just to make sure it gets constructed
 
     private final RollerSubsytem rollers = RollerSubsytem.Instance; // TODO Rename this to CatzRollerSubsystem
+
+    private final RollerSubsytem CatzRollerSubsystem = RollerSubsytem.Instance; // TODO Rename this to CatzRollerSubsystem
+
+    private final CatzElevator CatzElevatorSubsystem = CatzElevator.Instance;
+
+    private final CatzArm CatzArmSubsystem = CatzArm.Instance;
+
+    private final CatzWrist CatzWristSubsystem = CatzWrist.Instance;
+
+    private final CatzDrivetrain CatzDriveSubsystem = CatzDrivetrain.Instance;
 
     public RobotContainer() {
         configureBindings();

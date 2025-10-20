@@ -1,46 +1,39 @@
 package frc.robot.Bases;
 
-import java.util.List;
-
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.configs.TalonFXSConfiguration;
 import com.ctre.phoenix6.controls.*;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.hardware.TalonFXS;
 import com.ctre.phoenix6.signals.*;
 
+import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Dimensionless;
-import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.DigitalInput;
-import frc.robot.Utilities.MotorUtil.Gains;
-import frc.robot.Utilities.MotorUtil.MotionMagicParameters;
-import frc.robot.Utilities.MotorUtil.NeutralMode;;
+import frc.robot.Utilities.MotorUtil.Gains;;
 
-public class MotorIOReal implements MotorIO {
+public class TalonFXSIOReal implements MotorIO {
 
     // initialize follower if needed?
-    private TalonFX leaderTalon;
-    private TalonFX followerTalon;
+    private TalonFXS leaderTalon;
+    private ArrayList<TalonFXS> followerTalon;
 
     private Gains slot0_gainsM;
     private Gains slot1_gainsM;
 
-    private final TalonFXConfiguration config = new TalonFXConfiguration();
+    private final TalonFXSConfiguration config = new TalonFXSConfiguration();
 
     private final StatusSignal<Angle> internalPositionRotations;
     private final StatusSignal<AngularVelocity> velocityRps;
-    private final List<StatusSignal<Voltage>> appliedVoltage;
-    private final List<StatusSignal<Current>> supplyCurrent;
-    private final List<StatusSignal<Current>> torqueCurrent;
-    private final List<StatusSignal<Temperature>> tempCelsius;
+    
 
     private double Final_Ratio;
 
@@ -59,7 +52,7 @@ public class MotorIOReal implements MotorIO {
      * @param s0g slot 0 gains
      * @param motorMode motor mode
      */
-    public MotorIOReal(TalonFX motor, double FL, Gains s0g, NeutralModeValue motorMode) {
+    public TalonFXSIOReal(TalonFXS motor, double FL, Gains s0g, NeutralModeValue motorMode) {
 
         leaderTalon = motor;
 
@@ -69,23 +62,13 @@ public class MotorIOReal implements MotorIO {
 
         internalPositionRotations = leaderTalon.getPosition();
         velocityRps = leaderTalon.getVelocity();
-        appliedVoltage = List.of(leaderTalon.getMotorVoltage(), followerTalon.getMotorVoltage());
-        supplyCurrent = List.of(leaderTalon.getSupplyCurrent(), followerTalon.getSupplyCurrent());
-        torqueCurrent = List.of(leaderTalon.getTorqueCurrent(), followerTalon.getTorqueCurrent());
-        tempCelsius = List.of(leaderTalon.getDeviceTemp(), followerTalon.getDeviceTemp());
+        
 
         BaseStatusSignal.setUpdateFrequencyForAll(
         100,
         internalPositionRotations,
-        velocityRps,
-        appliedVoltage.get(0),
-        appliedVoltage.get(1),
-        supplyCurrent.get(0),
-        supplyCurrent.get(1),
-        torqueCurrent.get(0),
-        torqueCurrent.get(1),
-        tempCelsius.get(0),
-        tempCelsius.get(1));
+        velocityRps
+        );
 
         // PID configs
         config.Slot0.kS = slot0_gainsM.kS();
@@ -106,8 +89,8 @@ public class MotorIOReal implements MotorIO {
 
 
         // Supply Current Limits
-        config.TorqueCurrent.PeakForwardTorqueCurrent =  80.0;
-        config.TorqueCurrent.PeakReverseTorqueCurrent = -80.0;
+        //config.TorqueCurrent.PeakForwardTorqueCurrent =  80.0;
+        //config.TorqueCurrent.PeakReverseTorqueCurrent = -80.0;
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
         config.CurrentLimits.SupplyCurrentLimit = 100.0;
         config.MotorOutput.NeutralMode = motorMode;
@@ -133,7 +116,7 @@ public class MotorIOReal implements MotorIO {
      * @param s1g slot 1 gains
      * @param motorMode motor mode
      */
-    public MotorIOReal(TalonFX leader, TalonFX followerMotor, double FL, Gains s0g, Gains s1g, NeutralModeValue motorMode) {
+    public TalonFXSIOReal(TalonFXS leader, ArrayList<TalonFXS> followerMotor, double FL, Gains s0g, Gains s1g, NeutralModeValue motorMode) {
 
         leaderTalon = leader;
         followerTalon = followerMotor;
@@ -145,23 +128,13 @@ public class MotorIOReal implements MotorIO {
 
         internalPositionRotations = leaderTalon.getPosition();
         velocityRps = leaderTalon.getVelocity();
-        appliedVoltage = List.of(leaderTalon.getMotorVoltage(), followerTalon.getMotorVoltage());
-        supplyCurrent = List.of(leaderTalon.getSupplyCurrent(), followerTalon.getSupplyCurrent());
-        torqueCurrent = List.of(leaderTalon.getTorqueCurrent(), followerTalon.getTorqueCurrent());
-        tempCelsius = List.of(leaderTalon.getDeviceTemp(), followerTalon.getDeviceTemp());
+        
 
         BaseStatusSignal.setUpdateFrequencyForAll(
         100,
         internalPositionRotations,
-        velocityRps,
-        appliedVoltage.get(0),
-        appliedVoltage.get(1),
-        supplyCurrent.get(0),
-        supplyCurrent.get(1),
-        torqueCurrent.get(0),
-        torqueCurrent.get(1),
-        tempCelsius.get(0),
-        tempCelsius.get(1));
+        velocityRps
+        );
 
         // PID configs
         config.Slot0.kS = slot0_gainsM.kS();
@@ -181,8 +154,8 @@ public class MotorIOReal implements MotorIO {
         config.Slot1.kG = slot1_gainsM.kG();
 
         // Supply Current Limits, does this need a varialbe input into it?
-        config.TorqueCurrent.PeakForwardTorqueCurrent =  80.0;
-        config.TorqueCurrent.PeakReverseTorqueCurrent = -80.0;
+        //config.TorqueCurrent.PeakForwardTorqueCurrent =  80.0; I have no idea what this is in TalonFXS and cant find it but i have to finish
+        //config.TorqueCurrent.PeakReverseTorqueCurrent = -80.0;
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
         config.CurrentLimits.SupplyCurrentLimit = 80.0;
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -191,12 +164,15 @@ public class MotorIOReal implements MotorIO {
 
 
         leaderTalon.setPosition(0);
-        followerTalon.setPosition(0);
+
 
         leaderTalon.getConfigurator().apply(config, 1.0);
-        followerTalon.getConfigurator().apply(config, 1.0);
 
-        followerTalon.setControl(new Follower(leaderTalon.getDeviceID(), false));
+        for (int i = 0; i < followerTalon.size(); i++) {
+            followerTalon.get(i).setPosition(0);
+            followerTalon.get(i).getConfigurator().apply(config, 1.0);
+            followerTalon.get(i).setControl(new Follower(leaderTalon.getDeviceID(), false));
+        }
 
     }
 
@@ -208,7 +184,7 @@ public class MotorIOReal implements MotorIO {
      * @param s0g slot 0 gains
      * @param s1g slot 1 gains
      */
-    public MotorIOReal(TalonFX motor, double FL, Gains s0g, Gains s1g) {
+    public TalonFXSIOReal(TalonFXS motor, double FL, Gains s0g, Gains s1g) {
 
         leaderTalon = motor;
 
@@ -219,10 +195,7 @@ public class MotorIOReal implements MotorIO {
 
         internalPositionRotations = leaderTalon.getPosition();
         velocityRps = leaderTalon.getVelocity();
-        appliedVoltage = List.of(leaderTalon.getMotorVoltage());
-        supplyCurrent = List.of(leaderTalon.getSupplyCurrent());
-        torqueCurrent = List.of(leaderTalon.getTorqueCurrent());
-        tempCelsius = List.of(leaderTalon.getDeviceTemp());
+        
 
         
         // BaseStatusSignal.setUpdateFrequencyForAll(
@@ -258,8 +231,8 @@ public class MotorIOReal implements MotorIO {
 
 
         // Supply Current Limits
-        config.TorqueCurrent.PeakForwardTorqueCurrent =  80.0;
-        config.TorqueCurrent.PeakReverseTorqueCurrent = -80.0;
+        //config.TorqueCurrent.PeakForwardTorqueCurrent =  80.0;
+        //config.TorqueCurrent.PeakReverseTorqueCurrent = -80.0;
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
         config.CurrentLimits.SupplyCurrentLimit = 80.0;
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -284,7 +257,7 @@ public class MotorIOReal implements MotorIO {
      * @param s0g slot 0 gains
      * @param s1g slot 1 gains
      */
-    public MotorIOReal(TalonFX leader, TalonFX followerMotor, double FL, Gains s0g, Gains s1g) {
+    public TalonFXSIOReal(TalonFXS leader, ArrayList<TalonFXS> followerMotor, double FL, Gains s0g, Gains s1g) {
 
         leaderTalon = leader;
         followerTalon = followerMotor;
@@ -296,23 +269,13 @@ public class MotorIOReal implements MotorIO {
 
         internalPositionRotations = leaderTalon.getPosition();
         velocityRps = leaderTalon.getVelocity();
-        appliedVoltage = List.of(leaderTalon.getMotorVoltage(), followerTalon.getMotorVoltage());
-        supplyCurrent = List.of(leaderTalon.getSupplyCurrent(), followerTalon.getSupplyCurrent());
-        torqueCurrent = List.of(leaderTalon.getTorqueCurrent(), followerTalon.getTorqueCurrent());
-        tempCelsius = List.of(leaderTalon.getDeviceTemp(), followerTalon.getDeviceTemp());
+        
 
         BaseStatusSignal.setUpdateFrequencyForAll(
         100,
         internalPositionRotations,
-        velocityRps,
-        appliedVoltage.get(0),
-        appliedVoltage.get(1),
-        supplyCurrent.get(0),
-        supplyCurrent.get(1),
-        torqueCurrent.get(0),
-        torqueCurrent.get(1),
-        tempCelsius.get(0),
-        tempCelsius.get(1));
+        velocityRps
+        );
 
         // PID configs
         config.Slot0.kS = slot0_gainsM.kS();
@@ -332,8 +295,8 @@ public class MotorIOReal implements MotorIO {
         config.Slot1.kG = slot1_gainsM.kG();
 
         // Supply Current Limits, does this need a varialbe input into it?
-        config.TorqueCurrent.PeakForwardTorqueCurrent =  80.0;
-        config.TorqueCurrent.PeakReverseTorqueCurrent = -80.0;
+        //config.TorqueCurrent.PeakForwardTorqueCurrent =  80.0;
+        //config.TorqueCurrent.PeakReverseTorqueCurrent = -80.0;
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
         config.CurrentLimits.SupplyCurrentLimit = 80.0;
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -342,12 +305,15 @@ public class MotorIOReal implements MotorIO {
 
 
         leaderTalon.setPosition(0);
-        followerTalon.setPosition(0);
+
 
         leaderTalon.getConfigurator().apply(config, 1.0);
-        followerTalon.getConfigurator().apply(config, 1.0);
 
-        followerTalon.setControl(new Follower(leaderTalon.getDeviceID(), false));
+        for (int i = 0; i < followerTalon.size(); i++) {
+            followerTalon.get(i).setPosition(0);
+            followerTalon.get(i).getConfigurator().apply(config, 1.0);
+            followerTalon.get(i).setControl(new Follower(leaderTalon.getDeviceID(), false));
+        }
 
     }
 
@@ -355,12 +321,10 @@ public class MotorIOReal implements MotorIO {
         inputs.isLeaderMotorConnected =
             BaseStatusSignal.refreshAll(
                 internalPositionRotations,
-                velocityRps,
-                appliedVoltage.get(0),
-                supplyCurrent.get(0),
-                torqueCurrent.get(0),
-                tempCelsius.get(0))
-            .isOK();
+                velocityRps
+                
+
+            ).isOK();
 
         // inputs.isFollowerMotorConnected = // TODO Some mechanisms may not have a followerer for their subtsystem rendering this redundant
         //     BaseStatusSignal.refreshAll(
@@ -370,20 +334,9 @@ public class MotorIOReal implements MotorIO {
         //         tempCelsius.get(1))
         //     .isOK();
 
-        inputs.positionInch = internalPositionRotations.getValueAsDouble() * Final_Ratio; //TODO Constants should be ALL_CAPS // Yuyhun said that because we get it from constructor that it should be lowercase
+        inputs.motorRotations = internalPositionRotations.getValueAsDouble() * Final_Ratio; //TODO Constants should be ALL_CAPS // Yuyhun said that because we get it from constructor that it should be lowercase
         inputs.velocityInchPerSec = velocityRps.getValueAsDouble() * Final_Ratio;
-        inputs.appliedVolts =     appliedVoltage.stream()
-                                                .mapToDouble(StatusSignal::getValueAsDouble)
-                                                .toArray();
-        inputs.supplyCurrentAmps = supplyCurrent.stream()
-                                                .mapToDouble(StatusSignal::getValueAsDouble)
-                                                .toArray();
-        inputs.torqueCurrentAmps = torqueCurrent.stream()
-                                                .mapToDouble(StatusSignal::getValueAsDouble)
-                                                .toArray();
-        inputs.tempCelcius =         tempCelsius.stream()
-                                                .mapToDouble(StatusSignal::getValueAsDouble)
-                                                .toArray();
+
     }
 
     @Override
@@ -427,7 +380,10 @@ public class MotorIOReal implements MotorIO {
         }
         else {
             leaderTalon.setNeutralMode(enabled ? NeutralModeValue.Brake : NeutralModeValue.Coast);
-            followerTalon.setNeutralMode(enabled ? NeutralModeValue.Brake : NeutralModeValue.Coast);
+            for (int i = 0; i < followerTalon.size(); i++) {
+                followerTalon.get(i).setNeutralMode(enabled ? NeutralModeValue.Brake : NeutralModeValue.Coast);
+            }
+            
         }
     }
 

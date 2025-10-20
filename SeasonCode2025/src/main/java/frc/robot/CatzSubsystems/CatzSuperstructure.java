@@ -31,6 +31,6 @@ public class CatzSuperstructure extends VirtualSubsystem{
     }
 
     public Command setSpeed() {
-        return new RunCommand(() -> {RollerSubsytem.getInstance().setSpeed();});
+        return new RunCommand(() -> {RollerSubsytem.Instance.setSpeed();});
     }
 }
