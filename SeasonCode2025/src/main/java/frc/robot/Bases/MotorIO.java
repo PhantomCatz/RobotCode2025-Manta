@@ -5,6 +5,7 @@ import java.util.function.UnaryOperator;
 import org.littletonrobotics.junction.AutoLog;
 
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Dimensionless;
@@ -37,7 +38,11 @@ public interface MotorIO {
 
   public default void setGainsSlot0(double kP, double kI, double kD, double kS, double kV, double kA, double kG) {}
 
+  public default void setGainsSlot0(double kP, double kI, double kD) {}
+
   public default void setGainsSlot1(double kP, double kI, double kD, double kS, double kV, double kA, double kG) {}
+
+  public default void setGainsSlot1(double kP, double kI, double kD) {}
 
   public default void setFF(double kS, double kV, double kA) {}
 
@@ -50,6 +55,8 @@ public interface MotorIO {
   public default void setBrakeMode(boolean enabled) {}
 
   public default void setNeutralMode(NeutralModeValue mode) {}
+
+  public default void setIdleMode(IdleMode mode) {}
 
   public default void stop() {}
 
