@@ -1,6 +1,7 @@
 package frc.robot.CatzSubsystems.CatzIntakeRollers;
 
 import frc.robot.Bases.TalonFXIOReal;
+import frc.robot.CatzSubsystems.CatzIntakeRollers.RollerSubsytem.intakeRollersStates;
 import frc.robot.Bases.MotorIO;
 import frc.robot.Bases.MotorSubsystem;
 
@@ -18,6 +19,11 @@ public class RollerSubsytem extends MotorSubsystem{
         super(io, "CatzIntakeRollers"); 
     }
 
+    // @Override
+    // public void periodic() {
+    //     io.updateInputs(inputs);
+    // }
+
     public enum intakeRollersStates {
         INTAKE,
         ANTIJAM,
@@ -28,7 +34,8 @@ public class RollerSubsytem extends MotorSubsystem{
     private intakeRollersStates currentState = intakeRollersStates.STOP;
     private intakeRollersStates previousState = intakeRollersStates.STOP;
 
-    public static void setSpeed() {
-        io.runMotor(1);
+    public static void setSpeed(int speed) {
+        io.runMotor(speed);
+        //System.out.println("wozerwsdadsadwdsad it set speed");
     }
 }

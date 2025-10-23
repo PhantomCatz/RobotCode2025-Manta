@@ -155,7 +155,6 @@ public class CatzRobotTracker {
             (chassisSpeeds.omegaRadiansPerSecond - m_lastChassisSpeeds.omegaRadiansPerSecond)
                 / observation.timestamp);
     m_lastChassisSpeeds = chassisSpeeds;
-    System.out.println("hellohellohello");
     Logger.recordOutput("CatzRobotTracker/EstimatedPose", estimatedPose);
   } // end of addOdometryObservation
 
