@@ -87,8 +87,6 @@ public class TalonFXSIOReal implements MotorIO {
 
 
         // Supply Current Limits
-        //config.TorqueCurrent.PeakForwardTorqueCurrent =  80.0;
-        //config.TorqueCurrent.PeakReverseTorqueCurrent = -80.0;
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
         config.CurrentLimits.SupplyCurrentLimit = 100.0;
         config.MotorOutput.NeutralMode = motorMode;
@@ -152,8 +150,6 @@ public class TalonFXSIOReal implements MotorIO {
         config.Slot1.kG = slot1_gainsM.kG();
 
         // Supply Current Limits, does this need a varialbe input into it?
-        //config.TorqueCurrent.PeakForwardTorqueCurrent =  80.0; I have no idea what this is in TalonFXS and cant find it but i have to finish
-        //config.TorqueCurrent.PeakReverseTorqueCurrent = -80.0;
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
         config.CurrentLimits.SupplyCurrentLimit = 80.0;
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -196,19 +192,11 @@ public class TalonFXSIOReal implements MotorIO {
 
 
 
-        // BaseStatusSignal.setUpdateFrequencyForAll(
-        // 100,
-        // internalPositionRotations,
-        // velocityRps,
-        // appliedVoltage.get(0),
-        // supplyCurrent.get(0),
-        // supplyCurrent.get(1),
-        // torqueCurrent.get(0),
-        // torqueCurrent.get(1),
-        // tempCelsius.get(0),
-        // tempCelsius.get(1));
-
-
+        BaseStatusSignal.setUpdateFrequencyForAll(
+            100,
+            internalPositionRotations,
+            velocityRps
+        );
 
         // PID configs
         config.Slot0.kS = slot0_gainsM.kS();
@@ -229,8 +217,6 @@ public class TalonFXSIOReal implements MotorIO {
 
 
         // Supply Current Limits
-        //config.TorqueCurrent.PeakForwardTorqueCurrent =  80.0;
-        //config.TorqueCurrent.PeakReverseTorqueCurrent = -80.0;
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
         config.CurrentLimits.SupplyCurrentLimit = 80.0;
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -293,8 +279,6 @@ public class TalonFXSIOReal implements MotorIO {
         config.Slot1.kG = slot1_gainsM.kG();
 
         // Supply Current Limits, does this need a varialbe input into it?
-        //config.TorqueCurrent.PeakForwardTorqueCurrent =  80.0;
-        //config.TorqueCurrent.PeakReverseTorqueCurrent = -80.0;
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
         config.CurrentLimits.SupplyCurrentLimit = 80.0;
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
