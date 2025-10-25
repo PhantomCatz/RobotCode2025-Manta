@@ -1,10 +1,10 @@
 package frc.robot.Bases;
 
-import frc.robot.Bases.ServoMotorIO.Setpoint;
+import frc.robot.Bases.MotorIO.Setpoint;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class ServoMotorSubsystem<IO extends ServoMotorIOReal> extends SubsystemBase {
+public class ServoMotorSubsystem<IO extends MotorIO> extends SubsystemBase {
     protected final IO io;
 	protected final String name;
 
@@ -22,8 +22,7 @@ public class ServoMotorSubsystem<IO extends ServoMotorIOReal> extends SubsystemB
 
     @Override
 	public void periodic() {
-		io.updateInputs(io.getServoMotorIOInputs());
-		System.out.println("wowzers it works");
+		io.updateInputs(io.getMotorIOInputs());
 	}
 
 	public void applySetpoint(Setpoint setpoint) {

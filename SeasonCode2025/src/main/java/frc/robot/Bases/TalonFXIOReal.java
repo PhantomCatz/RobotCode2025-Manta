@@ -40,6 +40,7 @@ public class TalonFXIOReal implements MotorIO {
     private BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
     private ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(1, 1, 5, java.util.concurrent.TimeUnit.MILLISECONDS, queue);
 
+    private Setpoint setpoint = Setpoint.withNeutralSetpoint();
     private boolean enabled = true;
 
     /**
@@ -404,6 +405,14 @@ public class TalonFXIOReal implements MotorIO {
         return new MotorIO.MotorIOInputs();
     }
 
+    @Override
+    public void setMotionMagicParameters(double vel, double accel, double jerk) {
+        config.MotionMagic.MotionMagicCruiseVelocity = vel;
+        config.MotionMagic.MotionMagicAcceleration = accel;
+        config.MotionMagic.MotionMagicJerk = jerk;
+        leaderTalon.getConfigurator().apply(config);
+    }
+
     public static class ControlRequestGetter { // TODO pretty cool!
 		public ControlRequest getVoltageRequest(Voltage voltage) {
 			return new VoltageOut(voltage.in(Units.Volts)).withEnableFOC(false);
@@ -450,6 +459,38 @@ public class TalonFXIOReal implements MotorIO {
     public void runPercentOutput(double percent) {
         setControl(new DutyCycleOut(percent));
     }
+
+    public final void applySetpoint(Setpoint setpointToApply) {
+		setpoint = setpointToApply;
+		if (enabled) {
+			setpointToApply.apply(this);
+		}
+	}
+
+    @Override
+	public void setVoltageSetpoint(Voltage voltage) {
+		setControl(requestGetter.getVoltageRequest(voltage));
+	}
+
+	@Override
+	public void setDutyCycleSetpoint(Dimensionless percent) {
+		setControl(requestGetter.getDutyCycleRequest(percent));
+	}
+
+	@Override
+	public void setMotionMagicSetpoint(Angle mechanismPosition) {
+		setControl(requestGetter.getMotionMagicRequest(mechanismPosition));
+	}
+
+	@Override
+	public void setVelocitySetpoint(AngularVelocity mechanismVelocity) {
+		setControl(requestGetter.getVelocityRequest(mechanismVelocity));
+	}
+
+	@Override
+	public void setPositionSetpoint(Angle mechanismPosition) {
+		setControl(requestGetter.getPositionRequest(mechanismPosition));
+	}
 
 	@Override
 	public void setCurrentPosition(Angle mechanismPosition) {

@@ -24,6 +24,9 @@ public class MotorSubsystem extends SubsystemBase {
 		Logger.processInputs("RealInputs/"+name, inputs);
 		//System.out.println(inputs.absoluteEncoderPositionRads);
 		// System.out.println("it worked!!!! base");
+		
 	}
+
+	
 
 }
