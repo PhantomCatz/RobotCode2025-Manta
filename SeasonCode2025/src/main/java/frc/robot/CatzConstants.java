@@ -8,7 +8,7 @@ import frc.robot.Utilities.Alert.AlertType;
 public final class CatzConstants {
 
   // ----------------------------------------------------
-  // 
+  //
   //  Robot Modes
   //
   // --------------------------------------------------/

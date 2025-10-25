@@ -1,16 +1,12 @@
 package frc.robot.CatzSubsystems.CatzIntakeRollers;
 
-import static edu.wpi.first.units.Units.Volts;
 
-import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.ChassisReference;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.math.system.LinearSystem;
@@ -18,10 +14,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
-import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
-import frc.robot.Robot;
 import frc.robot.Bases.MotorIO;
-import frc.robot.CatzSubsystems.SubystemVisualizer;
 import frc.robot.CatzSubsystems.CatzArm.ArmConstants;
 import frc.robot.CatzSubsystems.CatzDriveAndRobotOrientation.Drivetrain.DriveConstants;
 
@@ -71,7 +64,7 @@ public class IntakeRollersIOSim implements MotorIO {
     @Override
     public void runMotor(double speed) {
         // Set the motor speed in simulation
-        
+
         //m_intakeRollerMotor.getSimState().setRotorVelocity(speed);
         m_IntakeRollersSim.setInputVoltage(speed * 12.0); // Assuming speed is between -1 and 1
     }

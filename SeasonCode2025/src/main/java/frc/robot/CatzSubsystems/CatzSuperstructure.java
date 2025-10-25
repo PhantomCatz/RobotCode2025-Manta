@@ -1,6 +1,5 @@
 package frc.robot.CatzSubsystems;
 
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import frc.robot.CatzSubsystems.CatzArm.CatzArm;
@@ -25,8 +24,8 @@ public class CatzSuperstructure extends VirtualSubsystem{
     @Override
     public void periodic() {
 
-        //setpointVisualizer.update(elevator.getElevatorPositionMeters(), 
-                                  //Rotation2d.fromDegrees(arm.getArmPos()), 
+        //setpointVisualizer.update(elevator.getElevatorPositionMeters(),
+                                  //Rotation2d.fromDegrees(arm.getArmPos()),
                                   //Rotation2d.fromDegrees(wrist.getWristPos()));
     }
 

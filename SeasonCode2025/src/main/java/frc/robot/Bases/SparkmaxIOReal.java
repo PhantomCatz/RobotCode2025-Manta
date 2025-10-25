@@ -1,7 +1,5 @@
 package frc.robot.Bases;
 
-import com.ctre.phoenix6.BaseStatusSignal;
-import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.*;
 import com.ctre.phoenix6.signals.*;
 import com.revrobotics.spark.SparkMax;
@@ -34,7 +32,7 @@ public class SparkmaxIOReal implements MotorIO {
 
     // private final StatusSignal<Angle> internalPositionRotations;
     // private final StatusSignal<AngularVelocity> velocityRps;
-    
+
 
     private double Final_Ratio;
 
@@ -63,7 +61,7 @@ public class SparkmaxIOReal implements MotorIO {
         // i dont think our setup will work with sparkmaxes
         // internalPositionRotations = new Angle(leaderSpark.getAbsoluteEncoder().getPosition());
         // velocityRps = leaderSpark.getAbsoluteEncoder().getVelocity();   .degrees(leaderSpark.getAbsoluteEncoder().getPosition()
-        
+
 
         // BaseStatusSignal.setUpdateFrequencyForAll(
         // 100,
@@ -73,7 +71,7 @@ public class SparkmaxIOReal implements MotorIO {
 
         // PID configs
         config.apply(new ClosedLoopConfig().pid(s0g.kP(), s0g.kI(), s0g.kD()));
-        
+
 
         // config.Slot1.kS = slot1_gainsM.kS();
         // config.Slot1.kV = slot1_gainsM.kV();
@@ -93,7 +91,7 @@ public class SparkmaxIOReal implements MotorIO {
         // Motion Magic Parameters
 
         config.inverted(false); //is this supposed to be inverted? i just left it as false
-        
+
 
         //leaderSpark.setPosition(0); I do not think you can set positions for sparkmax
 
@@ -123,7 +121,7 @@ public class SparkmaxIOReal implements MotorIO {
 
         // internalPositionRotations = leaderSpark.getPosition();
         // velocityRps = leaderSpark.getVelocity();
-        
+
 
         // BaseStatusSignal.setUpdateFrequencyForAll(
         // 100,
@@ -186,9 +184,9 @@ public class SparkmaxIOReal implements MotorIO {
 
         // internalPositionRotations = leaderSpark.getPosition();
         // velocityRps = leaderSpark.getVelocity();
-        
 
-        
+
+
         // BaseStatusSignal.setUpdateFrequencyForAll(
         // 100,
         // internalPositionRotations,
@@ -200,8 +198,8 @@ public class SparkmaxIOReal implements MotorIO {
         // torqueCurrent.get(1),
         // tempCelsius.get(0),
         // tempCelsius.get(1));
-    
-        
+
+
 
         // PID configs
         // config.Slot0.kS = slot0_gainsM.kS();
@@ -257,7 +255,7 @@ public class SparkmaxIOReal implements MotorIO {
 
         // internalPositionRotations = leaderSpark.getPosition();
         // velocityRps = leaderSpark.getVelocity();
-        
+
 
         // BaseStatusSignal.setUpdateFrequencyForAll(
         // 100,
@@ -309,7 +307,7 @@ public class SparkmaxIOReal implements MotorIO {
         //     BaseStatusSignal.refreshAll(
         //         internalPositionRotations,
         //         velocityRps
-                
+
 
         //     ).isOK();
 
@@ -366,7 +364,7 @@ public class SparkmaxIOReal implements MotorIO {
                 followerSpark.get(i).configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
             }
             leaderSpark.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-            
+
         }
     }
 
@@ -421,13 +419,13 @@ public class SparkmaxIOReal implements MotorIO {
     private void setControl(ControlRequest request) {
 		leaderSpark.setControl(request);
 	}
-    
+
 
     @Override
 	public void setNeutralOut() {
 		setControl(new NeutralOut());
 	}
-    
+
 	@Override
 	public void setCoastOut() {
 		setControl(new CoastOut());
@@ -437,7 +435,7 @@ public class SparkmaxIOReal implements MotorIO {
     public void runPercentOutput(double percent) {
         setControl(new DutyCycleOut(percent));
     }
-    
+
 	@Override
 	public void setCurrentPosition(Angle mechanismPosition) {
 		threadPoolExecutor.submit(() -> {

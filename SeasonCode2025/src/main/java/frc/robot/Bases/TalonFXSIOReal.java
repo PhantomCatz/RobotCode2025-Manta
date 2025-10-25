@@ -3,9 +3,7 @@ package frc.robot.Bases;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXSConfiguration;
-import com.ctre.phoenix6.configs.TorqueCurrentConfigs;
 import com.ctre.phoenix6.controls.*;
-import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.hardware.TalonFXS;
 import com.ctre.phoenix6.signals.*;
 
@@ -33,7 +31,7 @@ public class TalonFXSIOReal implements MotorIO {
 
     private final StatusSignal<Angle> internalPositionRotations;
     private final StatusSignal<AngularVelocity> velocityRps;
-    
+
 
     private double Final_Ratio;
 
@@ -62,7 +60,7 @@ public class TalonFXSIOReal implements MotorIO {
 
         internalPositionRotations = leaderTalon.getPosition();
         velocityRps = leaderTalon.getVelocity();
-        
+
 
         BaseStatusSignal.setUpdateFrequencyForAll(
         100,
@@ -128,7 +126,7 @@ public class TalonFXSIOReal implements MotorIO {
 
         internalPositionRotations = leaderTalon.getPosition();
         velocityRps = leaderTalon.getVelocity();
-        
+
 
         BaseStatusSignal.setUpdateFrequencyForAll(
         100,
@@ -195,9 +193,9 @@ public class TalonFXSIOReal implements MotorIO {
 
         internalPositionRotations = leaderTalon.getPosition();
         velocityRps = leaderTalon.getVelocity();
-        
 
-        
+
+
         // BaseStatusSignal.setUpdateFrequencyForAll(
         // 100,
         // internalPositionRotations,
@@ -209,8 +207,8 @@ public class TalonFXSIOReal implements MotorIO {
         // torqueCurrent.get(1),
         // tempCelsius.get(0),
         // tempCelsius.get(1));
-    
-        
+
+
 
         // PID configs
         config.Slot0.kS = slot0_gainsM.kS();
@@ -269,7 +267,7 @@ public class TalonFXSIOReal implements MotorIO {
 
         internalPositionRotations = leaderTalon.getPosition();
         velocityRps = leaderTalon.getVelocity();
-        
+
 
         BaseStatusSignal.setUpdateFrequencyForAll(
         100,
@@ -322,7 +320,7 @@ public class TalonFXSIOReal implements MotorIO {
             BaseStatusSignal.refreshAll(
                 internalPositionRotations,
                 velocityRps
-                
+
 
             ).isOK();
 
@@ -336,7 +334,7 @@ public class TalonFXSIOReal implements MotorIO {
 
         inputs.motorRotations = internalPositionRotations.getValueAsDouble() * Final_Ratio; //TODO Constants should be ALL_CAPS // Yuyhun said that because we get it from constructor that it should be lowercase
         inputs.velocityInchPerSec = velocityRps.getValueAsDouble() * Final_Ratio;
-        
+
 
     }
 
@@ -384,7 +382,7 @@ public class TalonFXSIOReal implements MotorIO {
             for (int i = 0; i < followerTalon.size(); i++) {
                 followerTalon.get(i).setNeutralMode(enabled ? NeutralModeValue.Brake : NeutralModeValue.Coast);
             }
-            
+
         }
     }
 

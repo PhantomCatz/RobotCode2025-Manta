@@ -31,7 +31,7 @@ public class TalonFXIOReal implements MotorIO {
 
     private final StatusSignal<Angle> internalPositionRotations;
     private final StatusSignal<AngularVelocity> velocityRps;
-    
+
 
     private double Final_Ratio;
 
@@ -60,7 +60,7 @@ public class TalonFXIOReal implements MotorIO {
 
         internalPositionRotations = leaderTalon.getPosition();
         velocityRps = leaderTalon.getVelocity();
-        
+
 
         BaseStatusSignal.setUpdateFrequencyForAll(
         100,
@@ -126,7 +126,7 @@ public class TalonFXIOReal implements MotorIO {
 
         internalPositionRotations = leaderTalon.getPosition();
         velocityRps = leaderTalon.getVelocity();
-        
+
 
         BaseStatusSignal.setUpdateFrequencyForAll(
         100,
@@ -193,9 +193,9 @@ public class TalonFXIOReal implements MotorIO {
 
         internalPositionRotations = leaderTalon.getPosition();
         velocityRps = leaderTalon.getVelocity();
-        
 
-        
+
+
         // BaseStatusSignal.setUpdateFrequencyForAll(
         // 100,
         // internalPositionRotations,
@@ -207,8 +207,8 @@ public class TalonFXIOReal implements MotorIO {
         // torqueCurrent.get(1),
         // tempCelsius.get(0),
         // tempCelsius.get(1));
-    
-        
+
+
 
         // PID configs
         config.Slot0.kS = slot0_gainsM.kS();
@@ -267,7 +267,7 @@ public class TalonFXIOReal implements MotorIO {
 
         internalPositionRotations = leaderTalon.getPosition();
         velocityRps = leaderTalon.getVelocity();
-        
+
 
         BaseStatusSignal.setUpdateFrequencyForAll(
         100,
@@ -320,7 +320,7 @@ public class TalonFXIOReal implements MotorIO {
             BaseStatusSignal.refreshAll(
                 internalPositionRotations,
                 velocityRps
-                
+
 
             ).isOK();
 
@@ -381,7 +381,7 @@ public class TalonFXIOReal implements MotorIO {
             for (int i = 0; i < followerTalon.size(); i++) {
                 followerTalon.get(i).setNeutralMode(enabled ? NeutralModeValue.Brake : NeutralModeValue.Coast);
             }
-            
+
         }
     }
 

@@ -1,15 +1,11 @@
 package frc.robot.Bases;
 
-import java.util.function.UnaryOperator;
 
 import org.littletonrobotics.junction.AutoLog;
 
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
-import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Dimensionless;
-import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.units.measure.Angle;
 
 public interface MotorIO {

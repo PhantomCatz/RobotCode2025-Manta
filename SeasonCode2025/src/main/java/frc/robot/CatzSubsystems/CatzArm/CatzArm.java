@@ -3,7 +3,6 @@ import static frc.robot.CatzSubsystems.CatzArm.ArmConstants.*;
 
 import java.util.function.DoubleSupplier;
 
-import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;

@@ -1,6 +1,5 @@
 package frc.robot.CatzSubsystems.CatzArm;
 
-import static edu.wpi.first.units.Units.Volts;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -14,7 +13,6 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
-import frc.robot.Robot;
 import frc.robot.CatzSubsystems.SubystemVisualizer;
 
 public class ArmIOSim implements ArmIO {
@@ -29,7 +27,7 @@ public class ArmIOSim implements ArmIO {
 
     private final SingleJointedArmSim m_armSim =
         new SingleJointedArmSim(
-            m_armGearbox, 
+            m_armGearbox,
             ArmConstants.ARM_GEAR_REDUCTION,
             ArmConstants.ARM_JKG_SQUARED,
             Units.inchesToMeters(ArmConstants.ARM_LENGTH_INCHES),

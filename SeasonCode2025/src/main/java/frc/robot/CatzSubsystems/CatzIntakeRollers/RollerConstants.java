@@ -1,10 +1,7 @@
 package frc.robot.CatzSubsystems.CatzIntakeRollers;
 
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.NeutralModeValue;
 
-import frc.robot.Bases.MotorIO;
-import frc.robot.Bases.TalonFXIOReal;
 import frc.robot.Utilities.MotorUtil.Gains;
 
 public class RollerConstants {

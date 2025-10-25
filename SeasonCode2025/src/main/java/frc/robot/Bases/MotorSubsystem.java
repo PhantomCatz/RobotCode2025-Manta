@@ -4,7 +4,6 @@ package frc.robot.Bases;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Bases.MotorIOInputsAutoLogged;
 
 public class MotorSubsystem extends SubsystemBase {
     protected final MotorIO io;
