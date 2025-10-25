@@ -22,7 +22,7 @@ public class TalonFXIOReal implements MotorIO {
 
     // initialize follower if needed?
     private TalonFX leaderTalon;
-    private ArrayList<TalonFX> followerTalon;
+    private TalonFX[] followerTalon;
 
     private Gains slot0_gainsM;
     private Gains slot1_gainsM;
@@ -115,7 +115,7 @@ public class TalonFXIOReal implements MotorIO {
      * @param s1g slot 1 gains
      * @param motorMode motor mode
      */
-    public TalonFXIOReal(TalonFX leader, ArrayList<TalonFX> followerMotor, double FL, Gains s0g, Gains s1g, NeutralModeValue motorMode) {
+    public TalonFXIOReal(TalonFX leader, TalonFX[] followerMotor, double FL, Gains s0g, Gains s1g, NeutralModeValue motorMode) {
 
         leaderTalon = leader;
         followerTalon = followerMotor;
@@ -167,10 +167,10 @@ public class TalonFXIOReal implements MotorIO {
 
         leaderTalon.getConfigurator().apply(config, 1.0);
 
-        for (int i = 0; i < followerTalon.size(); i++) {
-            followerTalon.get(i).setPosition(0);
-            followerTalon.get(i).getConfigurator().apply(config, 1.0);
-            followerTalon.get(i).setControl(new Follower(leaderTalon.getDeviceID(), false));
+        for (int i = 0; i < followerTalon.length; i++) {
+            followerTalon[i].setPosition(0);
+            followerTalon[i].getConfigurator().apply(config, 1.0);
+            followerTalon[i].setControl(new Follower(leaderTalon.getDeviceID(), false));
         }
 
     }
@@ -256,7 +256,7 @@ public class TalonFXIOReal implements MotorIO {
      * @param s0g slot 0 gains
      * @param s1g slot 1 gains
      */
-    public TalonFXIOReal(TalonFX leader, ArrayList<TalonFX> followerMotor, double FL, Gains s0g, Gains s1g) {
+    public TalonFXIOReal(TalonFX leader, TalonFX[] followerMotor, double FL, Gains s0g, Gains s1g) {
 
         leaderTalon = leader;
         followerTalon = followerMotor;
@@ -308,10 +308,10 @@ public class TalonFXIOReal implements MotorIO {
 
         leaderTalon.getConfigurator().apply(config, 1.0);
 
-        for (int i = 0; i < followerTalon.size(); i++) {
-            followerTalon.get(i).setPosition(0);
-            followerTalon.get(i).getConfigurator().apply(config, 1.0);
-            followerTalon.get(i).setControl(new Follower(leaderTalon.getDeviceID(), false));
+        for (int i = 0; i < followerTalon.length; i++) {
+            followerTalon[i].setPosition(0);
+            followerTalon[i].getConfigurator().apply(config, 1.0);
+            followerTalon[i].setControl(new Follower(leaderTalon.getDeviceID(), false));
         }
 
     }
@@ -379,8 +379,8 @@ public class TalonFXIOReal implements MotorIO {
         }
         else {
             leaderTalon.setNeutralMode(enabled ? NeutralModeValue.Brake : NeutralModeValue.Coast);
-            for (int i = 0; i < followerTalon.size(); i++) {
-                followerTalon.get(i).setNeutralMode(enabled ? NeutralModeValue.Brake : NeutralModeValue.Coast);
+            for (int i = 0; i < followerTalon.length; i++) {
+                followerTalon[i].setNeutralMode(enabled ? NeutralModeValue.Brake : NeutralModeValue.Coast);
             }
 
         }
