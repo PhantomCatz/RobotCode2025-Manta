@@ -14,7 +14,6 @@ public class RollerSubsytem extends MotorSubsystem{
     public static final RollerSubsytem Instance = new RollerSubsytem(io);
 
 
-
     public RollerSubsytem(MotorIO io) {
         super(io, "CatzIntakeRollers"); 
         io.runMotor(0);

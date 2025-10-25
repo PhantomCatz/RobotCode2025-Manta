@@ -16,8 +16,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Dimensionless;
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj2.command.RunCommand;
-import frc.robot.Utilities.MotorUtil.Gains;;
+import frc.robot.Utilities.MotorUtil.Gains;
 
 public class TalonFXIOReal implements MotorIO {
 
