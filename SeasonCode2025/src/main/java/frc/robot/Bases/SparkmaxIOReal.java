@@ -25,23 +25,9 @@ public class SparkmaxIOReal implements MotorIO {
     private SparkMax leaderSpark;
     private ArrayList<SparkMax> followerSpark;
 
-    private Gains slot0_gainsM;
-    private Gains slot1_gainsM;
-
     private final SparkMaxConfig config = new SparkMaxConfig();
 
-    // private final StatusSignal<Angle> internalPositionRotations;
-    // private final StatusSignal<AngularVelocity> velocityRps;
-
-
-    private double Final_Ratio;
-
-    private final ControlRequestGetter requestGetter = new ControlRequestGetter();
-
-    private BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
-    private ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(1, 1, 5, java.util.concurrent.TimeUnit.MILLISECONDS, queue);
-
-    private boolean enabled = true;
+    // private double Final_Ratio; //TODO do we need this?
 
     /**
      * basic, not done
@@ -55,36 +41,13 @@ public class SparkmaxIOReal implements MotorIO {
 
         leaderSpark = motor;
 
-        Final_Ratio = FL;
-
-        slot0_gainsM = s0g;
-        // i dont think our setup will work with sparkmaxes
-        // internalPositionRotations = new Angle(leaderSpark.getAbsoluteEncoder().getPosition());
-        // velocityRps = leaderSpark.getAbsoluteEncoder().getVelocity();   .degrees(leaderSpark.getAbsoluteEncoder().getPosition()
-
-
-        // BaseStatusSignal.setUpdateFrequencyForAll(
-        // 100,
-        // internalPositionRotations,
-        // velocityRps
-        // );
+        //Final_Ratio = FL;
 
         // PID configs
         config.apply(new ClosedLoopConfig().pid(s0g.kP(), s0g.kI(), s0g.kD()));
 
 
-        // config.Slot1.kS = slot1_gainsM.kS();
-        // config.Slot1.kV = slot1_gainsM.kV();
-        // config.Slot1.kA = slot1_gainsM.kA();
-        // config.Slot1.kP = slot1_gainsM.kP();
-        // config.Slot1.kI = slot1_gainsM.kI();
-        // config.Slot1.kD = slot1_gainsM.kD();
-        // config.Slot1.kG = slot1_gainsM.kG();
-
-
         // Supply Current Limits
-        //config.TorqueCurrent.PeakForwardTorqueCurrent =  80.0;
-        //config.TorqueCurrent.PeakReverseTorqueCurrent = -80.0;
         config.smartCurrentLimit(100);
         config.idleMode(motorMode);
 
@@ -106,44 +69,19 @@ public class SparkmaxIOReal implements MotorIO {
      * @param followerMotor 2nd motor, automatically set as same direction as leader
      * @param FL Final Ration
      * @param s0g slot 0 gains
-     * @param s1g slot 1 gains
      * @param motorMode motor mode
      */
-    public SparkmaxIOReal(SparkMax leader, ArrayList<SparkMax> followerMotor, double FL, Gains s0g, Gains s1g, IdleMode motorMode) {
+    public SparkmaxIOReal(SparkMax leader, ArrayList<SparkMax> followerMotor, double FL, Gains s0g, IdleMode motorMode) {
 
         leaderSpark = leader;
         followerSpark = followerMotor;
 
-        Final_Ratio = FL;
-
-        slot0_gainsM = s0g;
-        slot1_gainsM = s1g;
-
-        // internalPositionRotations = leaderSpark.getPosition();
-        // velocityRps = leaderSpark.getVelocity();
-
-
-        // BaseStatusSignal.setUpdateFrequencyForAll(
-        // 100,
-        // internalPositionRotations,
-        // velocityRps
-        // );
+        //Final_Ratio = FL;
 
         // PID configs
         config.apply(new ClosedLoopConfig().pid(s0g.kP(), s0g.kI(), s0g.kD()));
 
-
-        // config.Slot1.kS = slot1_gainsM.kS();
-        // config.Slot1.kV = slot1_gainsM.kV();
-        // config.Slot1.kA = slot1_gainsM.kA();
-        // config.Slot1.kP = slot1_gainsM.kP();
-        // config.Slot1.kI = slot1_gainsM.kI();
-        // config.Slot1.kD = slot1_gainsM.kD();
-        // config.Slot1.kG = slot1_gainsM.kG();
-
         // Supply Current Limits, does this need a varialbe input into it?
-        // config.TorqueCurrent.PeakForwardTorqueCurrent =  80.0;
-        // config.TorqueCurrent.PeakReverseTorqueCurrent = -80.0;
         config.smartCurrentLimit(100);
         config.idleMode(motorMode);
 
@@ -171,51 +109,15 @@ public class SparkmaxIOReal implements MotorIO {
      * @param leader motor
      * @param FL Final Ratio
      * @param s0g slot 0 gains
-     * @param s1g slot 1 gains
      */
-    public SparkmaxIOReal(SparkMax motor, double FL, Gains s0g, Gains s1g) {
+    public SparkmaxIOReal(SparkMax motor, double FL, Gains s0g) {
 
         leaderSpark = motor;
 
-        Final_Ratio = FL;
-
-        slot0_gainsM = s0g;
-        slot1_gainsM = s1g;
-
-        // internalPositionRotations = leaderSpark.getPosition();
-        // velocityRps = leaderSpark.getVelocity();
-
-
-
-        // BaseStatusSignal.setUpdateFrequencyForAll(
-        // 100,
-        // internalPositionRotations,
-        // velocityRps,
-        // appliedVoltage.get(0),
-        // supplyCurrent.get(0),
-        // supplyCurrent.get(1),
-        // torqueCurrent.get(0),
-        // torqueCurrent.get(1),
-        // tempCelsius.get(0),
-        // tempCelsius.get(1));
-
-
+        // Final_Ratio = FL;
 
         // PID configs
-        // config.Slot0.kS = slot0_gainsM.kS();
-        // config.Slot0.kV = slot0_gainsM.kV();
-        // config.Slot0.kA = slot0_gainsM.kA();
         config.apply(new ClosedLoopConfig().pid(s0g.kP(), s0g.kI(), s0g.kD()));
-        // config.Slot0.kG = slot0_gainsM.kG();
-
-        // config.Slot1.kS = slot1_gainsM.kS();
-        // config.Slot1.kV = slot1_gainsM.kV();
-        // config.Slot1.kA = slot1_gainsM.kA();
-        // config.Slot1.kP = slot1_gainsM.kP();
-        // config.Slot1.kI = slot1_gainsM.kI();
-        // config.Slot1.kD = slot1_gainsM.kD();
-        // config.Slot1.kG = slot1_gainsM.kG();
-
 
         // Supply Current Limits
         // config.TorqueCurrent.PeakForwardTorqueCurrent =  80.0;
@@ -241,46 +143,18 @@ public class SparkmaxIOReal implements MotorIO {
      * @param followerMotor 2nd motor, automatically set as same direction as leader
      * @param FL Final Ration
      * @param s0g slot 0 gains
-     * @param s1g slot 1 gains
      */
-    public SparkmaxIOReal(SparkMax leader, ArrayList<SparkMax> followerMotor, double FL, Gains s0g, Gains s1g) {
+    public SparkmaxIOReal(SparkMax leader, ArrayList<SparkMax> followerMotor, double FL, Gains s0g) {
 
         leaderSpark = leader;
         followerSpark = followerMotor;
 
-        Final_Ratio = FL;
-
-        slot0_gainsM = s0g;
-        slot1_gainsM = s1g;
-
-        // internalPositionRotations = leaderSpark.getPosition();
-        // velocityRps = leaderSpark.getVelocity();
-
-
-        // BaseStatusSignal.setUpdateFrequencyForAll(
-        // 100,
-        // internalPositionRotations,
-        // velocityRps
-        // );
+        // Final_Ratio = FL;
 
         // PID configs
-        // config.Slot0.kS = slot0_gainsM.kS();
-        // config.Slot0.kV = slot0_gainsM.kV();
-        // config.Slot0.kA = slot0_gainsM.kA();
         config.apply(new ClosedLoopConfig().pid(s0g.kP(), s0g.kI(), s0g.kD()));
-        // config.Slot0.kG = slot0_gainsM.kG();
-
-        // config.Slot1.kS = slot1_gainsM.kS();
-        // config.Slot1.kV = slot1_gainsM.kV();
-        // config.Slot1.kA = slot1_gainsM.kA();
-        // config.Slot1.kP = slot1_gainsM.kP();
-        // config.Slot1.kI = slot1_gainsM.kI();
-        // config.Slot1.kD = slot1_gainsM.kD();
-        // config.Slot1.kG = slot1_gainsM.kG();
 
         // Supply Current Limits, does this need a varialbe input into it?
-        // config.TorqueCurrent.PeakForwardTorqueCurrent =  80.0;
-        // config.TorqueCurrent.PeakReverseTorqueCurrent = -80.0;
         config.smartCurrentLimit(100);
         config.idleMode(IdleMode.kBrake);
 
@@ -303,24 +177,8 @@ public class SparkmaxIOReal implements MotorIO {
     }
 
     public void updateInputs(MotorIOInputs inputs) {
-        // inputs.isLeaderMotorConnected =
-        //     BaseStatusSignal.refreshAll(
-        //         internalPositionRotations,
-        //         velocityRps
-
-
-        //     ).isOK();
-
-        // inputs.isFollowerMotorConnected = // TODO Some mechanisms may not have a followerer for their subtsystem rendering this redundant
-        //     BaseStatusSignal.refreshAll(
-        //         appliedVoltage.get(1),
-        //         supplyCurrent.get(1),
-        //         torqueCurrent.get(1),
-        //         tempCelsius.get(1))
-        //     .isOK();
-
-        // inputs.motorRotations = internalPositionRotations.getValueAsDouble() * Final_Ratio; //TODO Constants should be ALL_CAPS // Yuyhun said that because we get it from constructor that it should be lowercase
-        // inputs.velocityInchPerSec = velocityRps.getValueAsDouble() * Final_Ratio;
+        inputs.motorRotations = leaderSpark.getAbsoluteEncoder().getPosition(); //TODO does this need to be multiplied by final ratio?
+        inputs.velocityInchPerSec = leaderSpark.getAbsoluteEncoder().getVelocity();
 
     }
 
@@ -329,28 +187,11 @@ public class SparkmaxIOReal implements MotorIO {
         leaderSpark.stopMotor();
     }
 
-    // @Override
-    // public void setPosition(double pos) {
-    //     leaderSpark.setPosition(pos);
-    // }
-
     @Override
     public void setGainsSlot0(double kP, double kI, double kD) {
         config.apply(new ClosedLoopConfig().pid(kP, kI, kD));
         leaderSpark.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
-
-    // @Override
-    // public void setGainsSlot1(double kP, double kI, double kD, double kS, double kV, double kA, double kG) {
-    //     config.Slot1.kP = kP;
-    //     config.Slot1.kI = kI;
-    //     config.Slot1.kD = kD;
-    //     config.Slot1.kS = kS;
-    //     config.Slot1.kV = kV;
-    //     config.Slot1.kA = kA;
-    //     config.Slot1.kG = kG;
-    //     leaderSpark.getConfigurator().apply(config);
-    // }
 
     @Override
     public void setBrakeMode(boolean enabled) {
@@ -373,16 +214,6 @@ public class SparkmaxIOReal implements MotorIO {
         System.out.println(speed);
         leaderSpark.set(speed);
     }
-
-    /* pretty sure this doesnt exist
-    @Override
-    public void setFF(double kS, double kV, double kA) {
-        config.Slot0.kS = kS;
-        config.Slot0.kV = kV;
-        config.Slot0.kA = kA;
-        leaderSpark.getConfigurator().apply(config);
-    }
-    */
 
     public MotorIOInputs getMotorIOInputs() {
         return new MotorIO.MotorIOInputs();
@@ -415,32 +246,4 @@ public class SparkmaxIOReal implements MotorIO {
         config.idleMode(mode);
     }
 
-    /* I do not believe this exists i think perhaps maybe im not actually really sure but i can find it
-    private void setControl(ControlRequest request) {
-		leaderSpark.setControl(request);
-	}
-
-
-    @Override
-	public void setNeutralOut() {
-		setControl(new NeutralOut());
-	}
-
-	@Override
-	public void setCoastOut() {
-		setControl(new CoastOut());
-	}
-
-    @Override
-    public void runPercentOutput(double percent) {
-        setControl(new DutyCycleOut(percent));
-    }
-
-	@Override
-	public void setCurrentPosition(Angle mechanismPosition) {
-		threadPoolExecutor.submit(() -> {
-			leaderSpark.setPosition(mechanismPosition);
-		});
-	}
-    */
 }

@@ -3,6 +3,7 @@ import static frc.robot.CatzSubsystems.CatzArm.ArmConstants.*;
 
 import java.util.function.DoubleSupplier;
 
+import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -14,7 +15,7 @@ public class CatzArm extends SubsystemBase {
     public static final CatzArm Instance = new CatzArm();
 
     private final ArmIO io;
-    //private final ArmIOInputsAutoLogged inputs = new ArmIOInputsAutoLogged();
+    private final ArmIOInputsAutoLogged inputs = new ArmIOInputsAutoLogged();
 
     private static ArmPosition targetPosition = ArmPosition.STOW;
 
@@ -58,8 +59,8 @@ public class CatzArm extends SubsystemBase {
 
     @Override
     public void periodic() {
-        //io.updateInputs(inputs);
-        //Logger.processInputs("RealInputs/Arm", inputs);
+        io.updateInputs(inputs);
+        Logger.processInputs("RealInputs/Arm", inputs);
 
         if (DriverStation.isDisabled()) {
             io.setPercentOutput(0.0);
