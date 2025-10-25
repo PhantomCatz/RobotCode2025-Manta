@@ -336,6 +336,7 @@ public class TalonFXSIOReal implements MotorIO {
 
         inputs.motorRotations = internalPositionRotations.getValueAsDouble() * Final_Ratio; //TODO Constants should be ALL_CAPS // Yuyhun said that because we get it from constructor that it should be lowercase
         inputs.velocityInchPerSec = velocityRps.getValueAsDouble() * Final_Ratio;
+        
 
     }
 
@@ -389,7 +390,7 @@ public class TalonFXSIOReal implements MotorIO {
 
     @Override
     public void runMotor(double speed) {
-        System.out.println(speed);
+        // System.out.println(speed);
         leaderTalon.set(speed);
     }
 

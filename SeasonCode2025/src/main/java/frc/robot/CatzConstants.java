@@ -13,7 +13,7 @@ public final class CatzConstants {
   //
   // --------------------------------------------------/
   public static final RobotScenario robotScenario = RobotScenario.TUNING;
-  public static final RobotHardwareMode hardwareMode = RobotHardwareMode.SIM;
+  public static final RobotHardwareMode hardwareMode = RobotHardwareMode.REAL;
   private static RobotID robotType = RobotID.SN_TEST;
   public static boolean disableHAL = false;
 

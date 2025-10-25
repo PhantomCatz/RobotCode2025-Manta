@@ -17,6 +17,7 @@ public class RollerSubsytem extends MotorSubsystem{
 
     public RollerSubsytem(MotorIO io) {
         super(io, "CatzIntakeRollers"); 
+        io.runMotor(0);
     }
 
     // @Override
@@ -34,7 +35,7 @@ public class RollerSubsytem extends MotorSubsystem{
     private intakeRollersStates currentState = intakeRollersStates.STOP;
     private intakeRollersStates previousState = intakeRollersStates.STOP;
 
-    public static void setSpeed(int speed) {
+    public static void setSpeed(double speed) {
         io.runMotor(speed);
         //System.out.println("wozerwsdadsadwdsad it set speed");
     }

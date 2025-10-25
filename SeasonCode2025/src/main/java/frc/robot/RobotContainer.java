@@ -42,7 +42,7 @@ public class RobotContainer {
     private void configureBindings() {
         xboxDrv.a().onTrue(CatzArm.Instance.armUp().alongWith(CatzWrist.Instance.extendWrist()).alongWith(CatzElevator.Instance.Elevator_L4()));
         //xboxDrv.b().onTrue(CatzArm.Instance.armStow().alongWith(CatzWrist.Instance.Wrist_Home()).alongWith(CatzElevator.Instance.Elevator_Stow()));
-        xboxDrv.b().onTrue(new RunCommand(() -> {rollers.setSpeed(1);}));
+        xboxDrv.b().onTrue(new RunCommand(() -> {rollers.setSpeed(0.6);}));
         
         xboxDrv.x().onTrue(CatzWrist.Instance.extendWrist());
         xboxDrv.y().onTrue(CatzWrist.Instance.Wrist_Home());
