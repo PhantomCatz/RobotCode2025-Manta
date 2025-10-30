@@ -31,7 +31,7 @@ public class TalonFXIOSim implements MotorIO {
         LinearSystemId.createDCMotorSystem(
             DCMotor.getKrakenX60(1), 0.025, DriveConstants.MODULE_GAINS_AND_RATIOS.driveReduction());
 
-    private final DCMotorSim m_IntakeRollersSim = new DCMotorSim(plantIntakeMotorSys, GearBox, null);
+    private final DCMotorSim TalonFXSim = new DCMotorSim(plantIntakeMotorSys, GearBox, null);
 
 
     public TalonFXIOSim() {
@@ -44,17 +44,17 @@ public class TalonFXIOSim implements MotorIO {
         // PID -> Voltage Command
         //double setVoltage = simPIDController.calculate(inputs.positionDegreesFinalShaft, targetDegreesFinalShaft) * 12.0;
 
-        var m_armSimState = LeaderTalon.getSimState();
-        m_armSimState.Orientation = ChassisReference.CounterClockwise_Positive;
+        var TalonFXSimState = LeaderTalon.getSimState();
+        TalonFXSimState.Orientation = ChassisReference.CounterClockwise_Positive;
 
         // Feed input into WPILib sim
         //m_IntakeRollersSim.setInputVoltage(setVoltage);
-        m_IntakeRollersSim.update(0.02);
+        TalonFXSim.update(0.02);
 
 
         // Sync CTRE Sim State with WPILib Sim
-        m_armSimState.setSupplyVoltage(12.0); // battery voltage
-        m_armSimState.setRawRotorPosition(Units.radiansToRotations(m_IntakeRollersSim.getAngularPositionRad()) * ArmConstants.ARM_GEAR_REDUCTION);
+        TalonFXSimState.setSupplyVoltage(12.0); // battery voltage
+        TalonFXSimState.setRawRotorPosition(Units.radiansToRotations(TalonFXSim.getAngularPositionRad()) * ArmConstants.ARM_GEAR_REDUCTION);
         //m_armSimState.setRotorVelocity((Units.radiansPerSecondToRotationsPerMinute(m_IntakeRollersSim.get) * ArmConstants.ARM_GEAR_REDUCTION)/60.0);
 
         // Fill IO inputs and standered deviations
@@ -66,7 +66,7 @@ public class TalonFXIOSim implements MotorIO {
         // Set the motor speed in simulation
 
         //LeaderTalon.getSimState().setRotorVelocity(speed);
-        m_IntakeRollersSim.setInputVoltage(speed * 12.0); // Assuming speed is between -1 and 1
+        TalonFXSim.setInputVoltage(speed * 12.0); // Assuming speed is between -1 and 1
     }
 
     @Override
