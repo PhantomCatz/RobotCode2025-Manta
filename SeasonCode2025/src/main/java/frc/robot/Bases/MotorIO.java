@@ -26,6 +26,11 @@ public interface MotorIO {
     public double absoluteEncoderPositionRads = 0.0;
     public double relativeEncoderPositionRads = 0.0;
     public double velocityInchPerSec = 0.0;
+	public double acceleration = 0.0;
+	public double supplyCurrentAmps = 0.0;
+    public double torqueCurrentAmps = 0.0;
+	public double appliedVoltage = 0.0;
+	public double tempCelcius = 0.0;
 
   }
 

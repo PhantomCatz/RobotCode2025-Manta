@@ -7,14 +7,17 @@ import com.ctre.phoenix6.controls.*;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.*;
 
-import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
+
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Dimensionless;
+import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.Utilities.MotorUtil.Gains;
 
@@ -31,6 +34,11 @@ public class TalonFXIOReal implements MotorIO {
 
     private final StatusSignal<Angle> internalPositionRotations;
     private final StatusSignal<AngularVelocity> velocityRps;
+    private final StatusSignal<AngularAcceleration> acceleration;
+    private final StatusSignal<Current> supplyCurrent;
+    private final StatusSignal<Current> torqueCurrent;
+    private final StatusSignal<Voltage> appliedVoltage;
+    private final StatusSignal<Temperature> tempCelsius;
 
 
     private double Final_Ratio;
@@ -60,21 +68,11 @@ public class TalonFXIOReal implements MotorIO {
 
         internalPositionRotations = leaderTalon.getPosition();
         velocityRps = leaderTalon.getVelocity();
-
-
-
-        // BaseStatusSignal.setUpdateFrequencyForAll(
-        // 100,
-        // internalPositionRotations,
-        // velocityRps,
-        // appliedVoltage.get(0),
-        // supplyCurrent.get(0),
-        // supplyCurrent.get(1),
-        // torqueCurrent.get(0),
-        // torqueCurrent.get(1),
-        // tempCelsius.get(0),
-        // tempCelsius.get(1));
-
+        acceleration = leaderTalon.getAcceleration();
+        supplyCurrent = leaderTalon.getSupplyCurrent();
+        torqueCurrent = leaderTalon.getTorqueCurrent();
+        appliedVoltage = leaderTalon.getMotorVoltage();
+        tempCelsius = leaderTalon.getDeviceTemp();
 
 
         // PID configs
@@ -183,21 +181,23 @@ public class TalonFXIOReal implements MotorIO {
         inputs.isLeaderMotorConnected =
             BaseStatusSignal.refreshAll(
                 internalPositionRotations,
-                velocityRps
+                velocityRps,
+                acceleration,
+                supplyCurrent,
+                torqueCurrent,
+                appliedVoltage,
+                tempCelsius
 
 
             ).isOK();
 
-        // inputs.isFollowerMotorConnected = // TODO Some mechanisms may not have a followerer for their subtsystem rendering this redundant
-        //     BaseStatusSignal.refreshAll(
-        //         appliedVoltage.get(1),
-        //         supplyCurrent.get(1),
-        //         torqueCurrent.get(1),
-        //         tempCelsius.get(1))
-        //     .isOK();
-
         inputs.motorRotations = internalPositionRotations.getValueAsDouble() * Final_Ratio; //TODO Constants should be ALL_CAPS // Yuyhun said that because we get it from constructor that it should be lowercase
         inputs.velocityInchPerSec = velocityRps.getValueAsDouble() * Final_Ratio;
+        inputs.acceleration = acceleration.getValueAsDouble() * Final_Ratio;
+        inputs.appliedVoltage = appliedVoltage.getValueAsDouble();
+        inputs.supplyCurrentAmps = supplyCurrent.getValueAsDouble();
+        inputs.torqueCurrentAmps = torqueCurrent.getValueAsDouble();
+        inputs.tempCelcius = tempCelsius.getValueAsDouble();
 
     }
 
@@ -252,8 +252,7 @@ public class TalonFXIOReal implements MotorIO {
     @Override
     public void runMotor(double speed) {
         // System.out.println(speed);
-        leaderTalon.set(speed);
-        System.out.println(leaderTalon.get());
+        leaderTalon.setControl(new DutyCycleOut(speed));
     }
 
     @Override

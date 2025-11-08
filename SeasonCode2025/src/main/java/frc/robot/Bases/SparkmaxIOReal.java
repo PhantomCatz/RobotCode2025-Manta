@@ -1,7 +1,5 @@
 package frc.robot.Bases;
 
-import com.ctre.phoenix6.controls.*;
-import com.ctre.phoenix6.signals.*;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
@@ -10,14 +8,6 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import java.util.ArrayList;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import edu.wpi.first.units.Units;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Dimensionless;
-import edu.wpi.first.units.measure.Voltage;
 import frc.robot.Utilities.MotorUtil.Gains;;
 
 public class SparkmaxIOReal implements MotorIO {
@@ -39,25 +29,10 @@ public class SparkmaxIOReal implements MotorIO {
      */
     public SparkmaxIOReal(SparkMax motor, double FL, Gains s0g, IdleMode motorMode) {
 
-        leaderSpark = motor;
+        this(motor, FL, s0g);
 
-        //Final_Ratio = FL;
-
-        // PID configs
-        config.apply(new ClosedLoopConfig().pid(s0g.kP(), s0g.kI(), s0g.kD()));
-
-
-        // Supply Current Limits
-        config.smartCurrentLimit(100);
         config.idleMode(motorMode);
-
-        // Motion Magic Parameters
-
-        config.inverted(false); //is this supposed to be inverted? i just left it as false
-
-
-        //leaderSpark.setPosition(0); I do not think you can set positions for sparkmax
-
+        
         leaderSpark.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     }
@@ -73,25 +48,9 @@ public class SparkmaxIOReal implements MotorIO {
      */
     public SparkmaxIOReal(SparkMax leader, ArrayList<SparkMax> followerMotor, double FL, Gains s0g, IdleMode motorMode) {
 
-        leaderSpark = leader;
+        this(leader, FL, s0g, motorMode);
+
         followerSpark = followerMotor;
-
-        //Final_Ratio = FL;
-
-        // PID configs
-        config.apply(new ClosedLoopConfig().pid(s0g.kP(), s0g.kI(), s0g.kD()));
-
-        // Supply Current Limits, does this need a varialbe input into it?
-        config.smartCurrentLimit(100);
-        config.idleMode(motorMode);
-
-        config.inverted(false);
-
-
-        // leaderSpark.setPosition(0);
-
-
-        leaderSpark.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         for (int i = 0; i < followerSpark.size(); i++) {
             // followerSpark.get(i).setPosition(0);
@@ -145,26 +104,9 @@ public class SparkmaxIOReal implements MotorIO {
      * @param s0g slot 0 gains
      */
     public SparkmaxIOReal(SparkMax leader, ArrayList<SparkMax> followerMotor, double FL, Gains s0g) {
+        this(leader, FL, s0g);
 
-        leaderSpark = leader;
         followerSpark = followerMotor;
-
-        // Final_Ratio = FL;
-
-        // PID configs
-        config.apply(new ClosedLoopConfig().pid(s0g.kP(), s0g.kI(), s0g.kD()));
-
-        // Supply Current Limits, does this need a varialbe input into it?
-        config.smartCurrentLimit(100);
-        config.idleMode(IdleMode.kBrake);
-
-        config.inverted(false);
-
-
-        // leaderSpark.setPosition(0);
-
-
-        leaderSpark.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         for (int i = 0; i < followerSpark.size(); i++) {
             // followerSpark.get(i).setPosition(0);
@@ -174,12 +116,16 @@ public class SparkmaxIOReal implements MotorIO {
             followerSpark.get(i).configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         }
 
+
     }
 
     public void updateInputs(MotorIOInputs inputs) {
         inputs.motorRotations = leaderSpark.getAbsoluteEncoder().getPosition(); //TODO does this need to be multiplied by final ratio?
         inputs.velocityInchPerSec = leaderSpark.getAbsoluteEncoder().getVelocity();
-
+        inputs.appliedVoltage = leaderSpark.getAppliedOutput();
+        inputs.supplyCurrentAmps = leaderSpark.getOutputCurrent();
+        inputs.torqueCurrentAmps = //TODO I have literally no idea
+        inputs.tempCelcius = leaderSpark.getMotorTemperature();
     }
 
     @Override
@@ -218,28 +164,6 @@ public class SparkmaxIOReal implements MotorIO {
     public MotorIOInputs getMotorIOInputs() {
         return new MotorIO.MotorIOInputs();
     }
-
-    public static class ControlRequestGetter { // TODO pretty cool!
-		public ControlRequest getVoltageRequest(Voltage voltage) {
-			return new VoltageOut(voltage.in(Units.Volts)).withEnableFOC(false);
-		}
-
-		public ControlRequest getDutyCycleRequest(Dimensionless percent) {
-			return new DutyCycleOut(percent.in(Units.Percent));
-		}
-
-		public ControlRequest getMotionMagicRequest(Angle mechanismPosition) {
-			return new MotionMagicExpoVoltage(mechanismPosition).withSlot(0).withEnableFOC(true);
-		}
-
-		public ControlRequest getVelocityRequest(AngularVelocity mechanismVelocity) {
-			return new VelocityTorqueCurrentFOC(mechanismVelocity).withSlot(1);
-		}
-
-		public ControlRequest getPositionRequest(Angle mechanismPosition) {
-			return new PositionTorqueCurrentFOC(mechanismPosition).withSlot(2);
-		}
-	}
 
     @Override
     public void setIdleMode(IdleMode mode) {
