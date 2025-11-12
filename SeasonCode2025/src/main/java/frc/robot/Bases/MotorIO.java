@@ -73,7 +73,7 @@ public interface MotorIO {
   public default void setNeutralOut() {}
 
   public default void setCurrentPosition(Angle mechanismPosition) {}
-  
+
   public default void setMotionMagicParameters(double cruiseVelocity, double acceleration, double jerk) {}
 
   public default void setMotionMagicSetpoint(Angle mechanismPosition) {}

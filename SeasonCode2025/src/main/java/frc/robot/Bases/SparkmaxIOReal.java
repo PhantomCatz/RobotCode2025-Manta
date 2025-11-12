@@ -32,7 +32,7 @@ public class SparkmaxIOReal implements MotorIO {
         this(motor, FL, s0g);
 
         config.idleMode(motorMode);
-        
+
         leaderSpark.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     }

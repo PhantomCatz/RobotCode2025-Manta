@@ -14,7 +14,6 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
-import frc.robot.Bases.MotorIO;
 import frc.robot.CatzSubsystems.CatzArm.ArmConstants;
 import frc.robot.CatzSubsystems.CatzDriveAndRobotOrientation.Drivetrain.DriveConstants;
 
@@ -31,7 +30,7 @@ public class TalonFXIOSim implements MotorIO {
         LinearSystemId.createDCMotorSystem(
             DCMotor.getKrakenX60(1), 0.025, DriveConstants.MODULE_GAINS_AND_RATIOS.driveReduction());
 
-    private final DCMotorSim TalonFXSim = new DCMotorSim(plantIntakeMotorSys, GearBox, null);
+    private final DCMotorSim TalonFXSim = new DCMotorSim(plantIntakeMotorSys, GearBox, 0.025, 0.025);
 
 
     public TalonFXIOSim() {

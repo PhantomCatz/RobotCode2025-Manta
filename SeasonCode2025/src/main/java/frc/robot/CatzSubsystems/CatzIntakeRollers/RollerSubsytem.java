@@ -1,15 +1,28 @@
 package frc.robot.CatzSubsystems.CatzIntakeRollers;
 
 import frc.robot.Bases.TalonFXIOReal;
-import frc.robot.CatzSubsystems.CatzIntakeRollers.RollerSubsytem.intakeRollersStates;
+import frc.robot.Bases.TalonFXIOSim;
 import frc.robot.Bases.MotorIO;
 import frc.robot.Bases.MotorSubsystem;
+import frc.robot.Bases.TalonFXIONull;
 
 import static frc.robot.CatzSubsystems.CatzIntakeRollers.RollerConstants.*;
 
+import frc.robot.Robot;
+
 
 public class RollerSubsytem extends MotorSubsystem{
-    private static final MotorIO io = new TalonFXIOReal(RollerMotor, Final_Ratio, s0g, s1g);
+    private static final MotorIO io = getIOInstance();
+
+    static MotorIO getIOInstance() {
+        if(Robot.isReal()) {
+            return new TalonFXIOReal(RollerMotor, Final_Ratio, s0g, s1g);
+        } else if(Robot.isSimulation()) {
+            return new TalonFXIOSim();
+        } else {
+            return new TalonFXIONull();
+        }
+    }
 
     public static final RollerSubsytem Instance = new RollerSubsytem();
 

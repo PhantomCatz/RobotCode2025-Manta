@@ -122,7 +122,7 @@ public class TalonFXIOReal implements MotorIO {
     public TalonFXIOReal(TalonFX motor, double FL, Gains s0g, Gains s1g,  NeutralModeValue motorMode) {
 
         this(motor, FL, s0g, s1g);
-        
+
         config.MotorOutput.NeutralMode = motorMode;
 
         leaderTalon.getConfigurator().apply(config, 1.0); // re-apply because other constructor has to go first
@@ -275,7 +275,7 @@ public class TalonFXIOReal implements MotorIO {
         leaderTalon.getConfigurator().apply(config);
     }
 
-    public static class ControlRequestGetter { // TODO pretty cool!
+    public static class ControlRequestGetter {
 		public ControlRequest getVoltageRequest(Voltage voltage) {
 			return new VoltageOut(voltage.in(Units.Volts)).withEnableFOC(false);
 		}
