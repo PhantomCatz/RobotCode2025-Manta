@@ -2,12 +2,16 @@ package frc.robot.CatzSubsystems.CatzIntakeRollers;
 
 import frc.robot.Bases.TalonFXIOReal;
 import frc.robot.Bases.TalonFXIOSim;
+import frc.robot.CatzSubsystems.CatzElevator.ElevatorIONull;
+import frc.robot.CatzSubsystems.CatzElevator.ElevatorIOReal;
+import frc.robot.CatzSubsystems.CatzElevator.ElevatorIOSim;
 import frc.robot.Bases.MotorIO;
+import frc.robot.Bases.MotorIONull;
 import frc.robot.Bases.MotorSubsystem;
-import frc.robot.Bases.TalonFXIONull;
 
 import static frc.robot.CatzSubsystems.CatzIntakeRollers.RollerConstants.*;
 
+import frc.robot.CatzConstants;
 import frc.robot.Robot;
 
 
@@ -15,12 +19,16 @@ public class RollerSubsytem extends MotorSubsystem{
     private static final MotorIO io = getIOInstance();
 
     static MotorIO getIOInstance() {
-        if(Robot.isReal()) {
-            return new TalonFXIOReal(RollerMotor, Final_Ratio, s0g, s1g);
-        } else if(Robot.isSimulation()) {
-            return new TalonFXIOSim();
-        } else {
-            return new TalonFXIONull();
+        switch (CatzConstants.hardwareMode) {
+            case REAL:
+                // System.out.println("Roller Configured for Real");
+                return new TalonFXIOReal(RollerMotor, Final_Ratio, s0g, s1g); 
+            case SIM:
+                // System.out.println("Roller Configured for Simulation");
+                return new TalonFXIOSim();
+            default:
+                // System.out.println("Roller Unconfigured");
+                return new MotorIONull();
         }
     }
 

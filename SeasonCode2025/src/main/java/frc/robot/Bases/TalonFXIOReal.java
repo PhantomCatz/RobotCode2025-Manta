@@ -263,10 +263,6 @@ public class TalonFXIOReal implements MotorIO {
         leaderTalon.getConfigurator().apply(config);
     }
 
-    public MotorIOInputs getMotorIOInputs() {
-        return new MotorIO.MotorIOInputs();
-    }
-
     @Override
     public void setMotionMagicParameters(double vel, double accel, double jerk) {
         config.MotionMagic.MotionMagicCruiseVelocity = vel;

@@ -40,23 +40,16 @@ public class TalonFXIOSim implements MotorIO {
 
     @Override
     public void updateInputs(MotorIOInputs inputs) {
-        // PID -> Voltage Command
-        //double setVoltage = simPIDController.calculate(inputs.positionDegreesFinalShaft, targetDegreesFinalShaft) * 12.0;
 
         var TalonFXSimState = LeaderTalon.getSimState();
         TalonFXSimState.Orientation = ChassisReference.CounterClockwise_Positive;
 
-        // Feed input into WPILib sim
-        //m_IntakeRollersSim.setInputVoltage(setVoltage);
         TalonFXSim.update(0.02);
 
 
         // Sync CTRE Sim State with WPILib Sim
         TalonFXSimState.setSupplyVoltage(12.0); // battery voltage
         TalonFXSimState.setRawRotorPosition(Units.radiansToRotations(TalonFXSim.getAngularPositionRad()) * ArmConstants.ARM_GEAR_REDUCTION);
-        //m_armSimState.setRotorVelocity((Units.radiansPerSecondToRotationsPerMinute(m_IntakeRollersSim.get) * ArmConstants.ARM_GEAR_REDUCTION)/60.0);
-
-        // Fill IO inputs and standered deviations
 
     }
 
@@ -64,7 +57,6 @@ public class TalonFXIOSim implements MotorIO {
     public void runMotor(double speed) {
         // Set the motor speed in simulation
 
-        //LeaderTalon.getSimState().setRotorVelocity(speed);
         TalonFXSim.setInputVoltage(speed * 12.0); // Assuming speed is between -1 and 1
     }
 
