@@ -204,7 +204,7 @@ public class SparkmaxIOReal extends MotorIO {
     }
 
     @Override
-    public void runPercentOutput(double percent) {
+    public void setPercentOutput(double percent) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'runPercentOutput'");
     }

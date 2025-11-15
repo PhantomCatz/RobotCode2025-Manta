@@ -20,14 +20,15 @@ public abstract class MotorIO {
 	 * With interfaces, we cannot log any of the follower inputs without doing really scuffed stuff.
 	 */
 
-	//NOTE a single MotorIO will represent an entire group of motors that work together. lowkey why don't we just have one array that holds all of the motors instead of spliiting it into two?
-	protected final MotorIOInputs motorInputs;
-	protected final MotorIOInputs[] followerInputs; //NOTE always use arrays instead of arraylist to reduce room for error.
 
+	//NOTE i realized that there can be cases where we may need to run two motors at separate powers. like bubbles' outtake motor at L1
 
-	public MotorIO(int numFollowers){
-		motorInputs = new MotorIOInputs();
-		followerInputs = new MotorIOInputs[numFollowers];
+	private Setpoint setpoint = Setpoint.withNeutralSetpoint();
+
+	protected final MotorIOInputsAutoLogged[] inputs;
+
+	public MotorIO(int numOfMotors){
+		inputs = new MotorIOInputsAutoLogged[numOfMotors];
 	}
 
 	@AutoLog
@@ -47,11 +48,9 @@ public abstract class MotorIO {
 
 	}
 
-	public abstract void updateInputs(MotorIOInputs inputs);
+	public abstract void updateInputs();
 
-	public abstract void runMotor(double speed);
-
-	public abstract void runCurrent(double amps);
+	public abstract void zeroSensors();
 
 	public abstract void setGainsSlot(double kP, double kI, double kD, double kS, double kV, double kA, double kG);
 
@@ -59,17 +58,15 @@ public abstract class MotorIO {
 
 	public abstract void setFF(double kS, double kV, double kA);
 
-	public abstract void runCharacterizationMotor(double input);
+	public abstract void setPercentOutput(double... percent);
 
-	public abstract void runPercentOutput(double percent);
+	public abstract void setPosition(double... pos);
 
-	public abstract void setPosition(double pos);
+	public abstract void setBrakeMode(boolean... enabled);
 
-	public abstract void setBrakeMode(boolean enabled);
+	public abstract void setNeutralMode(NeutralModeValue... mode);
 
-	public abstract void setNeutralMode(NeutralModeValue mode);
-
-	public abstract void setIdleMode(IdleMode mode);
+	public abstract void setIdleMode(IdleMode... mode);
 
 	public abstract void stop();
 
@@ -95,13 +92,21 @@ public abstract class MotorIO {
 
 	public abstract void setVoltageSetpoint(Voltage voltage);
 
-	public abstract void applySetpoint(Setpoint setpointToApply);
-
 	public abstract double getVelocityInch();
 
 	public abstract double getPositionInch();
 
 	public abstract double getSupplyCurrent();
+
+	public final void applySetpoint(Setpoint setpoint){
+		this.setpoint = setpoint;
+
+		setpoint.apply(this);
+	}
+
+	public final Setpoint getCurrentSetpoint(){
+		return setpoint;
+	}
 
 	//NOTE write the rest of get functions
 

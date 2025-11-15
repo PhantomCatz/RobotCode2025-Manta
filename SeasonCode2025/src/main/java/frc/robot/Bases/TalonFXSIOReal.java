@@ -299,7 +299,7 @@ public class TalonFXSIOReal extends MotorIO {
 	}
 
     @Override
-    public void runPercentOutput(double percent) {
+    public void setPercentOutput(double percent) {
         setControl(new DutyCycleOut(percent));
     }
 

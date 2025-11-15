@@ -10,7 +10,6 @@ public class MotorSubsystem extends SubsystemBase {
     protected final MotorIO io;
 	protected final String name;
 
-	protected final MotorIOInputsAutoLogged inputs = new MotorIOInputsAutoLogged();
 
     public MotorSubsystem(MotorIO io, String name) {
 		super(name);
@@ -18,6 +17,7 @@ public class MotorSubsystem extends SubsystemBase {
 
 		this.name = name;
 	}
+
 
     @Override
 	public void periodic() {
