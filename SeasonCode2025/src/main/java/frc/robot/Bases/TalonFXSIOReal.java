@@ -6,6 +6,7 @@ import com.ctre.phoenix6.configs.TalonFXSConfiguration;
 import com.ctre.phoenix6.controls.*;
 import com.ctre.phoenix6.hardware.TalonFXS;
 import com.ctre.phoenix6.signals.*;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
@@ -21,11 +22,11 @@ import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.Utilities.MotorUtil.Gains;;
 
-public class TalonFXSIOReal implements MotorIO {
+public class TalonFXSIOReal extends MotorIO {
 
     // initialize follower if needed?
     private TalonFXS leaderTalon;
-    private ArrayList<TalonFXS> followerTalon;
+    private TalonFXS[] followerTalons;
 
     private Gains slot0_gainsM;
     private Gains slot1_gainsM;
@@ -69,20 +70,21 @@ public class TalonFXSIOReal implements MotorIO {
      * basic, not done
      * 2 motors
      * @param leader 1st motor
-     * @param followerMotor 2nd motor, automatically set as same direction as leader
+     * @param followerMotors follower motors, automatically set as same direction as leader
      * @param FL Final Ration
      * @param s0g slot 0 gains
      * @param s1g slot 1 gains
      * @param motorMode motor mode
      */
-    public TalonFXSIOReal(TalonFXS leader, ArrayList<TalonFXS> followerMotor, double FL, Gains s0g, Gains s1g, NeutralModeValue motorMode) {
+    public TalonFXSIOReal(TalonFXS leader, TalonFXS[] followerMotors, double FL, Gains s0g, Gains s1g, NeutralModeValue motorMode) {
 
         this(leader, FL, s0g, s1g, motorMode);
+        this.followerTalons = followerMotors;
 
-        for (int i = 0; i < followerTalon.size(); i++) {
-            followerTalon.get(i).setPosition(0);
-            followerTalon.get(i).getConfigurator().apply(config, 1.0);
-            followerTalon.get(i).setControl(new Follower(leaderTalon.getDeviceID(), false));
+        for (int i = 0; i < followerTalons.length; i++) {
+            followerTalons[i].setPosition(0);
+            followerTalons[i].getConfigurator().apply(config, 1.0);
+            followerTalons[i].setControl(new Follower(leaderTalon.getDeviceID(), false));
         }
 
     }
@@ -162,20 +164,21 @@ public class TalonFXSIOReal implements MotorIO {
      * @param s0g slot 0 gains
      * @param s1g slot 1 gains
      */
-    public TalonFXSIOReal(TalonFXS leader, ArrayList<TalonFXS> followerMotor, double FL, Gains s0g, Gains s1g) {
+    public TalonFXSIOReal(TalonFXS leader, TalonFXS[] followerMotors, double FL, Gains s0g, Gains s1g) {
 
         this(leader, FL, s0g, s1g);
+        this.followerTalons = followerMotors;
 
-        for (int i = 0; i < followerTalon.size(); i++) {
-            followerTalon.get(i).setPosition(0);
-            followerTalon.get(i).getConfigurator().apply(config, 1.0);
-            followerTalon.get(i).setControl(new Follower(leaderTalon.getDeviceID(), false));
+        for (int i = 0; i < followerTalons.length; i++) {
+            followerTalons[i].setPosition(0);
+            followerTalons[i].getConfigurator().apply(config, 1.0);
+            followerTalons[i].setControl(new Follower(leaderTalon.getDeviceID(), false));
         }
 
     }
 
     public void updateInputs(MotorIOInputs inputs) {
-        inputs.isLeaderMotorConnected =
+        inputs.isMotorConnected =
             BaseStatusSignal.refreshAll(
                 internalPositionRotations,
                 velocityRps,
@@ -210,7 +213,7 @@ public class TalonFXSIOReal implements MotorIO {
     }
 
     @Override
-    public void setGainsSlot0(double kP, double kI, double kD, double kS, double kV, double kA, double kG) {
+    public void setGainsSlot(double kP, double kI, double kD, double kS, double kV, double kA, double kG) {
         config.Slot0.kP = kP;
         config.Slot0.kI = kI;
         config.Slot0.kD = kD;
@@ -222,26 +225,14 @@ public class TalonFXSIOReal implements MotorIO {
     }
 
     @Override
-    public void setGainsSlot1(double kP, double kI, double kD, double kS, double kV, double kA, double kG) {
-        config.Slot1.kP = kP;
-        config.Slot1.kI = kI;
-        config.Slot1.kD = kD;
-        config.Slot1.kS = kS;
-        config.Slot1.kV = kV;
-        config.Slot1.kA = kA;
-        config.Slot1.kG = kG;
-        leaderTalon.getConfigurator().apply(config);
-    }
-
-    @Override
     public void setBrakeMode(boolean enabled) {
-        if (followerTalon == null) {
+        if (followerTalons == null) {
             leaderTalon.setNeutralMode(enabled ? NeutralModeValue.Brake : NeutralModeValue.Coast);
         }
         else {
             leaderTalon.setNeutralMode(enabled ? NeutralModeValue.Brake : NeutralModeValue.Coast);
-            for (int i = 0; i < followerTalon.size(); i++) {
-                followerTalon.get(i).setNeutralMode(enabled ? NeutralModeValue.Brake : NeutralModeValue.Coast);
+            for (int i = 0; i < followerTalons.length; i++) {
+                followerTalons[i].setNeutralMode(enabled ? NeutralModeValue.Brake : NeutralModeValue.Coast);
             }
 
         }
@@ -318,5 +309,72 @@ public class TalonFXSIOReal implements MotorIO {
 			leaderTalon.setPosition(mechanismPosition);
 		});
 	}
+
+    //NOTE fill these overrides out
+    @Override
+    public void runCurrent(double amps) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'runCurrent'");
+    }
+
+    @Override
+    public void setGainsSlot(double kP, double kI, double kD) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setGainsSlot'");
+    }
+
+    @Override
+    public void runCharacterizationMotor(double input) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'runCharacterizationMotor'");
+    }
+
+    @Override
+    public void setIdleMode(IdleMode mode) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setIdleMode'");
+    }
+
+    @Override
+    public void setMotionMagicParameters(double cruiseVelocity, double acceleration, double jerk) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setMotionMagicParameters'");
+    }
+
+    @Override
+    public void setMotionMagicSetpoint(Angle mechanismPosition) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setMotionMagicSetpoint'");
+    }
+
+    @Override
+    public void setVelocitySetpoint(AngularVelocity mechanismVelocity) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setVelocitySetpoint'");
+    }
+
+    @Override
+    public void setDutyCycleSetpoint(Dimensionless percent) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setDutyCycleSetpoint'");
+    }
+
+    @Override
+    public void setPositionSetpoint(Angle mechanismPosition) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setPositionSetpoint'");
+    }
+
+    @Override
+    public void setVoltageSetpoint(Voltage voltage) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setVoltageSetpoint'");
+    }
+
+    @Override
+    public void applySetpoint(Setpoint setpointToApply) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'applySetpoint'");
+    }
 
 }

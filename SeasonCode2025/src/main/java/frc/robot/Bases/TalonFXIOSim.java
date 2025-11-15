@@ -14,7 +14,6 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
-import frc.robot.Bases.MotorIO;
 import frc.robot.CatzSubsystems.CatzArm.ArmConstants;
 import frc.robot.CatzSubsystems.CatzDriveAndRobotOrientation.Drivetrain.DriveConstants;
 
@@ -70,7 +69,7 @@ public class TalonFXIOSim implements MotorIO {
     }
 
     @Override
-    public void setGainsSlot0(double kP, double kI, double kD, double kS, double kV, double kA, double kG) {
+    public void setGainsSlot(double kP, double kI, double kD, double kS, double kV, double kA, double kG) {
         // Update the PID controller gains
         simPIDController.setP(kP);
         simPIDController.setI(kI);

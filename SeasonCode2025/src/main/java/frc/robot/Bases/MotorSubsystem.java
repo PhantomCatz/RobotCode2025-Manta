@@ -3,6 +3,7 @@ package frc.robot.Bases;
 
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class MotorSubsystem extends SubsystemBase {
@@ -24,9 +25,10 @@ public class MotorSubsystem extends SubsystemBase {
 		Logger.processInputs("RealInputs/"+name, inputs);
 		//System.out.println(inputs.absoluteEncoderPositionRads);
 		// System.out.println("it worked!!!! base");
-		
+
 	}
 
-	
+	//NOTE this file should have get methods that returns all values from MotorIOInputsAutoLogged
+	//also have methods that set the setpoint of the motor. 
 
 }

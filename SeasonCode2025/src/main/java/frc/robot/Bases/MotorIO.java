@@ -1,6 +1,5 @@
 package frc.robot.Bases;
 
-
 import java.util.function.UnaryOperator;
 
 import org.littletonrobotics.junction.AutoLog;
@@ -13,82 +12,106 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Dimensionless;
 import edu.wpi.first.units.measure.Voltage;
 
-public interface MotorIO {
+public abstract class MotorIO {
 
-  @AutoLog
-  public static class MotorIOInputs {
+	/*
+	 * NOTE probably a better idea to turn this into an abstract class to properly log
+	 * follower motors and
+	 * because there is no reason for this to be an interface. abstract classes allow for more flexibility
+	 */
 
-    public boolean isLeaderMotorConnected = false;
-    public boolean isFollowerMotorConnected = false;
+	//NOTE a single MotorIO will represent an entire group of motors that work together. lowkey why don't we just have one array that holds all of the motors instead of spliiting it into two?
+	protected final MotorIOInputs motorInputs;
+	protected final MotorIOInputs[] followerInputs; //NOTE always use arrays instead of arraylist to reduce room for error.
 
 
-    public double motorRotations = 0.0;
-    public double absoluteEncoderPositionRads = 0.0;
-    public double relativeEncoderPositionRads = 0.0;
-    public double velocityInchPerSec = 0.0;
-	public double acceleration = 0.0;
-	public double supplyCurrentAmps = 0.0;
-    public double torqueCurrentAmps = 0.0;
-	public double appliedVoltage = 0.0;
-	public double tempCelcius = 0.0;
+	public MotorIO(int numFollowers){
+		motorInputs = new MotorIOInputs();
+		followerInputs = new MotorIOInputs[numFollowers];
+	}
 
-  }
+	@AutoLog
+	public static class MotorIOInputs {
 
-  public default void updateInputs(MotorIOInputs inputs) {}
+		public boolean isMotorConnected = false;
 
-  public default void runMotor(double Speed) {}
+		public double motorRotations = 0.0;
+		public double absoluteEncoderPositionRads = 0.0;
+		public double relativeEncoderPositionRads = 0.0;
+		public double velocityInchPerSec = 0.0;
+		public double acceleration = 0.0;
+		public double supplyCurrentAmps = 0.0;
+		public double torqueCurrentAmps = 0.0;
+		public double appliedVoltage = 0.0;
+		public double tempCelcius = 0.0;
 
-  public default void runMotorBck(double Speed) {}
+	}
 
-  public default void runCurrent(double amps) {}
+	public abstract void updateInputs(MotorIOInputs inputs);
 
-  public default void setGainsSlot0(double kP, double kI, double kD, double kS, double kV, double kA, double kG) {}
+	public abstract void runMotor(double speed);
 
-  public default void setGainsSlot0(double kP, double kI, double kD) {}
+	public abstract void runCurrent(double amps);
 
-  public default void setGainsSlot1(double kP, double kI, double kD, double kS, double kV, double kA, double kG) {}
+	public abstract void setGainsSlot(double kP, double kI, double kD, double kS, double kV, double kA, double kG);
 
-  public default void setGainsSlot1(double kP, double kI, double kD) {}
+	public abstract void setGainsSlot(double kP, double kI, double kD);
 
-  public default void setFF(double kS, double kV, double kA) {}
+	public abstract void setFF(double kS, double kV, double kA);
 
-  public default void runCharacterizationMotor(double input) {}
+	public abstract void runCharacterizationMotor(double input);
 
-  public default void runPercentOutput(double percent) {}
+	public abstract void runPercentOutput(double percent);
 
-  public default void setPosition(double pos) {}
+	public abstract void setPosition(double pos);
 
-  public default void setBrakeMode(boolean enabled) {}
+	public abstract void setBrakeMode(boolean enabled);
 
-  public default void setNeutralMode(NeutralModeValue mode) {}
+	public abstract void setNeutralMode(NeutralModeValue mode);
 
-  public default void setIdleMode(IdleMode mode) {}
+	public abstract void setIdleMode(IdleMode mode);
 
-  public default void stop() {}
+	public abstract void stop();
 
-  public default MotorIOInputs getMotorIOInputs() {return new MotorIO.MotorIOInputs();}
+	public MotorIOInputs getMotorIOInputs() {
+		return new MotorIO.MotorIOInputs();
+	}
 
-  public default void setCoastOut() {}
+	public abstract void setCoastOut();
 
-  public default void setNeutralOut() {}
+	public abstract void setNeutralOut();
 
-  public default void setCurrentPosition(Angle mechanismPosition) {}
-  
-  public default void setMotionMagicParameters(double cruiseVelocity, double acceleration, double jerk) {}
+	public abstract void setCurrentPosition(Angle mechanismPosition);
 
-  public default void setMotionMagicSetpoint(Angle mechanismPosition) {}
+	public abstract void setMotionMagicParameters(double cruiseVelocity, double acceleration, double jerk);
 
-  public default void setVelocitySetpoint(AngularVelocity mechanismVelocity) {}
+	public abstract void setMotionMagicSetpoint(Angle mechanismPosition);
 
-  public default void setDutyCycleSetpoint(Dimensionless percent) {}
+	public abstract void setVelocitySetpoint(AngularVelocity mechanismVelocity);
 
-  public default void setPositionSetpoint(Angle mechanismPosition) {}
+	public abstract void setDutyCycleSetpoint(Dimensionless percent);
 
-  public default void setVoltageSetpoint(Voltage voltage) {}
+	public abstract void setPositionSetpoint(Angle mechanismPosition);
 
-  public default void applySetpoint(Setpoint setpointToApply) {}
+	public abstract void setVoltageSetpoint(Voltage voltage);
 
-  public enum Mode {
+	public abstract void applySetpoint(Setpoint setpointToApply);
+
+	public double getVelocityInch() {
+		return 0.0;
+	}
+
+	public double getPositionInch() {
+		return 0.0;
+	}
+
+	public double getSupplyCurrent() {
+		return 0.0;
+	}
+
+	//NOTE write the rest of get functions
+
+	public enum Mode {
 		IDLE,
 		VOLTAGE,
 		MOTIONMAGIC,
@@ -97,7 +120,8 @@ public interface MotorIO {
 		POSITIONPID;
 
 		/**
-		 * Gets whether the control mode is based on position. Motion Magic and Position PID control count as position.
+		 * Gets whether the control mode is based on position. Motion Magic and Position
+		 * PID control count as position.
 		 *
 		 * @return True if in position control, false if not.
 		 */
@@ -140,21 +164,22 @@ public interface MotorIO {
 		public boolean isVoltageControl() {
 			return switch (this) {
 				case VOLTAGE, DUTY_CYCLE -> true;
-				default -> false;
+				 default -> false;
 			};
 		}
 	}
 
-    public static class Setpoint {
+	public static class Setpoint {
 		private final UnaryOperator<MotorIO> applier;
 		public final Mode mode;
 		public final double baseUnits;
 
 		/**
-		 * Creates a setpoint with a given applier, control mode, and base units equivalent.
+		 * Creates a setpoint with a given applier, control mode, and base units
+		 * equivalent.
 		 *
-		 * @param applier What to apply to ServoMotorIO when the setpoint is set.
-		 * @param mode Control mode to register for this setpoint.
+		 * @param applier   What to apply to ServoMotorIO when the setpoint is set.
+		 * @param mode      Control mode to register for this setpoint.
 		 * @param baseUnits Setpoint's target in it's base form of units as a double.
 		 */
 		private Setpoint(UnaryOperator<MotorIO> applier, Mode mode, double baseUnits) {
@@ -164,10 +189,11 @@ public interface MotorIO {
 		}
 
 		/**
-		 * Creates a setpoint with a completely custom applier, control mode, and base units.
+		 * Creates a setpoint with a completely custom applier, control mode, and base
+		 * units.
 		 *
-		 * @param applier What to apply to ServoMotorIO when the setpoint is set.
-		 * @param mode Control mode to register for this setpoint.
+		 * @param applier   What to apply to ServoMotorIO when the setpoint is set.
+		 * @param mode      Control mode to register for this setpoint.
 		 * @param baseUnits Setpoint's target in it's base form of units as a double.
 		 */
 		public static Setpoint withCustomSetpoint(UnaryOperator<MotorIO> applier, Mode mode, double baseUnits) {

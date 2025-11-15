@@ -1,16 +1,23 @@
 package frc.robot.Bases;
 
 import com.revrobotics.spark.SparkMax;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.config.ClosedLoopConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
+
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Dimensionless;
+import edu.wpi.first.units.measure.Voltage;
+
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import java.util.ArrayList;
-import frc.robot.Utilities.MotorUtil.Gains;;
+import frc.robot.Utilities.MotorUtil.Gains;
 
-public class SparkmaxIOReal implements MotorIO {
+public class SparkmaxIOReal extends MotorIO {
     // initialize follower if needed?
     private SparkMax leaderSpark;
     private ArrayList<SparkMax> followerSpark;
@@ -32,7 +39,7 @@ public class SparkmaxIOReal implements MotorIO {
         this(motor, FL, s0g);
 
         config.idleMode(motorMode);
-        
+
         leaderSpark.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     }
@@ -134,7 +141,7 @@ public class SparkmaxIOReal implements MotorIO {
     }
 
     @Override
-    public void setGainsSlot0(double kP, double kI, double kD) {
+    public void setGainsSlot(double kP, double kI, double kD) {
         config.apply(new ClosedLoopConfig().pid(kP, kI, kD));
         leaderSpark.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
@@ -168,6 +175,110 @@ public class SparkmaxIOReal implements MotorIO {
     @Override
     public void setIdleMode(IdleMode mode) {
         config.idleMode(mode);
+    }
+
+    //NOTE fill these overrides out
+
+    @Override
+    public void runCurrent(double amps) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'runCurrent'");
+    }
+
+    @Override
+    public void setGainsSlot(double kP, double kI, double kD, double kS, double kV, double kA, double kG) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setGainsSlot'");
+    }
+
+    @Override
+    public void setFF(double kS, double kV, double kA) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setFF'");
+    }
+
+    @Override
+    public void runCharacterizationMotor(double input) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'runCharacterizationMotor'");
+    }
+
+    @Override
+    public void runPercentOutput(double percent) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'runPercentOutput'");
+    }
+
+    @Override
+    public void setPosition(double pos) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setPosition'");
+    }
+
+    @Override
+    public void setNeutralMode(NeutralModeValue mode) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setNeutralMode'");
+    }
+
+    @Override
+    public void setCoastOut() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setCoastOut'");
+    }
+
+    @Override
+    public void setNeutralOut() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setNeutralOut'");
+    }
+
+    @Override
+    public void setCurrentPosition(Angle mechanismPosition) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setCurrentPosition'");
+    }
+
+    @Override
+    public void setMotionMagicParameters(double cruiseVelocity, double acceleration, double jerk) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setMotionMagicParameters'");
+    }
+
+    @Override
+    public void setMotionMagicSetpoint(Angle mechanismPosition) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setMotionMagicSetpoint'");
+    }
+
+    @Override
+    public void setVelocitySetpoint(AngularVelocity mechanismVelocity) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setVelocitySetpoint'");
+    }
+
+    @Override
+    public void setDutyCycleSetpoint(Dimensionless percent) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setDutyCycleSetpoint'");
+    }
+
+    @Override
+    public void setPositionSetpoint(Angle mechanismPosition) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setPositionSetpoint'");
+    }
+
+    @Override
+    public void setVoltageSetpoint(Voltage voltage) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setVoltageSetpoint'");
+    }
+
+    @Override
+    public void applySetpoint(Setpoint setpointToApply) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'applySetpoint'");
     }
 
 }

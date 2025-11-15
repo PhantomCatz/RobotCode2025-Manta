@@ -25,6 +25,36 @@ public class ServoMotorSubsystem<IO extends MotorIO> extends SubsystemBase {
 		io.updateInputs(io.getMotorIOInputs());
 	}
 
+	//NOTE: try adding these code into the periodic (they are from 1678's code) Idk the exact reason for using this but it probably allows for accurate homing
+	/*
+
+	 * @Override
+	public void periodic() {
+		super.periodic();
+		if (isHomingSubsystem) {
+			if (mNeedsToHome && setpointNearHome() && nearHomingLocation()) {
+				mHoming = true;
+				useSoftLimits(false);
+				mHomingDelay =
+						new DelayedBoolean(Timer.getFPGATimestamp(), homingConfig.kHomingTimeout.in(Units.Seconds));
+			}
+			if (mHoming) {
+				io.applySetpoint(Setpoint.withVoltageSetpoint(homingConfig.kHomingVoltage));
+				if (mHomingDelay.update(
+						Timer.getFPGATimestamp(),
+						Math.abs(getVelocity().baseUnitMagnitude()) < homingConfig.kSetHomedVelocity.baseUnitMagnitude()
+								&& DriverStation.isEnabled())) {
+					setCurrentPosition(homingConfig.kHomePosition);
+					applySetpoint(Setpoint.withMotionMagicSetpoint(homingConfig.kHomePosition));
+					useSoftLimits(true);
+					mNeedsToHome = false;
+				}
+			}
+		}
+	}
+
+	 */
+
 	public void applySetpoint(Setpoint setpoint) {
 		io.applySetpoint(setpoint);
 	}

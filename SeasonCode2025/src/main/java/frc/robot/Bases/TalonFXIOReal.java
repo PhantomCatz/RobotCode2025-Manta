@@ -6,6 +6,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.*;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.*;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -21,7 +22,7 @@ import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.Utilities.MotorUtil.Gains;
 
-public class TalonFXIOReal implements MotorIO {
+public class TalonFXIOReal extends MotorIO {
 
     // initialize follower if needed?
     private TalonFX leaderTalon;
@@ -58,8 +59,8 @@ public class TalonFXIOReal implements MotorIO {
      * @param FL Final Ratio
      * @param s0g slot 0 gains
      */
-    public TalonFXIOReal(TalonFX motor, double FL, Gains s0g, Gains s1g) {
-
+    public TalonFXIOReal(int numMotors, TalonFX motor, double FL, Gains s0g, Gains s1g) {
+        super(numMotors);
         leaderTalon = motor;
 
         Final_Ratio = FL;
@@ -76,7 +77,7 @@ public class TalonFXIOReal implements MotorIO {
 
 
         // PID configs
-        config.Slot0.kS = slot0_gainsM.kS();
+        config.Slot0.kS = slot0_gainsM.kS(); 
         config.Slot0.kV = slot0_gainsM.kV();
         config.Slot0.kA = slot0_gainsM.kA();
         config.Slot0.kP = slot0_gainsM.kP();
@@ -84,7 +85,7 @@ public class TalonFXIOReal implements MotorIO {
         config.Slot0.kD = slot0_gainsM.kD();
         config.Slot0.kG = slot0_gainsM.kG();
 
-        config.Slot1.kS = slot1_gainsM.kS();
+        config.Slot1.kS = slot1_gainsM.kS(); //NOTE why do we need two slots? 
         config.Slot1.kV = slot1_gainsM.kV();
         config.Slot1.kA = slot1_gainsM.kA();
         config.Slot1.kP = slot1_gainsM.kP();
@@ -122,7 +123,7 @@ public class TalonFXIOReal implements MotorIO {
     public TalonFXIOReal(TalonFX motor, double FL, Gains s0g, Gains s1g,  NeutralModeValue motorMode) {
 
         this(motor, FL, s0g, s1g);
-        
+
         config.MotorOutput.NeutralMode = motorMode;
 
         leaderTalon.getConfigurator().apply(config, 1.0); // re-apply because other constructor has to go first
@@ -178,7 +179,7 @@ public class TalonFXIOReal implements MotorIO {
     }
 
     public void updateInputs(MotorIOInputs inputs) {
-        inputs.isLeaderMotorConnected =
+        inputs.isMotorConnected =
             BaseStatusSignal.refreshAll(
                 internalPositionRotations,
                 velocityRps,
@@ -212,7 +213,7 @@ public class TalonFXIOReal implements MotorIO {
     }
 
     @Override
-    public void setGainsSlot0(double kP, double kI, double kD, double kS, double kV, double kA, double kG) {
+    public void setGainsSlot(double kP, double kI, double kD, double kS, double kV, double kA, double kG) {
         config.Slot0.kP = kP;
         config.Slot0.kI = kI;
         config.Slot0.kD = kD;
@@ -220,18 +221,6 @@ public class TalonFXIOReal implements MotorIO {
         config.Slot0.kV = kV;
         config.Slot0.kA = kA;
         config.Slot0.kG = kG;
-        leaderTalon.getConfigurator().apply(config);
-    }
-
-    @Override
-    public void setGainsSlot1(double kP, double kI, double kD, double kS, double kV, double kA, double kG) {
-        config.Slot1.kP = kP;
-        config.Slot1.kI = kI;
-        config.Slot1.kD = kD;
-        config.Slot1.kS = kS;
-        config.Slot1.kV = kV;
-        config.Slot1.kA = kA;
-        config.Slot1.kG = kG;
         leaderTalon.getConfigurator().apply(config);
     }
 
@@ -275,6 +264,7 @@ public class TalonFXIOReal implements MotorIO {
         leaderTalon.getConfigurator().apply(config);
     }
 
+    //NOTE try to run these velocity and motion magic motor controls
     public static class ControlRequestGetter { // TODO pretty cool!
 		public ControlRequest getVoltageRequest(Voltage voltage) {
 			return new VoltageOut(voltage.in(Units.Volts)).withEnableFOC(false);
@@ -360,5 +350,31 @@ public class TalonFXIOReal implements MotorIO {
 			leaderTalon.setPosition(mechanismPosition);
 		});
 	}
+
+    //NOTE fill these overrides out
+
+    @Override
+    public void runCurrent(double amps) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'runCurrent'");
+    }
+
+    @Override
+    public void setGainsSlot(double kP, double kI, double kD) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setGainsSlot'");
+    }
+
+    @Override
+    public void runCharacterizationMotor(double input) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'runCharacterizationMotor'");
+    }
+
+    @Override
+    public void setIdleMode(IdleMode mode) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setIdleMode'");
+    }
 
 }
