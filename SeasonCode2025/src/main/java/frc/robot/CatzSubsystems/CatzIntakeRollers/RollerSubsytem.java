@@ -1,18 +1,15 @@
 package frc.robot.CatzSubsystems.CatzIntakeRollers;
 
-import frc.robot.Bases.TalonFXIOReal;
 import frc.robot.Bases.TalonFXIOSim;
-import frc.robot.CatzSubsystems.CatzElevator.ElevatorIONull;
-import frc.robot.CatzSubsystems.CatzElevator.ElevatorIOReal;
-import frc.robot.CatzSubsystems.CatzElevator.ElevatorIOSim;
 import frc.robot.Bases.MotorIO;
 import frc.robot.Bases.MotorIONull;
 import frc.robot.Bases.MotorSubsystem;
+import frc.robot.Bases.SparkmaxIOReal;
 
 import static frc.robot.CatzSubsystems.CatzIntakeRollers.RollerConstants.*;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import frc.robot.CatzConstants;
-import frc.robot.Robot;
 
 
 public class RollerSubsytem extends MotorSubsystem{
@@ -21,8 +18,8 @@ public class RollerSubsytem extends MotorSubsystem{
     static MotorIO getIOInstance() {
         switch (CatzConstants.hardwareMode) {
             case REAL:
-                // System.out.println("Roller Configured for Real");
-                return new TalonFXIOReal(RollerMotor, Final_Ratio, s0g, s1g); 
+                System.out.println("Roller Configured for Real");
+                return new SparkmaxIOReal(RollerMotor, Final_Ratio, s0g, IdleMode.kBrake);
             case SIM:
                 // System.out.println("Roller Configured for Simulation");
                 return new TalonFXIOSim();
