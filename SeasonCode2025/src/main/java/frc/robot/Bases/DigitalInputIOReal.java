@@ -4,8 +4,8 @@ import edu.wpi.first.wpilibj.DigitalInput;
 
 public class DigitalInputIOReal implements DigitalInputIO {
 
-    //NOTE are these for beambreaks?
-    //Look at 1678's code for BeamBreaks. it looks like they generalized all external triggers as "BeamBreaks", not necessarily just beambreaks
+    //NOTE are these for beambreaks? this is least important
+    //Look at 1678's code for BeamBreaks. it looks like they generalized all external robot triggers as "BeamBreaks", not necessarily just beambreaks
     //like they have a "beambreak" for motor current spikes to detect if they intaked an algae, etc. 
     //So I think it's a better idea to call it something like "RobotTriggers". 
     //They also have this thing called a BeamBreakIOSim which extends the BeamBreakIO and looks like it's just used as a wrapper to trigger any boolean conditions,

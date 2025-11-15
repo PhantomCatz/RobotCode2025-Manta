@@ -16,8 +16,8 @@ public abstract class MotorIO {
 
 	/*
 	 * NOTE probably a better idea to turn this into an abstract class to properly log
-	 * follower motors and
-	 * because there is no reason for this to be an interface. abstract classes allow for more flexibility
+	 * follower motors and because there is no reason for this to be an interface. abstract classes allow for more flexibility
+	 * With interfaces, we cannot log any of the follower inputs without doing really scuffed stuff.
 	 */
 
 	//NOTE a single MotorIO will represent an entire group of motors that work together. lowkey why don't we just have one array that holds all of the motors instead of spliiting it into two?
@@ -97,17 +97,11 @@ public abstract class MotorIO {
 
 	public abstract void applySetpoint(Setpoint setpointToApply);
 
-	public double getVelocityInch() {
-		return 0.0;
-	}
+	public abstract double getVelocityInch();
 
-	public double getPositionInch() {
-		return 0.0;
-	}
+	public abstract double getPositionInch();
 
-	public double getSupplyCurrent() {
-		return 0.0;
-	}
+	public abstract double getSupplyCurrent();
 
 	//NOTE write the rest of get functions
 
