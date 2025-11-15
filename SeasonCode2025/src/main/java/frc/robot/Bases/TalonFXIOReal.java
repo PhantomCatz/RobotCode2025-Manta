@@ -32,7 +32,7 @@ public class TalonFXIOReal extends MotorIO {
 
     private final TalonFXConfiguration config = new TalonFXConfiguration();
 
-    private double Final_Ratio;
+    private final double FINAL_RATIO;
 
     private final ControlRequestGetter requestGetter = new ControlRequestGetter();
 
@@ -54,7 +54,7 @@ public class TalonFXIOReal extends MotorIO {
         super(1);
         talonMotors = new TalonFX[] {motor};
 
-        Final_Ratio = FL;
+        FINAL_RATIO = FL;
 
         setMotorConfig(s0g, s1g, motorMode, false);
     }
@@ -72,7 +72,7 @@ public class TalonFXIOReal extends MotorIO {
     public TalonFXIOReal(double FL, Gains s0g, Gains s1g, NeutralModeValue motorMode, boolean setFollow, TalonFX... motors) {
         super(motors.length);
         talonMotors = motors;
-        Final_Ratio = FL;
+        FINAL_RATIO = FL;
 
         setMotorConfig(s0g, s1g, motorMode, setFollow);
     }
@@ -114,7 +114,7 @@ public class TalonFXIOReal extends MotorIO {
 
         if(setFollower){
             for(int i = 1; i < talonMotors.length; i++){
-                talonMotors[i].setControl(new Follower(talonMotors[0].getDeviceID(), false));
+                talonMotors[i].setControl(new Follower(talonMotors[0].getDeviceID(), false)); //TODO make a custom talon config class that has an array that holds which motors will oppose the master
             }
         }
     }
@@ -141,9 +141,9 @@ public class TalonFXIOReal extends MotorIO {
                     motorTemp
                 ).isOK();
     
-            inputs[i].motorRotations = motorPosition.getValueAsDouble() * Final_Ratio; //TODO Constants should be ALL_CAPS // Yuyhun said that because we get it from constructor that it should be lowercase
-            inputs[i].velocityInchPerSec = angularVelocity.getValueAsDouble() * Final_Ratio;
-            inputs[i].acceleration = angularAcceleration.getValueAsDouble() * Final_Ratio;
+            inputs[i].motorRotations = motorPosition.getValueAsDouble() * FINAL_RATIO; //TODO Constants should be ALL_CAPS // Yuyhun said that because we get it from constructor that it should be lowercase
+            inputs[i].velocityInchPerSec = angularVelocity.getValueAsDouble() * FINAL_RATIO;
+            inputs[i].acceleration = angularAcceleration.getValueAsDouble() * FINAL_RATIO;
             inputs[i].appliedVoltage = appliedVoltage.getValueAsDouble();
             inputs[i].supplyCurrentAmps = supplyCurrent.getValueAsDouble();
             inputs[i].torqueCurrentAmps = torqueCurrent.getValueAsDouble();
@@ -162,8 +162,13 @@ public class TalonFXIOReal extends MotorIO {
         talonMotors[0].setPosition(pos);
     }
 
+    private void applyConfig(TalonFX talon, TalonFXConfiguration config){
+        talon.getConfigurator().apply(config);
+    }
+    //TODO order the methods properly
+
     @Override
-    public void setGainsSlot(double kP, double kI, double kD, double kS, double kV, double kA, double kG) {
+    public void setGainsSlot0(double kP, double kI, double kD, double kS, double kV, double kA, double kG) {
         config.Slot0.kP = kP;
         config.Slot0.kI = kI;
         config.Slot0.kD = kD;
@@ -176,22 +181,9 @@ public class TalonFXIOReal extends MotorIO {
 
     @Override
     public void setBrakeMode(boolean enabled) {
-        if (followerTalon == null) {
-            talonMotors[0].setNeutralMode(enabled ? NeutralModeValue.Brake : NeutralModeValue.Coast);
+        for(int i = 0; i < talonMotors.length; i++){
+            talonMotors[i].setNeutralMode(enabled ? NeutralModeValue.Brake : NeutralModeValue.Coast);
         }
-        else {
-            talonMotors[0].setNeutralMode(enabled ? NeutralModeValue.Brake : NeutralModeValue.Coast);
-            for (int i = 0; i < followerTalon.length; i++) {
-                followerTalon[i].setNeutralMode(enabled ? NeutralModeValue.Brake : NeutralModeValue.Coast);
-            }
-
-        }
-    }
-
-    @Override
-    public void runMotor(double speed) {
-        // System.out.println(speed);
-        talonMotors[0].setControl(new DutyCycleOut(speed));
     }
 
     @Override
@@ -262,13 +254,6 @@ public class TalonFXIOReal extends MotorIO {
         setControl(new DutyCycleOut(percent));
     }
 
-    public final void applySetpoint(Setpoint setpointToApply) {
-		setpoint = setpointToApply;
-		if (enabled) {
-			setpointToApply.apply(this);
-		}
-	}
-
     @Override
 	public void setVoltageSetpoint(Voltage voltage) {
 		setControl(requestGetter.getVoltageRequest(voltage));
@@ -303,28 +288,43 @@ public class TalonFXIOReal extends MotorIO {
 
     //NOTE fill these overrides out
 
-    @Override
-    public void runCurrent(double amps) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'runCurrent'");
-    }
+
 
     @Override
-    public void setGainsSlot(double kP, double kI, double kD) {
+    public void setGainsSlot0(double kP, double kI, double kD) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'setGainsSlot'");
     }
 
-    @Override
-    public void runCharacterizationMotor(double input) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'runCharacterizationMotor'");
-    }
 
     @Override
     public void setIdleMode(IdleMode mode) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'setIdleMode'");
+    }
+
+    @Override
+    public void zeroSensors() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'zeroSensors'");
+    }
+
+    @Override
+    public double getVelocityInch() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getVelocityInch'");
+    }
+
+    @Override
+    public double getPositionInch() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getPositionInch'");
+    }
+
+    @Override
+    public double getSupplyCurrent() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getSupplyCurrent'");
     }
 
 }

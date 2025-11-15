@@ -52,21 +52,21 @@ public abstract class MotorIO {
 
 	public abstract void zeroSensors();
 
-	public abstract void setGainsSlot(double kP, double kI, double kD, double kS, double kV, double kA, double kG);
+	public abstract void setGainsSlot0(double kP, double kI, double kD, double kS, double kV, double kA, double kG);
 
-	public abstract void setGainsSlot(double kP, double kI, double kD);
+	public abstract void setGainsSlot0(double kP, double kI, double kD);
 
 	public abstract void setFF(double kS, double kV, double kA);
 
-	public abstract void setPercentOutput(double... percent);
+	public abstract void setPercentOutput(double percent);
 
-	public abstract void setPosition(double... pos);
+	public abstract void setPosition(double pos);
 
-	public abstract void setBrakeMode(boolean... enabled);
+	public abstract void setBrakeMode(boolean enabled);
 
-	public abstract void setNeutralMode(NeutralModeValue... mode);
+	public abstract void setNeutralMode(NeutralModeValue mode);
 
-	public abstract void setIdleMode(IdleMode... mode);
+	public abstract void setIdleMode(IdleMode mode);
 
 	public abstract void stop();
 
