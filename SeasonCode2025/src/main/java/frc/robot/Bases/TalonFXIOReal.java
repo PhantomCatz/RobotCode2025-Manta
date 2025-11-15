@@ -84,13 +84,13 @@ public class TalonFXIOReal implements MotorIO {
         config.Slot0.kD = slot0_gainsM.kD();
         config.Slot0.kG = slot0_gainsM.kG();
 
-        config.Slot1.kS = slot1_gainsM.kS();
-        config.Slot1.kV = slot1_gainsM.kV();
-        config.Slot1.kA = slot1_gainsM.kA();
-        config.Slot1.kP = slot1_gainsM.kP();
-        config.Slot1.kI = slot1_gainsM.kI();
-        config.Slot1.kD = slot1_gainsM.kD();
-        config.Slot1.kG = slot1_gainsM.kG();
+        // config.Slot1.kS = slot1_gainsM.kS();
+        // config.Slot1.kV = slot1_gainsM.kV();
+        // config.Slot1.kA = slot1_gainsM.kA();
+        // config.Slot1.kP = slot1_gainsM.kP();
+        // config.Slot1.kI = slot1_gainsM.kI();
+        // config.Slot1.kD = slot1_gainsM.kD();
+        // config.Slot1.kG = slot1_gainsM.kG();
 
 
         // Supply Current Limits
