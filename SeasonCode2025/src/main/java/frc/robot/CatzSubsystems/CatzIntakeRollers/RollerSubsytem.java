@@ -24,7 +24,6 @@ public class RollerSubsytem extends MotorSubsystem{
 
     private RollerSubsytem() {
         super(io, "CatzIntakeRollers");
-        io.runMotor(0);
     }
 
 

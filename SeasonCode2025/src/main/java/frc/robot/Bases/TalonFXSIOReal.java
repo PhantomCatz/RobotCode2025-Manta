@@ -2,16 +2,18 @@ package frc.robot.Bases;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXSConfiguration;
 import com.ctre.phoenix6.controls.*;
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.hardware.TalonFXS;
 import com.ctre.phoenix6.signals.*;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
-import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
+
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
@@ -20,109 +22,68 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Dimensionless;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
-import frc.robot.Utilities.MotorUtil.Gains;;
+import frc.robot.Utilities.MotorUtil.Gains;
 
 public class TalonFXSIOReal extends MotorIO {
 
     // initialize follower if needed?
-    private TalonFXS leaderTalon;
-    private TalonFXS[] followerTalons;
+    private TalonFXS talonMotors[];
 
     private Gains slot0_gainsM;
     private Gains slot1_gainsM;
 
     private final TalonFXSConfiguration config = new TalonFXSConfiguration();
 
-    private final StatusSignal<Angle> internalPositionRotations;
-    private final StatusSignal<AngularVelocity> velocityRps;
-    private final StatusSignal<AngularAcceleration> acceleration;
-    private final StatusSignal<Current> supplyCurrent;
-    private final StatusSignal<Current> torqueCurrent;
-    private final StatusSignal<Voltage> appliedVoltage;
-    private final StatusSignal<Temperature> tempCelsius;
-
-    private double Final_Ratio;
+    private final double FINAL_RATIO;
 
     private final ControlRequestGetter requestGetter = new ControlRequestGetter();
 
     private BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
     private ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(1, 1, 5, java.util.concurrent.TimeUnit.MILLISECONDS, queue);
 
+    private Setpoint setpoint = Setpoint.withNeutralSetpoint();
+    private boolean enabled = true;
+
     /**
-     * basic, not done
+     * basic
      * 1 motor
      * @param motor motor
      * @param FL Final Ratio
      * @param s0g slot 0 gains
      * @param motorMode motor mode
      */
-    public TalonFXSIOReal(TalonFXS motor, double FL, Gains s0g, Gains s1g, NeutralModeValue motorMode) {
+    public TalonFXSIOReal(TalonFXS motor, double FL, Gains s0g, Gains s1g,  NeutralModeValue motorMode) {
+        super(1);
+        talonMotors = new TalonFXS[] {motor};
 
-        this(motor, FL, s0g, s1g);
+        FINAL_RATIO = FL;
 
-        config.MotorOutput.NeutralMode = motorMode;
-
-        leaderTalon.getConfigurator().apply(config, 1.0);
-
+        setMotorConfig(s0g, s1g, motorMode, false);
     }
 
     /**
      * basic, not done
-     * 2 motors
+     * multiple motors, same control
      * @param leader 1st motor
-     * @param followerMotors follower motors, automatically set as same direction as leader
+     * @param followerMotor 2nd motor, automatically set as same direction as leader
      * @param FL Final Ration
      * @param s0g slot 0 gains
      * @param s1g slot 1 gains
      * @param motorMode motor mode
      */
-    public TalonFXSIOReal(TalonFXS leader, TalonFXS[] followerMotors, double FL, Gains s0g, Gains s1g, NeutralModeValue motorMode) {
+    public TalonFXSIOReal(double FL, Gains s0g, Gains s1g, NeutralModeValue motorMode, boolean setFollow, TalonFXS... motors) {
+        super(motors.length);
+        talonMotors = motors;
+        FINAL_RATIO = FL;
 
-        this(leader, FL, s0g, s1g, motorMode);
-        this.followerTalons = followerMotors;
-
-        for (int i = 0; i < followerTalons.length; i++) {
-            followerTalons[i].setPosition(0);
-            followerTalons[i].getConfigurator().apply(config, 1.0);
-            followerTalons[i].setControl(new Follower(leaderTalon.getDeviceID(), false));
-        }
-
+        setMotorConfig(s0g, s1g, motorMode, setFollow);
     }
 
-    /**
-     * basic, not done
-     * 1 motor
-     * @param leader motor
-     * @param FL Final Ratio
-     * @param s0g slot 0 gains
-     * @param s1g slot 1 gains
-     */
-    public TalonFXSIOReal(TalonFXS motor, double FL, Gains s0g, Gains s1g) {
+    private void setMotorConfig(Gains slot0Gains, Gains slot1Gains, NeutralModeValue motorMode, boolean setFollower){
+        slot0_gainsM = slot0Gains;
+        slot1_gainsM = slot1Gains;
 
-        leaderTalon = motor;
-
-        Final_Ratio = FL;
-
-        slot0_gainsM = s0g;
-        slot1_gainsM = s1g;
-
-        internalPositionRotations = leaderTalon.getPosition();
-        velocityRps = leaderTalon.getVelocity();
-        acceleration = leaderTalon.getAcceleration();
-        supplyCurrent = leaderTalon.getSupplyCurrent();
-        torqueCurrent = leaderTalon.getTorqueCurrent();
-        appliedVoltage = leaderTalon.getMotorVoltage();
-        tempCelsius = leaderTalon.getDeviceTemp();
-
-
-        BaseStatusSignal.setUpdateFrequencyForAll(
-            100,
-            internalPositionRotations,
-            velocityRps
-        );
-
-        // PID configs
-        config.Slot0.kS = slot0_gainsM.kS();
+        config.Slot0.kS = slot0_gainsM.kS(); 
         config.Slot0.kV = slot0_gainsM.kV();
         config.Slot0.kA = slot0_gainsM.kA();
         config.Slot0.kP = slot0_gainsM.kP();
@@ -130,7 +91,7 @@ public class TalonFXSIOReal extends MotorIO {
         config.Slot0.kD = slot0_gainsM.kD();
         config.Slot0.kG = slot0_gainsM.kG();
 
-        config.Slot1.kS = slot1_gainsM.kS();
+        config.Slot1.kS = slot1_gainsM.kS(); 
         config.Slot1.kV = slot1_gainsM.kV();
         config.Slot1.kA = slot1_gainsM.kA();
         config.Slot1.kP = slot1_gainsM.kP();
@@ -142,78 +103,72 @@ public class TalonFXSIOReal extends MotorIO {
         // Supply Current Limits
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
         config.CurrentLimits.SupplyCurrentLimit = 80.0;
-        config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-
-        // Motion Magic Parameters
+        config.MotorOutput.NeutralMode = motorMode;
 
         config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
-
-        leaderTalon.setPosition(0);
-
-        leaderTalon.getConfigurator().apply(config, 1.0);
-
-    }
-
-    /**
-     * basic, not done
-     * 2 motors
-     * @param leader 1st motor
-     * @param followerMotor 2nd motor, automatically set as same direction as leader
-     * @param FL Final Ration
-     * @param s0g slot 0 gains
-     * @param s1g slot 1 gains
-     */
-    public TalonFXSIOReal(TalonFXS leader, TalonFXS[] followerMotors, double FL, Gains s0g, Gains s1g) {
-
-        this(leader, FL, s0g, s1g);
-        this.followerTalons = followerMotors;
-
-        for (int i = 0; i < followerTalons.length; i++) {
-            followerTalons[i].setPosition(0);
-            followerTalons[i].getConfigurator().apply(config, 1.0);
-            followerTalons[i].setControl(new Follower(leaderTalon.getDeviceID(), false));
+        for(int i = 0; i < talonMotors.length; i++){
+            talonMotors[i].setPosition(0.0);
+            talonMotors[i].getConfigurator().apply(config, 1.0);
         }
 
+        if(setFollower){
+            for(int i = 1; i < talonMotors.length; i++){
+                talonMotors[i].setControl(new Follower(talonMotors[0].getDeviceID(), false)); //TODO make a custom talon config class that has an array that holds which motors will oppose the master
+            }
+        }
     }
 
-    public void updateInputs(MotorIOInputs inputs) {
-        inputs.isMotorConnected =
-            BaseStatusSignal.refreshAll(
-                internalPositionRotations,
-                velocityRps,
-                acceleration,
-                supplyCurrent,
-                torqueCurrent,
-                appliedVoltage,
-                tempCelsius
+    public void updateInputs() {
 
+        for(int i = 0; i < talonMotors.length; i++){
+            StatusSignal<Angle> motorPosition = talonMotors[i].getPosition();
+            StatusSignal<AngularVelocity> angularVelocity = talonMotors[i].getVelocity();
+            StatusSignal<AngularAcceleration> angularAcceleration = talonMotors[i].getAcceleration();
+            StatusSignal<Current> supplyCurrent = talonMotors[i].getSupplyCurrent();
+            StatusSignal<Current> torqueCurrent = talonMotors[i].getTorqueCurrent(); //TODO is this needed?
+            StatusSignal<Voltage> appliedVoltage = talonMotors[i].getMotorVoltage();
+            StatusSignal<Temperature> motorTemp = talonMotors[i].getDeviceTemp();
 
-            ).isOK();
-
-        inputs.motorRotations = internalPositionRotations.getValueAsDouble() * Final_Ratio; //TODO Constants should be ALL_CAPS // Yuyhun said that because we get it from constructor that it should be lowercase
-        inputs.velocityInchPerSec = velocityRps.getValueAsDouble() * Final_Ratio;
-        inputs.acceleration = acceleration.getValueAsDouble() * Final_Ratio;
-        inputs.appliedVoltage = appliedVoltage.getValueAsDouble();
-        inputs.supplyCurrentAmps = supplyCurrent.getValueAsDouble();
-        inputs.torqueCurrentAmps = torqueCurrent.getValueAsDouble();
-        inputs.tempCelcius = tempCelsius.getValueAsDouble();
-
+            inputs[i].isMotorConnected =
+                BaseStatusSignal.refreshAll(
+                    motorPosition,
+                    angularVelocity,
+                    angularAcceleration,
+                    supplyCurrent,
+                    torqueCurrent,
+                    appliedVoltage,
+                    motorTemp
+                ).isOK();
+    
+            inputs[i].motorRotations = motorPosition.getValueAsDouble() * FINAL_RATIO; //TODO Constants should be ALL_CAPS // Yuyhun said that because we get it from constructor that it should be lowercase
+            inputs[i].velocityInchPerSec = angularVelocity.getValueAsDouble() * FINAL_RATIO;
+            inputs[i].acceleration = angularAcceleration.getValueAsDouble() * FINAL_RATIO;
+            inputs[i].appliedVoltage = appliedVoltage.getValueAsDouble();
+            inputs[i].supplyCurrentAmps = supplyCurrent.getValueAsDouble();
+            inputs[i].torqueCurrentAmps = torqueCurrent.getValueAsDouble();
+            inputs[i].tempCelcius = motorTemp.getValueAsDouble();
+        }
 
     }
 
     @Override
     public void stop() {
-        leaderTalon.setControl(new DutyCycleOut(0.0));
+        talonMotors[0].setControl(new DutyCycleOut(0.0));
     }
 
     @Override
     public void setPosition(double pos) {
-        leaderTalon.setPosition(pos);
+        talonMotors[0].setPosition(pos);
     }
 
+    private void applyConfig(TalonFX talon, TalonFXConfiguration config){
+        talon.getConfigurator().apply(config);
+    }
+    //TODO order the methods properly
+
     @Override
-    public void setGainsSlot(double kP, double kI, double kD, double kS, double kV, double kA, double kG) {
+    public void setGainsSlot0(double kP, double kI, double kD, double kS, double kV, double kA, double kG) {
         config.Slot0.kP = kP;
         config.Slot0.kI = kI;
         config.Slot0.kD = kD;
@@ -221,27 +176,14 @@ public class TalonFXSIOReal extends MotorIO {
         config.Slot0.kV = kV;
         config.Slot0.kA = kA;
         config.Slot0.kG = kG;
-        leaderTalon.getConfigurator().apply(config);
+        talonMotors[0].getConfigurator().apply(config);
     }
 
     @Override
     public void setBrakeMode(boolean enabled) {
-        if (followerTalons == null) {
-            leaderTalon.setNeutralMode(enabled ? NeutralModeValue.Brake : NeutralModeValue.Coast);
+        for(int i = 0; i < talonMotors.length; i++){
+            talonMotors[i].setNeutralMode(enabled ? NeutralModeValue.Brake : NeutralModeValue.Coast);
         }
-        else {
-            leaderTalon.setNeutralMode(enabled ? NeutralModeValue.Brake : NeutralModeValue.Coast);
-            for (int i = 0; i < followerTalons.length; i++) {
-                followerTalons[i].setNeutralMode(enabled ? NeutralModeValue.Brake : NeutralModeValue.Coast);
-            }
-
-        }
-    }
-
-    @Override
-    public void runMotor(double speed) {
-        // System.out.println(speed);
-        leaderTalon.set(speed);
     }
 
     @Override
@@ -249,13 +191,22 @@ public class TalonFXSIOReal extends MotorIO {
         config.Slot0.kS = kS;
         config.Slot0.kV = kV;
         config.Slot0.kA = kA;
-        leaderTalon.getConfigurator().apply(config);
+        talonMotors[0].getConfigurator().apply(config);
     }
 
     public MotorIOInputs getMotorIOInputs() {
         return new MotorIO.MotorIOInputs();
     }
 
+    @Override
+    public void setMotionMagicParameters(double vel, double accel, double jerk) {
+        config.MotionMagic.MotionMagicCruiseVelocity = vel;
+        config.MotionMagic.MotionMagicAcceleration = accel;
+        config.MotionMagic.MotionMagicJerk = jerk;
+        talonMotors[0].getConfigurator().apply(config);
+    }
+
+    //NOTE try to run these velocity and motion magic motor controls
     public static class ControlRequestGetter { // TODO pretty cool!
 		public ControlRequest getVoltageRequest(Voltage voltage) {
 			return new VoltageOut(voltage.in(Units.Volts)).withEnableFOC(false);
@@ -285,7 +236,7 @@ public class TalonFXSIOReal extends MotorIO {
 
 
     private void setControl(ControlRequest request) {
-		leaderTalon.setControl(request);
+		talonMotors[0].setControl(request);
 	}
 
     @Override
@@ -303,31 +254,48 @@ public class TalonFXSIOReal extends MotorIO {
         setControl(new DutyCycleOut(percent));
     }
 
+    @Override
+	public void setVoltageSetpoint(Voltage voltage) {
+		setControl(requestGetter.getVoltageRequest(voltage));
+	}
+
+	@Override
+	public void setDutyCycleSetpoint(Dimensionless percent) {
+		setControl(requestGetter.getDutyCycleRequest(percent));
+	}
+
+	@Override
+	public void setMotionMagicSetpoint(Angle mechanismPosition) {
+		setControl(requestGetter.getMotionMagicRequest(mechanismPosition));
+	}
+
+	@Override
+	public void setVelocitySetpoint(AngularVelocity mechanismVelocity) {
+		setControl(requestGetter.getVelocityRequest(mechanismVelocity));
+	}
+
+	@Override
+	public void setPositionSetpoint(Angle mechanismPosition) {
+		setControl(requestGetter.getPositionRequest(mechanismPosition));
+	}
+
 	@Override
 	public void setCurrentPosition(Angle mechanismPosition) {
 		threadPoolExecutor.submit(() -> {
-			leaderTalon.setPosition(mechanismPosition);
+			talonMotors[0].setPosition(mechanismPosition);
 		});
 	}
 
     //NOTE fill these overrides out
-    @Override
-    public void runCurrent(double amps) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'runCurrent'");
-    }
+
+
 
     @Override
-    public void setGainsSlot(double kP, double kI, double kD) {
+    public void setGainsSlot0(double kP, double kI, double kD) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'setGainsSlot'");
     }
 
-    @Override
-    public void runCharacterizationMotor(double input) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'runCharacterizationMotor'");
-    }
 
     @Override
     public void setIdleMode(IdleMode mode) {
@@ -336,45 +304,27 @@ public class TalonFXSIOReal extends MotorIO {
     }
 
     @Override
-    public void setMotionMagicParameters(double cruiseVelocity, double acceleration, double jerk) {
+    public void zeroSensors() {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'setMotionMagicParameters'");
+        throw new UnsupportedOperationException("Unimplemented method 'zeroSensors'");
     }
 
     @Override
-    public void setMotionMagicSetpoint(Angle mechanismPosition) {
+    public double getVelocityInch() {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'setMotionMagicSetpoint'");
+        throw new UnsupportedOperationException("Unimplemented method 'getVelocityInch'");
     }
 
     @Override
-    public void setVelocitySetpoint(AngularVelocity mechanismVelocity) {
+    public double getPositionInch() {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'setVelocitySetpoint'");
+        throw new UnsupportedOperationException("Unimplemented method 'getPositionInch'");
     }
 
     @Override
-    public void setDutyCycleSetpoint(Dimensionless percent) {
+    public double getSupplyCurrent() {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'setDutyCycleSetpoint'");
-    }
-
-    @Override
-    public void setPositionSetpoint(Angle mechanismPosition) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'setPositionSetpoint'");
-    }
-
-    @Override
-    public void setVoltageSetpoint(Voltage voltage) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'setVoltageSetpoint'");
-    }
-
-    @Override
-    public void applySetpoint(Setpoint setpointToApply) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'applySetpoint'");
+        throw new UnsupportedOperationException("Unimplemented method 'getSupplyCurrent'");
     }
 
 }

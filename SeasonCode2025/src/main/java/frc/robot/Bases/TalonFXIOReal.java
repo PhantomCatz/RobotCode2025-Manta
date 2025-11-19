@@ -77,6 +77,7 @@ public class TalonFXIOReal extends MotorIO {
         setMotorConfig(s0g, s1g, motorMode, setFollow);
     }
 
+    //TODO remove actually applying config to motor. make a separate method for it. it is ambiguous that this method should be run after initializing the motor array ahhhh this is so tedious
     private void setMotorConfig(Gains slot0Gains, Gains slot1Gains, NeutralModeValue motorMode, boolean setFollower){
         slot0_gainsM = slot0Gains;
         slot1_gainsM = slot1Gains;

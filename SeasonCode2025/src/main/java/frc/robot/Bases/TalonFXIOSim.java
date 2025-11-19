@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc.robot.CatzSubsystems.CatzArm.ArmConstants;
 import frc.robot.CatzSubsystems.CatzDriveAndRobotOrientation.Drivetrain.DriveConstants;
 
-public class TalonFXIOSim implements MotorIO {
+public class TalonFXIOSim extends MotorIO {
     // CTRE Motor + Sim State
     private final TalonFX LeaderTalon = new TalonFX(0); // CAN ID 0, adjust as needed
 
@@ -34,6 +34,7 @@ public class TalonFXIOSim implements MotorIO {
 
 
     public TalonFXIOSim() {
+        super(1);
         // Configure neutral mode, etc.
         LeaderTalon.setNeutralMode(NeutralModeValue.Brake);
     }

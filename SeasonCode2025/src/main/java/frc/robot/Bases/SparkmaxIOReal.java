@@ -14,13 +14,14 @@ import edu.wpi.first.units.measure.Voltage;
 
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
+import java.lang.module.ModuleReader;
 import java.util.ArrayList;
 import frc.robot.Utilities.MotorUtil.Gains;
 
 public class SparkmaxIOReal extends MotorIO {
     // initialize follower if needed?
-    private SparkMax leaderSpark;
-    private ArrayList<SparkMax> followerSpark;
+
+    private SparkMax[] sparks;
 
     private final SparkMaxConfig config = new SparkMaxConfig();
 
@@ -77,8 +78,8 @@ public class SparkmaxIOReal extends MotorIO {
      * @param s0g slot 0 gains
      */
     public SparkmaxIOReal(SparkMax motor, double FL, Gains s0g) {
-
-        leaderSpark = motor;
+        super(1);
+        sparks = new SparkMax[] {motor};
 
         // Final_Ratio = FL;
 
@@ -97,10 +98,13 @@ public class SparkmaxIOReal extends MotorIO {
 
 
         // leaderSpark.setPosition(0);
+        sparks[0].getEncoder().setPosition(0);
 
-        leaderSpark.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        sparks[0].configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     }
+
+    private void setMotorConfig()
 
     /**
      * basic, not done
@@ -279,6 +283,48 @@ public class SparkmaxIOReal extends MotorIO {
     public void applySetpoint(Setpoint setpointToApply) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'applySetpoint'");
+    }
+
+    @Override
+    public void updateInputs() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'updateInputs'");
+    }
+
+    @Override
+    public void zeroSensors() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'zeroSensors'");
+    }
+
+    @Override
+    public void setGainsSlot0(double kP, double kI, double kD, double kS, double kV, double kA, double kG) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setGainsSlot0'");
+    }
+
+    @Override
+    public void setGainsSlot0(double kP, double kI, double kD) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setGainsSlot0'");
+    }
+
+    @Override
+    public double getVelocityInch() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getVelocityInch'");
+    }
+
+    @Override
+    public double getPositionInch() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getPositionInch'");
+    }
+
+    @Override
+    public double getSupplyCurrent() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getSupplyCurrent'");
     }
 
 }
