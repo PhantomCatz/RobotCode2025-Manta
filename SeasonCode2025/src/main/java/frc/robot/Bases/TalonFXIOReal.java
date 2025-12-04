@@ -312,20 +312,17 @@ public class TalonFXIOReal extends MotorIO {
 
     @Override
     public double getVelocityInch() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getVelocityInch'");
+        return inputs[0].velocityInchPerSec;
     }
 
     @Override
     public double getPositionInch() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getPositionInch'");
+        return inputs[0].absoluteEncoderPositionRads;
     }
 
     @Override
     public double getSupplyCurrent() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getSupplyCurrent'");
+        return inputs[0].supplyCurrentAmps;
     }
 
 }
