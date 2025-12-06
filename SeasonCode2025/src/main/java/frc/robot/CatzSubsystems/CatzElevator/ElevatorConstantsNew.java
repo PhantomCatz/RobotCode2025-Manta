@@ -2,18 +2,12 @@ package frc.robot.CatzSubsystems.CatzElevator;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import frc.robot.CatzConstants;
 import frc.robot.Bases.MotorIO.Setpoint;
 import frc.robot.Utilities.DistanceAngleConverter;
-import frc.robot.Utilities.LoggedTunableNumber;
 import frc.robot.Utilities.MotorUtil.Gains;
-import frc.robot.Utilities.MotorUtil.MotionMagicParameters;
-import lombok.val;
 
 
 public class ElevatorConstantsNew {
@@ -22,6 +16,7 @@ public class ElevatorConstantsNew {
 
     public static final int LEFT_LEADER_ID  = 31;
     public static final int RIGHT_FOLLOWER_ID = 30;
+    public static final TalonFX TEST_TALONFX = new TalonFX(3);
     public static final TalonFX[] elevatorMotors = {new TalonFX(LEFT_LEADER_ID), new TalonFX(RIGHT_FOLLOWER_ID)};
 
     public static final double ELEVATOR_GEAR_RATIO = (( 42.0 / 12.0) * (22.0 / 16.0));
@@ -48,6 +43,9 @@ public class ElevatorConstantsNew {
 
     public static final DistanceAngleConverter converter = new DistanceAngleConverter(
 		edu.wpi.first.units.Units.Inches.of(2.0).plus(edu.wpi.first.units.Units.Inches.of(0.125)).div(2.0));
+
+    public static final Distance kEpsilonThreshold = edu.wpi.first.units.Units.Inches.of(1.0);
+    public static final Angle kEpsilonThresholdAngle = converter.toAngle(kEpsilonThreshold);
 
 
     public static final Distance STOW_HEIGHT = edu.wpi.first.units.Units.Inches.of(0.0);

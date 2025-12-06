@@ -26,7 +26,7 @@ public class RobotContainer {
 
     // private final RollerSubsytem CatzRollerSubsystem = RollerSubsytem.Instance; // TODO Rename this to CatzRollerSubsystem
 
-    // private final CatzElevator CatzElevatorSubsystem = CatzElevator.Instance;
+    private final CatzElevatorNew CatzElevatorSubsystem = CatzElevatorNew.Instance;
 
     private final CatzArm CatzArmSubsystem = CatzArm.Instance;
 

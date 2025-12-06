@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ServoMotorSubsystem<IO extends MotorIO> extends SubsystemBase {
-    protected final IO io;
+    protected final MotorIO io;
 	protected final String name;
 
 	protected final Angle epsilonThreshold;
@@ -35,7 +35,7 @@ public class ServoMotorSubsystem<IO extends MotorIO> extends SubsystemBase {
 		epsilonThreshold = null;
 	}
 
-    public ServoMotorSubsystem(IO io, String name, Angle epsilonThreshold) {
+    public ServoMotorSubsystem(MotorIO io, String name, Angle epsilonThreshold) {
 		super(name);
 		this.io = io;
 		this.name = name;

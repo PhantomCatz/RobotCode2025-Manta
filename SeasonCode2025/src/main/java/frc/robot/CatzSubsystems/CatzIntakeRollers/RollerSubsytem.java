@@ -15,7 +15,7 @@
 //     public static final RollerSubsytem Instance = new RollerSubsytem();
 
 //     //NOTE these subsystem files should only really hold setpoint constants of the mechanism.
-//     //e.g. 
+//     //e.g.
 //     // public static final Setpoint STOW_FULL = Setpoint.withMotionMagicSetpoint(CoralDeployConstants.kFullStowPosition);
 // 	// public static final Setpoint STOW_CLEAR = Setpoint.withMotionMagicSetpoint(CoralDeployConstants.kStowClearPosition);
 // 	// public static final Setpoint DEPLOY = Setpoint.withMotionMagicSetpoint(CoralDeployConstants.kDeployPosition);
@@ -27,7 +27,7 @@
 //     }
 
 
-//     //NOTE therefore we shouldn't have these enums and setSpeed methods inside the roller subsystem file. 
+//     //NOTE therefore we shouldn't have these enums and setSpeed methods inside the roller subsystem file.
 //     //states of the mechanisms will be handled in the superstructure class.
 //     public enum intakeRollersStates {
 //         INTAKE,

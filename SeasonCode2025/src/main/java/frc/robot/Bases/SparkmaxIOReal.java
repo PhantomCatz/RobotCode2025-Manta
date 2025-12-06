@@ -15,8 +15,6 @@ import edu.wpi.first.units.measure.Voltage;
 
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
-import java.lang.module.ModuleReader;
-import java.util.ArrayList;
 import frc.robot.Utilities.MotorUtil.Gains;
 
 public class SparkmaxIOReal extends MotorIO {
@@ -90,7 +88,7 @@ public class SparkmaxIOReal extends MotorIO {
             followerConfig.follow(sparks[0].getDeviceId(), false);
             sparks[i].configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         }
-        
+
 
     }
 

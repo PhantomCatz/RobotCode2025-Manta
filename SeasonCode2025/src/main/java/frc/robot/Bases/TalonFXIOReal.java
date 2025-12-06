@@ -1,7 +1,6 @@
 package frc.robot.Bases;
 
 import com.ctre.phoenix6.BaseStatusSignal;
-import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.*;
@@ -16,7 +15,6 @@ import java.util.function.UnaryOperator;
 
 import org.littletonrobotics.junction.Logger;
 
-import edu.wpi.first.units.AngleUnit;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
@@ -58,7 +56,7 @@ public class TalonFXIOReal extends MotorIO {
      * @param motorMode motor mode
      */
     public TalonFXIOReal(TalonFX motor, double FL, Gains s0g, Gains s1g,  NeutralModeValue motorMode, String name) {
-        super(1, Units.Rotations, Units.Seconds); // change null for something else 
+        super(1, Units.Rotations, Units.Seconds); // change null for something else
         talonMotors = new TalonFX[] {motor};
 
         FINAL_RATIO = FL;
@@ -93,7 +91,7 @@ public class TalonFXIOReal extends MotorIO {
         slot0_gainsM = slot0Gains;
         slot1_gainsM = slot1Gains;
 
-        config.Slot0.kS = slot0_gainsM.kS(); 
+        config.Slot0.kS = slot0_gainsM.kS();
         config.Slot0.kV = slot0_gainsM.kV();
         config.Slot0.kA = slot0_gainsM.kA();
         config.Slot0.kP = slot0_gainsM.kP();
@@ -101,7 +99,7 @@ public class TalonFXIOReal extends MotorIO {
         config.Slot0.kD = slot0_gainsM.kD();
         config.Slot0.kG = slot0_gainsM.kG();
 
-        config.Slot1.kS = slot1_gainsM.kS(); 
+        config.Slot1.kS = slot1_gainsM.kS();
         config.Slot1.kV = slot1_gainsM.kV();
         config.Slot1.kA = slot1_gainsM.kA();
         config.Slot1.kP = slot1_gainsM.kP();
@@ -154,7 +152,7 @@ public class TalonFXIOReal extends MotorIO {
                     appliedVoltage,
                     motorTemp
                 ).isOK();
-    
+
             inputs[i].motorRotations = motorPosition.getValueAsDouble() * FINAL_RATIO; //TODO Constants should be ALL_CAPS // Yuyhun said that because we get it from constructor that it should be lowercase
             inputs[i].velocityInchPerSec = angularVelocity.getValueAsDouble() * FINAL_RATIO;
             inputs[i].acceleration = angularAcceleration.getValueAsDouble() * FINAL_RATIO;

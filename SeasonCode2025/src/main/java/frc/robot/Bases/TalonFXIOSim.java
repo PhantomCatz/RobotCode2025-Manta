@@ -61,7 +61,7 @@ public class TalonFXIOSim extends MotorIO {
         TalonFXSimState.setSupplyVoltage(12.0); // battery voltage
         //TODO uncomment the one below, but somehow have both units imports as diffrent
         TalonFXSimState.setRawRotorPosition(edu.wpi.first.math.util.Units.radiansToRotations(TalonFXSim.getAngularPositionRad()) * ArmConstants.ARM_GEAR_REDUCTION);
-        
+
         //m_armSimState.setRotorVelocity((Units.radiansPerSecondToRotationsPerMinute(m_IntakeRollersSim.get) * ArmConstants.ARM_GEAR_REDUCTION)/60.0);
 
         // Fill IO inputs and standered deviations
