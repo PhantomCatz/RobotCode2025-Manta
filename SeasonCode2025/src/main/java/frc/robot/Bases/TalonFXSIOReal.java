@@ -14,6 +14,8 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
@@ -44,6 +46,8 @@ public class TalonFXSIOReal extends MotorIO {
     private Setpoint setpoint = Setpoint.withNeutralSetpoint();
     private boolean enabled = true;
 
+    private String name;
+
     /**
      * basic
      * 1 motor
@@ -52,13 +56,15 @@ public class TalonFXSIOReal extends MotorIO {
      * @param s0g slot 0 gains
      * @param motorMode motor mode
      */
-    public TalonFXSIOReal(TalonFXS motor, double FL, Gains s0g, Gains s1g,  NeutralModeValue motorMode) {
-        super(1);
+    public TalonFXSIOReal(TalonFXS motor, double FL, Gains s0g, Gains s1g,  NeutralModeValue motorMode, String name) {
+        super(1, Units.Rotations, Units.Seconds);
         talonMotors = new TalonFXS[] {motor};
 
         FINAL_RATIO = FL;
 
         setMotorConfig(s0g, s1g, motorMode, false);
+
+        this.name = name;
     }
 
     /**
@@ -71,12 +77,14 @@ public class TalonFXSIOReal extends MotorIO {
      * @param s1g slot 1 gains
      * @param motorMode motor mode
      */
-    public TalonFXSIOReal(double FL, Gains s0g, Gains s1g, NeutralModeValue motorMode, boolean setFollow, TalonFXS... motors) {
-        super(motors.length);
+    public TalonFXSIOReal(double FL, Gains s0g, Gains s1g, NeutralModeValue motorMode, boolean setFollow, String name, TalonFXS... motors) {
+        super(motors.length, Units.Rotations, Units.Seconds);
         talonMotors = motors;
         FINAL_RATIO = FL;
 
         setMotorConfig(s0g, s1g, motorMode, setFollow);
+
+        this.name = name;
     }
 
     private void setMotorConfig(Gains slot0Gains, Gains slot1Gains, NeutralModeValue motorMode, boolean setFollower){
@@ -148,7 +156,10 @@ public class TalonFXSIOReal extends MotorIO {
             inputs[i].supplyCurrentAmps = supplyCurrent.getValueAsDouble();
             inputs[i].torqueCurrentAmps = torqueCurrent.getValueAsDouble();
             inputs[i].tempCelcius = motorTemp.getValueAsDouble();
+
+            Logger.processInputs("RealInputs/"+name, inputs[i]);
         }
+        
 
     }
 
@@ -322,6 +333,44 @@ public class TalonFXSIOReal extends MotorIO {
     @Override
     public double getSupplyCurrent() {
         return inputs[0].supplyCurrentAmps;
+    }
+
+    @Override
+    public double getAcceleration() {
+        return inputs[0].acceleration;
+    }
+
+    @Override
+    public double getAppliedVoltage() {
+        return inputs[0].appliedVoltage;
+    }
+
+    @Override
+    public double getTemp() {
+        return inputs[0].tempCelcius;
+    }
+
+    @Override
+    public double getRotations() {
+        return inputs[0].motorRotations;
+    }
+
+    @Override
+    public AngularVelocity getVelocity() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getVelocity'");
+    }
+
+    @Override
+    public Angle getPosition() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getPosition'");
+    }
+
+    @Override
+    public void useSoftLimits(boolean enable) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'useSoftLimits'");
     }
 
 }

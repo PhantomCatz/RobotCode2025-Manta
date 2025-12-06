@@ -1,6 +1,7 @@
 package frc.robot.Bases;
 
 import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.*;
@@ -11,7 +12,11 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.function.UnaryOperator;
 
+import org.littletonrobotics.junction.Logger;
+
+import edu.wpi.first.units.AngleUnit;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
@@ -42,6 +47,8 @@ public class TalonFXIOReal extends MotorIO {
     private Setpoint setpoint = Setpoint.withNeutralSetpoint();
     private boolean enabled = true;
 
+    private String name;
+
     /**
      * basic
      * 1 motor
@@ -50,13 +57,15 @@ public class TalonFXIOReal extends MotorIO {
      * @param s0g slot 0 gains
      * @param motorMode motor mode
      */
-    public TalonFXIOReal(TalonFX motor, double FL, Gains s0g, Gains s1g,  NeutralModeValue motorMode) {
-        super(1);
+    public TalonFXIOReal(TalonFX motor, double FL, Gains s0g, Gains s1g,  NeutralModeValue motorMode, String name) {
+        super(1, Units.Rotations, Units.Seconds); // change null for something else 
         talonMotors = new TalonFX[] {motor};
 
         FINAL_RATIO = FL;
 
         setMotorConfig(s0g, s1g, motorMode, false);
+
+        this.name = name;
     }
 
     /**
@@ -69,12 +78,14 @@ public class TalonFXIOReal extends MotorIO {
      * @param s1g slot 1 gains
      * @param motorMode motor mode
      */
-    public TalonFXIOReal(double FL, Gains s0g, Gains s1g, NeutralModeValue motorMode, boolean setFollow, TalonFX... motors) {
-        super(motors.length);
+    public TalonFXIOReal(double FL, Gains s0g, Gains s1g, NeutralModeValue motorMode, boolean setFollow, String name, TalonFX... motors) {
+        super(motors.length, Units.Rotations, Units.Seconds);
         talonMotors = motors;
         FINAL_RATIO = FL;
 
         setMotorConfig(s0g, s1g, motorMode, setFollow);
+
+        this.name = name;
     }
 
     //TODO remove actually applying config to motor. make a separate method for it. it is ambiguous that this method should be run after initializing the motor array ahhhh this is so tedious
@@ -118,6 +129,8 @@ public class TalonFXIOReal extends MotorIO {
                 talonMotors[i].setControl(new Follower(talonMotors[0].getDeviceID(), false)); //TODO make a custom talon config class that has an array that holds which motors will oppose the master
             }
         }
+
+
     }
 
     public void updateInputs() {
@@ -149,6 +162,8 @@ public class TalonFXIOReal extends MotorIO {
             inputs[i].supplyCurrentAmps = supplyCurrent.getValueAsDouble();
             inputs[i].torqueCurrentAmps = torqueCurrent.getValueAsDouble();
             inputs[i].tempCelcius = motorTemp.getValueAsDouble();
+
+            Logger.processInputs("RealInputs/"+name+i, inputs[i]);
         }
 
     }
@@ -324,5 +339,57 @@ public class TalonFXIOReal extends MotorIO {
     public double getSupplyCurrent() {
         return inputs[0].supplyCurrentAmps;
     }
+
+    @Override
+    public double getAcceleration() {
+        return inputs[0].acceleration;
+    }
+
+    @Override
+    public double getAppliedVoltage() {
+        return inputs[0].appliedVoltage;
+    }
+
+    @Override
+    public double getTemp() {
+        return inputs[0].tempCelcius;
+    }
+
+    @Override
+    public double getRotations() {
+        return inputs[0].motorRotations;
+    }
+
+    @Override
+    public AngularVelocity getVelocity() {
+        return talonMotors[0].getVelocity().getValue();
+    }
+
+    @Override
+    public Angle getPosition() {
+        return talonMotors[0].getPosition().getValue();
+    }
+
+    @Override
+	public void useSoftLimits(boolean enable) {
+		UnaryOperator<TalonFXConfiguration> configChanger = (config) -> {
+			config.SoftwareLimitSwitch.ForwardSoftLimitEnable = enable;
+			config.SoftwareLimitSwitch.ReverseSoftLimitEnable = enable;
+			return config;
+		};
+
+		changeMainConfig(configChanger);
+	}
+
+    public void changeMainConfig(UnaryOperator<TalonFXConfiguration> configChanger) {
+		setMainConfig(configChanger.apply(config));
+	}
+
+    public void setMainConfig(TalonFXConfiguration configuration) {
+        TalonFXConfiguration configNew = new TalonFXConfiguration();
+		configNew = configuration;
+		applyConfig(talonMotors[0], configNew);
+	}
+
 
 }

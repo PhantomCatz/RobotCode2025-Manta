@@ -10,7 +10,7 @@ import static frc.robot.CatzSubsystems.CatzIntakeRollers.RollerConstants.*;
 
 
 public class RollerSubsytem extends MotorSubsystem{
-    private static final MotorIO io = new TalonFXIOReal(RollerMotor, Final_Ratio, s0g, s1g);
+    private static final MotorIO io = new TalonFXIOReal(RollerMotors, Final_Ratio, s0g, s1g, "roller");
 
     public static final RollerSubsytem Instance = new RollerSubsytem();
 

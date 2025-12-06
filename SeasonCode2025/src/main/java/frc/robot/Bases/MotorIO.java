@@ -7,6 +7,12 @@ import org.littletonrobotics.junction.AutoLog;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
+import edu.wpi.first.units.AngleUnit;
+import edu.wpi.first.units.AngularVelocityUnit;
+import edu.wpi.first.units.DimensionlessUnit;
+import edu.wpi.first.units.TimeUnit;
+import edu.wpi.first.units.Units;
+import edu.wpi.first.units.VoltageUnit;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Dimensionless;
@@ -27,8 +33,21 @@ public abstract class MotorIO {
 
 	protected final MotorIOInputsAutoLogged[] inputs;
 
-	public MotorIO(int numOfMotors){
+	public final AngleUnit unitType;
+	public final TimeUnit time;
+
+	public MotorIO(){ // for null
+		inputs = new MotorIOInputsAutoLogged[1];
+		unitType = null;
+		time = null;
+	}
+
+	public MotorIO(int numOfMotors, AngleUnit unitType, TimeUnit time){
 		inputs = new MotorIOInputsAutoLogged[numOfMotors];
+
+		this.unitType = unitType;
+
+		this.time = time;
 	}
 
 	@AutoLog
@@ -98,6 +117,20 @@ public abstract class MotorIO {
 
 	public abstract double getSupplyCurrent();
 
+	public abstract double getAcceleration();
+
+	public abstract double getAppliedVoltage();
+
+	public abstract double getTemp();
+
+	public abstract double getRotations();
+
+	public abstract AngularVelocity getVelocity();
+
+	public abstract Angle getPosition();
+
+	public abstract void useSoftLimits(boolean enable);
+
 	public final void applySetpoint(Setpoint setpoint){
 		this.setpoint = setpoint;
 
@@ -106,6 +139,33 @@ public abstract class MotorIO {
 
 	public final Setpoint getCurrentSetpoint(){
 		return setpoint;
+	}
+
+	/**
+	 * Gets the current setpoint value of the MotorIO using units of the MotorIO.
+	 *
+	 * @return Setpoint in mechanism units.
+	 */
+	public double getSetpointDoubleInUnits() {
+		Setpoint currentSetpoint = getCurrentSetpoint();
+		switch (currentSetpoint.mode) {
+			case POSITIONPID:
+			case MOTIONMAGIC:
+				AngleUnit positionUnit = unitType;
+				return positionUnit.ofBaseUnits(currentSetpoint.baseUnits).in(positionUnit);
+			case VELOCITY:
+				AngularVelocityUnit velocityUnit = unitType.per(time);
+				return velocityUnit.ofBaseUnits(currentSetpoint.baseUnits).in(velocityUnit);
+			case VOLTAGE:
+				VoltageUnit voltageUnit = Units.Volts;
+				return voltageUnit.ofBaseUnits(currentSetpoint.baseUnits).in(voltageUnit);
+			case DUTY_CYCLE:
+				DimensionlessUnit percentUnit = Units.Percent;
+				return percentUnit.ofBaseUnits(currentSetpoint.baseUnits).in(percentUnit);
+			case IDLE:
+			default:
+				return currentSetpoint.baseUnits;
+		}
 	}
 
 	//NOTE write the rest of get functions

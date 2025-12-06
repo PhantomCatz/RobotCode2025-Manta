@@ -45,7 +45,7 @@ public class IntakeRollersIOSim extends MotorIO {
     }
 
     @Override
-    public void updateInputs(MotorIOInputs inputs) {
+    public void updateInputs() {
         // PID -> Voltage Command
         //double setVoltage = simPIDController.calculate(inputs.positionDegreesFinalShaft, targetDegreesFinalShaft) * 12.0;
 
@@ -64,14 +64,6 @@ public class IntakeRollersIOSim extends MotorIO {
 
         // Fill IO inputs and standered deviations
 
-    }
-
-    @Override
-    public void runMotor(double speed) {
-        // Set the motor speed in simulation
-
-        //m_intakeRollerMotor.getSimState().setRotorVelocity(speed);
-        m_IntakeRollersSim.setInputVoltage(speed * 12.0); // Assuming speed is between -1 and 1
     }
 
     @Override

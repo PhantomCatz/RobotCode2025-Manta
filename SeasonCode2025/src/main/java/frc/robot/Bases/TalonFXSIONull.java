@@ -3,6 +3,7 @@ package frc.robot.Bases;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
+import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Dimensionless;
@@ -11,7 +12,7 @@ import edu.wpi.first.units.measure.Voltage;
 public class TalonFXSIONull extends MotorIO {
 
     public TalonFXSIONull() {
-        super(0);
+        super(0, Units.Rotations, Units.Seconds);
     }
 
     @Override
@@ -150,4 +151,46 @@ public class TalonFXSIONull extends MotorIO {
     public double getSupplyCurrent() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getSupplyCurrent'");
+    }
+
+    @Override
+    public double getAcceleration() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getAcceleration'");
+    }
+
+    @Override
+    public double getAppliedVoltage() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getAppliedVoltage'");
+    }
+
+    @Override
+    public double getTemp() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getTemp'");
+    }
+
+    @Override
+    public double getRotations() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getRotations'");
+    }
+
+    @Override
+    public AngularVelocity getVelocity() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getVelocity'");
+    }
+
+    @Override
+    public Angle getPosition() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getPosition'");
+    }
+
+    @Override
+    public void useSoftLimits(boolean enable) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'useSoftLimits'");
     }}
