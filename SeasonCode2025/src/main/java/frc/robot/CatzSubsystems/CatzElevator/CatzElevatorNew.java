@@ -1,45 +1,20 @@
 package frc.robot.CatzSubsystems.CatzElevator;
 
-import static frc.robot.CatzSubsystems.CatzElevator.ElevatorConstants.*;
+import static frc.robot.CatzSubsystems.CatzElevator.ElevatorConstantsNew.*;
 
-import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
-
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.CatzConstants;
 import frc.robot.Bases.MotorIO;
-import frc.robot.Bases.MotorIO.Setpoint;
-import frc.robot.Bases.MotorIOInputsAutoLogged;
 import frc.robot.Bases.ServoMotorSubsystem;
 import frc.robot.Bases.TalonFXIONull;
 import frc.robot.Bases.TalonFXIOReal;
 import frc.robot.Bases.TalonFXIOSim;
-import frc.robot.Utilities.LoggedTunableNumber;
-import lombok.RequiredArgsConstructor;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DriverStation;
-
-import org.littletonrobotics.junction.Logger;
-
-import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-public class CatzElevatorNew extends ServoMotorSubsystem{
+public class CatzElevatorNew extends ServoMotorSubsystem<TalonFXIOReal>{
     public static final CatzElevatorNew Instance = new CatzElevatorNew();
 
-    private final MotorIO io;
-    private final MotorIOInputsAutoLogged inputs = new MotorIOInputsAutoLogged();
-
-    public static final Setpoint L4_SCORE =
-			Setpoint.withPositionSetpoint(ElevatorConstants.converter.toAngle(ElevatorConstants.kL4ScoringHeight));
-	public static final Setpoint L3_SCORE =
-			Setpoint.withMotionMagicSetpoint(ElevatorConstants.converter.toAngle(ElevatorConstants.kL3ScoringHeight));
-	public static final Setpoint L2_SCORE =
-			Setpoint.withMotionMagicSetpoint(ElevatorConstants.converter.toAngle(ElevatorConstants.kL2ScoringHeight));
-	public static final Setpoint L1_SCORE =
-
+    private static MotorIO io;
+   
     private CatzElevatorNew() {
         if(isElevatorDisabled) {
           io = new TalonFXIONull();
@@ -67,6 +42,24 @@ public class CatzElevatorNew extends ServoMotorSubsystem{
         // SmartDashboard.putData("Mech2d", m_mech2d);
       }
 
+      public static void Stow() {
+        io.applySetpoint(ElevatorConstantsNew.STOW);
+      }
 
+      public static void L1() {
+        io.applySetpoint(ElevatorConstantsNew.L1_SCORE);
+      }
+
+      public static void L2() {
+        io.applySetpoint(ElevatorConstantsNew.L2_SCORE);
+      }
+
+      public static void L3() {
+        io.applySetpoint(ElevatorConstantsNew.L3_SCORE);
+      }
+
+      public static void L4() {
+        io.applySetpoint(ElevatorConstantsNew.L4_SCORE);
+      }
 
 }

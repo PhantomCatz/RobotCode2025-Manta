@@ -11,8 +11,9 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.CatzSubsystems.CatzSuperstructure;
 import frc.robot.CatzSubsystems.CatzArm.CatzArm;
 import frc.robot.CatzSubsystems.CatzDriveAndRobotOrientation.Drivetrain.CatzDrivetrain;
-import frc.robot.CatzSubsystems.CatzElevator.CatzElevator;
-import frc.robot.CatzSubsystems.CatzIntakeRollers.RollerSubsytem;
+// import frc.robot.CatzSubsystems.CatzElevator.CatzElevator;
+// import frc.robot.CatzSubsystems.CatzIntakeRollers.RollerSubsytem;
+import frc.robot.CatzSubsystems.CatzElevator.CatzElevatorNew;
 import frc.robot.CatzSubsystems.CatzWrist.CatzWrist;
 
 public class RobotContainer {
@@ -23,11 +24,9 @@ public class RobotContainer {
 
     private final CatzSuperstructure superstructure = CatzSuperstructure.Instance; // Just to make sure it gets constructed
 
-    private final RollerSubsytem rollers = RollerSubsytem.Instance; // TODO Rename this to CatzRollerSubsystem
+    // private final RollerSubsytem CatzRollerSubsystem = RollerSubsytem.Instance; // TODO Rename this to CatzRollerSubsystem
 
-    private final RollerSubsytem CatzRollerSubsystem = RollerSubsytem.Instance; // TODO Rename this to CatzRollerSubsystem
-
-    private final CatzElevator CatzElevatorSubsystem = CatzElevator.Instance;
+    // private final CatzElevator CatzElevatorSubsystem = CatzElevator.Instance;
 
     private final CatzArm CatzArmSubsystem = CatzArm.Instance;
 
@@ -40,12 +39,18 @@ public class RobotContainer {
     }
 
     private void configureBindings() {
-        xboxDrv.a().onTrue(CatzArm.Instance.armUp().alongWith(CatzWrist.Instance.extendWrist()).alongWith(CatzElevator.Instance.Elevator_L4()));
-        //xboxDrv.b().onTrue(CatzArm.Instance.armStow().alongWith(CatzWrist.Instance.Wrist_Home()).alongWith(CatzElevator.Instance.Elevator_Stow()));
-        xboxDrv.b().onTrue(new RunCommand(() -> {rollers.setSpeed(0.6);}));
+        // xboxDrv.a().onTrue(CatzArm.Instance.armUp().alongWith(CatzWrist.Instance.extendWrist()).alongWith(CatzElevator.Instance.Elevator_L4()));
+        // xboxDrv.b().onTrue(CatzArm.Instance.armStow().alongWith(CatzWrist.Instance.Wrist_Home()).alongWith(CatzElevator.Instance.Elevator_Stow()));
+        // xboxDrv.b().onTrue(new RunCommand(() -> {rollers.setSpeed(0.6);}));
 
-        xboxDrv.x().onTrue(CatzWrist.Instance.extendWrist());
-        xboxDrv.y().onTrue(CatzWrist.Instance.Wrist_Home());
+        // xboxDrv.x().onTrue(CatzWrist.Instance.extendWrist());
+        // xboxDrv.y().onTrue(CatzWrist.Instance.Wrist_Home());
+
+        xboxDrv.a().onTrue(new RunCommand( () -> {CatzElevatorNew.Stow();}));
+        xboxDrv.b().onTrue(new RunCommand( () -> {CatzElevatorNew.L1();}));
+        xboxDrv.x().onTrue(new RunCommand( () -> {CatzElevatorNew.L2();}));
+        xboxDrv.y().onTrue(new RunCommand( () -> {CatzElevatorNew.L3();}));
+        xboxDrv.leftBumper().onTrue(new RunCommand( () -> {CatzElevatorNew.L4();}));
 
     }
 
