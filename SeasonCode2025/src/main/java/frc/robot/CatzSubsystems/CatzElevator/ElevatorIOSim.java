@@ -1,81 +1,81 @@
-package frc.robot.CatzSubsystems.CatzElevator;
+// package frc.robot.CatzSubsystems.CatzElevator;
 
-import static frc.robot.CatzSubsystems.CatzElevator.ElevatorConstants.FINAL_RATIO;
+// import static frc.robot.CatzSubsystems.CatzElevator.ElevatorConstants.FINAL_RATIO;
 
-import org.littletonrobotics.junction.Logger;
+// import org.littletonrobotics.junction.Logger;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.simulation.ElevatorSim;
-import frc.robot.CatzSubsystems.SubystemVisualizer;
+// import edu.wpi.first.math.controller.PIDController;
+// import edu.wpi.first.math.geometry.Pose3d;
+// import edu.wpi.first.math.geometry.Rotation3d;
+// import edu.wpi.first.math.geometry.Translation3d;
+// import edu.wpi.first.math.system.plant.DCMotor;
+// import edu.wpi.first.math.util.Units;
+// import edu.wpi.first.wpilibj.simulation.ElevatorSim;
+// import frc.robot.CatzSubsystems.SubystemVisualizer;
 
-public class ElevatorIOSim implements ElevatorIO{
+// public class ElevatorIOSim implements ElevatorIO{
 
 
-  private final DCMotor m_elevatorGearbox = DCMotor.getKrakenX60Foc(2);
-  private double targetRotations;
-  private double currentRotations;
-  private final int ELEVATOR_INDEX = 1;
-  private Pose3d[] elevatorPose3d = {
-    new Pose3d(0.0, 0.0, Units.inchesToMeters(ElevatorConstants.START_HEIGHT_GROUND), new Rotation3d(0.0, Math.PI / 2, 0.0)),
-    new Pose3d(0.0, 0.0, Units.inchesToMeters(ElevatorConstants.START_HEIGHT_GROUND+1), new Rotation3d(0.0, Math.PI / 2, 0.0))
-  };
+//   private final DCMotor m_elevatorGearbox = DCMotor.getKrakenX60Foc(2);
+//   private double targetRotations;
+//   private double currentRotations;
+//   private final int ELEVATOR_INDEX = 1;
+//   private Pose3d[] elevatorPose3d = {
+//     new Pose3d(0.0, 0.0, Units.inchesToMeters(ElevatorConstants.START_HEIGHT_GROUND), new Rotation3d(0.0, Math.PI / 2, 0.0)),
+//     new Pose3d(0.0, 0.0, Units.inchesToMeters(ElevatorConstants.START_HEIGHT_GROUND+1), new Rotation3d(0.0, Math.PI / 2, 0.0))
+//   };
 
-  private PIDController simPidController = new PIDController(0.1, 0.0, 0.0);
-  private final ElevatorSim m_elevatorSim =
-      new ElevatorSim(
-          m_elevatorGearbox,
-          ElevatorConstants.FINAL_RATIO,
-          2.0, // mass in kg (random number)
-          0.01, // drum radius in meters (random number)
-          Units.inchesToMeters(ElevatorConstants.MIN_TRAVEL_INCHES),
-          Units.inchesToMeters(ElevatorConstants.MAX_TRAVEL_INCHES),
-          true,
-          0,
-          0.01,
-          0.0);
+//   private PIDController simPidController = new PIDController(0.1, 0.0, 0.0);
+//   private final ElevatorSim m_elevatorSim =
+//       new ElevatorSim(
+//           m_elevatorGearbox,
+//           ElevatorConstants.FINAL_RATIO,
+//           2.0, // mass in kg (random number)
+//           0.01, // drum radius in meters (random number)
+//           Units.inchesToMeters(ElevatorConstants.MIN_TRAVEL_INCHES),
+//           Units.inchesToMeters(ElevatorConstants.MAX_TRAVEL_INCHES),
+//           true,
+//           0,
+//           0.01,
+//           0.0);
 
-  // private final LoggedMechanism2d mechanism = new LoggedMechanism2d(1, 1);
-  // private final LoggedMechanismRoot2d mechanismRoot = mechanism.getRoot("elevator root", 0.63, 0);
-  // private final LoggedMechanismLigament2d mechanismElevator = mechanismRoot.append(new LoggedMechanismLigament2d("Elevator", m_elevatorSim.getPositionMeters(), 90));
+//   // private final LoggedMechanism2d mechanism = new LoggedMechanism2d(1, 1);
+//   // private final LoggedMechanismRoot2d mechanismRoot = mechanism.getRoot("elevator root", 0.63, 0);
+//   // private final LoggedMechanismLigament2d mechanismElevator = mechanismRoot.append(new LoggedMechanismLigament2d("Elevator", m_elevatorSim.getPositionMeters(), 90));
 
-  @Override
-  public void updateInputs(ElevatorIOInputs inputs) {
-    currentRotations = inputs.positionInch / FINAL_RATIO;
-    Logger.recordOutput("Elevator/SimTargetRotations", targetRotations);
-    Logger.recordOutput("Elevator/SimRotations", currentRotations);
+//   @Override
+//   public void updateInputs(ElevatorIOInputs inputs) {
+//     currentRotations = inputs.positionInch / FINAL_RATIO;
+//     Logger.recordOutput("Elevator/SimTargetRotations", targetRotations);
+//     Logger.recordOutput("Elevator/SimRotations", currentRotations);
 
-    double setVoltage = simPidController.calculate(currentRotations, targetRotations) * 12.0;
-    m_elevatorSim.setInputVoltage(setVoltage);
-    m_elevatorSim.update(0.02);
+//     double setVoltage = simPidController.calculate(currentRotations, targetRotations) * 12.0;
+//     m_elevatorSim.setInputVoltage(setVoltage);
+//     m_elevatorSim.update(0.02);
 
-    inputs.velocityInchPerSec = Units.metersToInches(m_elevatorSim.getVelocityMetersPerSecond());
-    inputs.positionInch = Units.metersToInches(m_elevatorSim.getPositionMeters());
-    Logger.recordOutput("Elevator/SimCurrentSpeedInchesPerSecond", inputs.velocityInchPerSec);
-    Logger.recordOutput("Elevator/SimCurrentPositionInches", inputs.positionInch);
-    SubystemVisualizer.setSimPose(ELEVATOR_INDEX, new Pose3d(new Translation3d(0.0, 0.0, Units.inchesToMeters(inputs.positionInch/2)).plus(ElevatorConstants.ELEVATOR_SIM_OFFSET), new Rotation3d(0.0, Math.PI / 2, 0.0)));
-    // mechanismElevator.setLength(0.5 + Units.inchesToMeters(inputs.positionInch));
-    // Logger.recordOutput("Mechanism2d/Elevator", mechanism);
-  }
+//     inputs.velocityInchPerSec = Units.metersToInches(m_elevatorSim.getVelocityMetersPerSecond());
+//     inputs.positionInch = Units.metersToInches(m_elevatorSim.getPositionMeters());
+//     Logger.recordOutput("Elevator/SimCurrentSpeedInchesPerSecond", inputs.velocityInchPerSec);
+//     Logger.recordOutput("Elevator/SimCurrentPositionInches", inputs.positionInch);
+//     SubystemVisualizer.setSimPose(ELEVATOR_INDEX, new Pose3d(new Translation3d(0.0, 0.0, Units.inchesToMeters(inputs.positionInch/2)).plus(ElevatorConstants.ELEVATOR_SIM_OFFSET), new Rotation3d(0.0, Math.PI / 2, 0.0)));
+//     // mechanismElevator.setLength(0.5 + Units.inchesToMeters(inputs.positionInch));
+//     // Logger.recordOutput("Mechanism2d/Elevator", mechanism);
+//   }
 
-  @Override
-  public void runSetpointUp(double setpointInches) {
-      double setpointRotations = setpointInches / FINAL_RATIO;
-      targetRotations = setpointRotations;
-    System.out.println("New elevator target: "+targetRotations);
-  }
-  @Override
-  public void runSetpointDown(double setpointInches) {
-      double setpointRotations = setpointInches / FINAL_RATIO;
-      targetRotations = setpointRotations;
-      System.out.println("New elevator target: "+targetRotations);
-  }
+//   @Override
+//   public void runSetpointUp(double setpointInches) {
+//       double setpointRotations = setpointInches / FINAL_RATIO;
+//       targetRotations = setpointRotations;
+//     System.out.println("New elevator target: "+targetRotations);
+//   }
+//   @Override
+//   public void runSetpointDown(double setpointInches) {
+//       double setpointRotations = setpointInches / FINAL_RATIO;
+//       targetRotations = setpointRotations;
+//       System.out.println("New elevator target: "+targetRotations);
+//   }
 
-  public Pose3d[] getElevatorPose3d() {
-    return elevatorPose3d;
-  }
-}
+//   public Pose3d[] getElevatorPose3d() {
+//     return elevatorPose3d;
+//   }
+// }

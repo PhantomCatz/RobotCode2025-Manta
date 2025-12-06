@@ -9,6 +9,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.CatzConstants;
+import frc.robot.Bases.MotorIO;
+import frc.robot.Bases.MotorIOInputsAutoLogged;
+import frc.robot.Bases.ServoMotorSubsystem;
+import frc.robot.Bases.TalonFXIONull;
+import frc.robot.Bases.TalonFXIOReal;
+import frc.robot.Bases.TalonFXIOSim;
 import frc.robot.Utilities.LoggedTunableNumber;
 import lombok.RequiredArgsConstructor;
 import edu.wpi.first.math.util.Units;
@@ -16,11 +22,14 @@ import edu.wpi.first.wpilibj.DriverStation;
 
 import org.littletonrobotics.junction.Logger;
 
-public class CatzElevator extends SubsystemBase {
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+
+public class CatzElevator extends ServoMotorSubsystem {
   public static final CatzElevator Instance = new CatzElevator();
 
-  private final ElevatorIO io;
-  private final ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
+  private final MotorIO io;
+  private final MotorIOInputsAutoLogged inputs = new MotorIOInputsAutoLogged();
 
 
   private double elevatorSpeed = 0.0;
@@ -60,24 +69,24 @@ public class CatzElevator extends SubsystemBase {
 
   private CatzElevator() {
     if(isElevatorDisabled) {
-      io = new ElevatorIONull();
+      io = new TalonFXIONull();
       System.out.println("Elevator Unconfigured");
     } else {
       switch (CatzConstants.hardwareMode) {
         case REAL:
-          io = new ElevatorIOReal();
+          io = new TalonFXIOReal(FINAL_RATIO, slot0_gains, slot1_gains, NeutralModeValue.Brake, true, "elevator", elevatorMotors);
           System.out.println("Elevator Configured for Real");
         break;
         case REPLAY:
-          io = new ElevatorIOReal() {};
+          io = new TalonFXIOReal(FINAL_RATIO, slot0_gains, slot1_gains, NeutralModeValue.Brake, true, "elevator", elevatorMotors) {};
           System.out.println("Elevator Configured for Replayed simulation");
         break;
         case SIM:
-          io = new ElevatorIOSim();
+          io = new TalonFXIOSim();
           System.out.println("Elevator Configured for Simulation");
         break;
         default:
-          io = new ElevatorIONull();
+          io = new TalonFXIONull();
           System.out.println("Elevator Unconfigured");
         break;
       }
@@ -87,7 +96,7 @@ public class CatzElevator extends SubsystemBase {
 
   @Override
   public void periodic() {
-    io.updateInputs(inputs);
+    io.updateInputs();
     Logger.processInputs("RealInputs/Elevator", inputs);
 
     isElevatorInPos = isElevatorInPosition();
@@ -116,7 +125,7 @@ public class CatzElevator extends SubsystemBase {
 
     LoggedTunableNumber.ifChanged(
         hashCode(),
-        () -> io.setGainsSlot1(slot1_kP.get(),
+        () -> io.setGainsSlot0(slot1_kP.get(),
                                slot1_kI.get(),
                                slot1_kD.get(),
                                slot1_kS.get(),
@@ -146,9 +155,9 @@ public class CatzElevator extends SubsystemBase {
     //---------------------------------------------------------------------------------------------------------------------------
     //    Limit switch position setting
     //---------------------------------------------------------------------------------------------------------------------------
-    if(inputs.isBotLimitSwitched) {
-      //io.resetPosition(ElevatorPosition.PosLimitSwitchStow.getTargetPositionRads());
-    }
+    // if(inputs.isBotLimitSwitched) {
+    //   //io.resetPosition(ElevatorPosition.PosLimitSwitchStow.getTargetPositionRads());
+    // }
 
     //---------------------------------------------------------------------------------------------------------------------------
 
@@ -169,7 +178,7 @@ public class CatzElevator extends SubsystemBase {
         if(getElevatorPositionInch() < 2.0) {
           io.stop();
         } else {
-          io.runSetpointDown(targetPosition.getTargetPositionInch());
+          io.setPositionSetpoint(targetPosition.getTargetPositionInch());
           // System.out.println("setpoint down");
         }
       } else {
@@ -179,7 +188,7 @@ public class CatzElevator extends SubsystemBase {
 
       }
     } else if (targetPosition == ElevatorPosition.PosManual) {
-      io.runMotor(elevatorSpeed);
+      io.setPercentOutput(elevatorSpeed);
 
       Logger.recordOutput("Elevator/Manual Speed", elevatorSpeed*10);
       Logger.recordOutput("Elevator/Manual RPS", inputs.velocityInchPerSec/ElevatorConstants.FINAL_RATIO);
@@ -285,11 +294,11 @@ public class CatzElevator extends SubsystemBase {
   //--------------------------------------------------------------------------
 
   public double getElevatorPositionInch() {
-    return inputs.positionInch;
+    return io.getPositionInch();
   }
 
   public double getElevatorPositionMeters() {
-    return Units.inchesToMeters(inputs.positionInch);
+    return Units.inchesToMeters(io.getPositionInch());
   }
 
 

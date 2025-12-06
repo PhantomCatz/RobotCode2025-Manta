@@ -1,5 +1,7 @@
 package frc.robot.CatzSubsystems.CatzElevator;
 
+import com.ctre.phoenix6.hardware.TalonFX;
+
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
@@ -36,6 +38,8 @@ public class ElevatorConstants {
     // Motor ID
     public static final int LEFT_LEADER_ID  = 31;
     public static final int RIGHT_FOLLOWER_ID = 30;
+
+    public static final TalonFX[] elevatorMotors = {new TalonFX(LEFT_LEADER_ID), new TalonFX(RIGHT_FOLLOWER_ID)};
 
     public static final int BOT_LIMIT_SWITCH = 2;
 
