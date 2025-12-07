@@ -1,6 +1,5 @@
 package frc.robot.CatzSubsystems.CatzArm;
 
-import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.CatzSubsystems.CatzArm.ArmConstants.ARM_GEAR_REDUCTION;
 import static frc.robot.CatzSubsystems.CatzArm.ArmConstants.ARM_INITIAL_DEGREES;
 import static frc.robot.CatzSubsystems.CatzArm.ArmConstants.ARM_MOTOR_ID;
@@ -18,7 +17,6 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.sim.ChassisReference;
 
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
@@ -29,8 +27,6 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
-import frc.robot.CatzConstants;
-import frc.robot.Robot;
 
 public class ArmIOReal implements ArmIO{
     private TalonFX armMotor = new TalonFX(ARM_MOTOR_ID);

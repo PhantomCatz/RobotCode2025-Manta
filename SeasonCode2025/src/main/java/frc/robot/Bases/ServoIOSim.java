@@ -1,4 +1,4 @@
-package frc.robot.CatzSubsystems.CatzElevator;
+package frc.robot.Bases;
 
 import static frc.robot.CatzSubsystems.CatzElevator.ElevatorConstants.FINAL_RATIO;
 
@@ -12,8 +12,10 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import frc.robot.CatzSubsystems.SubystemVisualizer;
+import frc.robot.CatzSubsystems.CatzElevator.ElevatorConstants;
+import frc.robot.CatzSubsystems.CatzElevator.ElevatorIO;
 
-public class ElevatorIOSim implements ElevatorIO{
+public class ServoIOSim implements ElevatorIO{
 
 
   private final DCMotor m_elevatorGearbox = DCMotor.getKrakenX60Foc(2);

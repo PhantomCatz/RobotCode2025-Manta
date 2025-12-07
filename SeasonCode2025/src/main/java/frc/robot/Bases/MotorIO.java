@@ -1,0 +1,363 @@
+package frc.robot.Bases;
+
+import java.util.function.UnaryOperator;
+
+import org.littletonrobotics.junction.AutoLog;
+
+import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+
+import edu.wpi.first.units.AngleUnit;
+import edu.wpi.first.units.AngularVelocityUnit;
+import edu.wpi.first.units.DimensionlessUnit;
+import edu.wpi.first.units.TimeUnit;
+import edu.wpi.first.units.Units;
+import edu.wpi.first.units.VoltageUnit;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Dimensionless;
+import edu.wpi.first.units.measure.Voltage;
+
+public abstract class MotorIO {
+
+	/*
+	 * NOTE probably a better idea to turn this into an abstract class to properly log
+	 * follower motors and because there is no reason for this to be an interface. abstract classes allow for more flexibility
+	 * With interfaces, we cannot log any of the follower inputs without doing really scuffed stuff.
+	 */
+
+
+	//NOTE i realized that there can be cases where we may need to run two motors at separate powers. like bubbles' outtake motor at L1
+
+	private Setpoint setpoint = Setpoint.withNeutralSetpoint();
+
+	protected final MotorIOInputsAutoLogged[] inputs;
+
+	public final AngleUnit unitType;
+	public final TimeUnit time;
+
+	public MotorIO(){ // for null
+		inputs = new MotorIOInputsAutoLogged[1];
+		unitType = null;
+		time = null;
+	}
+
+	public MotorIO(int numOfMotors, AngleUnit unitType, TimeUnit time){
+		inputs = new MotorIOInputsAutoLogged[numOfMotors];
+
+		this.unitType = unitType;
+
+		this.time = time;
+	}
+
+	@AutoLog
+	public static class MotorIOInputs {
+
+		public boolean isMotorConnected = false;
+
+		public double motorRotations = 0.0;
+		public double absoluteEncoderPositionRads = 0.0;
+		public double relativeEncoderPositionRads = 0.0;
+		public double velocityInchPerSec = 0.0;
+		public double acceleration = 0.0;
+		public double supplyCurrentAmps = 0.0;
+		public double torqueCurrentAmps = 0.0;
+		public double appliedVoltage = 0.0;
+		public double tempCelcius = 0.0;
+
+	}
+
+	public abstract void updateInputs();
+
+	public abstract void zeroSensors();
+
+	public abstract void setGainsSlot0(double kP, double kI, double kD, double kS, double kV, double kA, double kG);
+
+	public abstract void setGainsSlot0(double kP, double kI, double kD);
+
+	public abstract void setFF(double kS, double kV, double kA);
+
+	public abstract void setPercentOutput(double percent);
+
+	public abstract void setPosition(double pos);
+
+	public abstract void setBrakeMode(boolean enabled);
+
+	public abstract void setNeutralMode(NeutralModeValue mode);
+
+	public abstract void setIdleMode(IdleMode mode);
+
+	public abstract void stop();
+
+	public MotorIOInputs getMotorIOInputs() {
+		return new MotorIO.MotorIOInputs();
+	}
+
+	public abstract void setCoastOut();
+
+	public abstract void setNeutralOut();
+
+	public abstract void setCurrentPosition(Angle mechanismPosition);
+
+	public abstract void setMotionMagicParameters(double cruiseVelocity, double acceleration, double jerk);
+
+	public abstract void setMotionMagicSetpoint(Angle mechanismPosition);
+
+	public abstract void setVelocitySetpoint(AngularVelocity mechanismVelocity);
+
+	public abstract void setDutyCycleSetpoint(Dimensionless percent);
+
+	public abstract void setPositionSetpoint(Angle mechanismPosition);
+
+	public abstract void setVoltageSetpoint(Voltage voltage);
+
+	public abstract double getVelocityInch();
+
+	public abstract double getPositionInch();
+
+	public abstract double getSupplyCurrent();
+
+	public abstract double getAcceleration();
+
+	public abstract double getAppliedVoltage();
+
+	public abstract double getTemp();
+
+	public abstract double getRotations();
+
+	public abstract AngularVelocity getVelocity();
+
+	public abstract Angle getPosition();
+
+	public abstract void useSoftLimits(boolean enable);
+
+	public final void applySetpoint(Setpoint setpoint){
+		this.setpoint = setpoint;
+
+		setpoint.apply(this);
+	}
+
+	public final Setpoint getCurrentSetpoint(){
+		return setpoint;
+	}
+
+	/**
+	 * Gets the current setpoint value of the MotorIO using units of the MotorIO.
+	 *
+	 * @return Setpoint in mechanism units.
+	 */
+	public double getSetpointDoubleInUnits() {
+		Setpoint currentSetpoint = getCurrentSetpoint();
+		switch (currentSetpoint.mode) {
+			case POSITIONPID:
+			case MOTIONMAGIC:
+				AngleUnit positionUnit = unitType;
+				return positionUnit.ofBaseUnits(currentSetpoint.baseUnits).in(positionUnit);
+			case VELOCITY:
+				AngularVelocityUnit velocityUnit = unitType.per(time);
+				return velocityUnit.ofBaseUnits(currentSetpoint.baseUnits).in(velocityUnit);
+			case VOLTAGE:
+				VoltageUnit voltageUnit = Units.Volts;
+				return voltageUnit.ofBaseUnits(currentSetpoint.baseUnits).in(voltageUnit);
+			case DUTY_CYCLE:
+				DimensionlessUnit percentUnit = Units.Percent;
+				return percentUnit.ofBaseUnits(currentSetpoint.baseUnits).in(percentUnit);
+			case IDLE:
+			default:
+				return currentSetpoint.baseUnits;
+		}
+	}
+
+	//NOTE write the rest of get functions
+
+	public enum Mode {
+		IDLE,
+		VOLTAGE,
+		MOTIONMAGIC,
+		VELOCITY,
+		DUTY_CYCLE,
+		POSITIONPID;
+
+		/**
+		 * Gets whether the control mode is based on position. Motion Magic and Position
+		 * PID control count as position.
+		 *
+		 * @return True if in position control, false if not.
+		 */
+		public boolean isPositionControl() {
+			return switch (this) {
+				case MOTIONMAGIC, POSITIONPID -> true;
+				default -> false;
+			};
+		}
+
+		/**
+		 * Gets whether the control mode is based on velocity.
+		 *
+		 * @return True if in velocity control, false if not.
+		 */
+		public boolean isVelocityControl() {
+			return switch (this) {
+				case VELOCITY -> true;
+				default -> false;
+			};
+		}
+
+		/**
+		 * Gets whether the control mode is neutral. Only Idle counts as neutral
+		 *
+		 * @return True if in velocity control, false if not.
+		 */
+		public boolean isNeutralControl() {
+			return switch (this) {
+				case IDLE -> true;
+				default -> false;
+			};
+		}
+
+		/**
+		 * Gets whether the control mode is based on voltage. Voltage and Duty Cycle control count as voltage.
+		 *
+		 * @return True if in voltage control, false if not.
+		 */
+		public boolean isVoltageControl() {
+			return switch (this) {
+				case VOLTAGE, DUTY_CYCLE -> true;
+				 default -> false;
+			};
+		}
+	}
+
+	public static class Setpoint {
+		private final UnaryOperator<MotorIO> applier;
+		public final Mode mode;
+		public final double baseUnits;
+
+		/**
+		 * Creates a setpoint with a given applier, control mode, and base units
+		 * equivalent.
+		 *
+		 * @param applier   What to apply to ServoMotorIO when the setpoint is set.
+		 * @param mode      Control mode to register for this setpoint.
+		 * @param baseUnits Setpoint's target in it's base form of units as a double.
+		 */
+		private Setpoint(UnaryOperator<MotorIO> applier, Mode mode, double baseUnits) {
+			this.applier = applier;
+			this.mode = mode;
+			this.baseUnits = baseUnits;
+		}
+
+		/**
+		 * Creates a setpoint with a completely custom applier, control mode, and base
+		 * units.
+		 *
+		 * @param applier   What to apply to ServoMotorIO when the setpoint is set.
+		 * @param mode      Control mode to register for this setpoint.
+		 * @param baseUnits Setpoint's target in it's base form of units as a double.
+		 */
+		public static Setpoint withCustomSetpoint(UnaryOperator<MotorIO> applier, Mode mode, double baseUnits) {
+			return new Setpoint(applier, mode, baseUnits);
+		}
+
+		/**
+		 * Creates a setpoint to use motion magic control to go to a position.
+		 *
+		 * @param motionMagicSetpoint Posiiton to go to in mechanism units.
+		 * @return A new Setpoint.
+		 */
+		public static Setpoint withMotionMagicSetpoint(Angle motionMagicSetpoint) {
+			UnaryOperator<MotorIO> applier = (MotorIO io) -> {
+				io.setMotionMagicSetpoint(motionMagicSetpoint);
+				return io;
+			};
+			return new Setpoint(applier, Mode.MOTIONMAGIC, motionMagicSetpoint.baseUnitMagnitude());
+		}
+
+		/**
+		 * Creates a setpoint to use PID control to go to a position.
+		 *
+		 * @param positionSetpoint Posiiton to go to in mechanism units.
+		 * @return A new Setpoint.
+		 */
+		public static Setpoint withPositionSetpoint(Angle positionSetpoint) {
+			UnaryOperator<MotorIO> applier = (MotorIO io) -> {
+				io.setPositionSetpoint(positionSetpoint);
+				return io;
+			};
+			return new Setpoint(applier, Mode.POSITIONPID, positionSetpoint.baseUnitMagnitude());
+		}
+
+		/**
+		 * Creates a setpoint to go to a velocity.
+		 *
+		 * @param velocitySetpoint Velocity to go to in mechanism units.
+		 * @return A new Setpoint.
+		 */
+		public static Setpoint withVelocitySetpoint(AngularVelocity velocitySetpoint) {
+			UnaryOperator<MotorIO> applier = (MotorIO io) -> {
+				io.setVelocitySetpoint(velocitySetpoint);
+				return io;
+			};
+			return new Setpoint(applier, Mode.VELOCITY, velocitySetpoint.baseUnitMagnitude());
+		}
+
+		/**
+		 * Creates a setpoint to run at a voltage.
+		 *
+		 * @param voltage Voltage to run at.
+		 * @return A new Setpoint.
+		 */
+		public static Setpoint withVoltageSetpoint(Voltage voltage) {
+			UnaryOperator<MotorIO> applier = (MotorIO io) -> {
+				io.setVoltageSetpoint(voltage);
+				return io;
+			};
+			return new Setpoint(applier, Mode.VOLTAGE, voltage.baseUnitMagnitude());
+		}
+
+		/**
+		 * Creates a setpoint to run at a percent of maximum voltage.
+		 *
+		 * @param percent Percent to run at.
+		 * @return A new Setpoint.
+		 */
+		public static Setpoint withDutyCycleSetpoint(Dimensionless percent) {
+			UnaryOperator<MotorIO> applier = (MotorIO io) -> {
+				io.setDutyCycleSetpoint(percent);
+				return io;
+			};
+			return new Setpoint(applier, Mode.DUTY_CYCLE, percent.baseUnitMagnitude());
+		}
+
+		/**
+		 * Creates a setpoint to idle.
+		 *
+		 * @return A new Setpoint.
+		 */
+		public static Setpoint withNeutralSetpoint() {
+			UnaryOperator<MotorIO> applier = (MotorIO io) -> {
+				io.setNeutralOut();
+				return io;
+			};
+			return new Setpoint(applier, Mode.IDLE, 0.0);
+		}
+
+		/**
+		 * Creates a setpoint to coast.
+		 *
+		 * @return A new Setpoint.
+		 */
+		public static Setpoint withCoastSetpoint() {
+			UnaryOperator<MotorIO> applier = (MotorIO io) -> {
+				io.setCoastOut();
+				return io;
+			};
+			return new Setpoint(applier, Mode.IDLE, 0.0);
+		}
+
+		public void apply(MotorIO io) {
+			applier.apply(io);
+		}
+	}
+
+}

@@ -48,7 +48,7 @@ public class CatzDrivetrain extends SubsystemBase {
 
   // Gyro input/output interface
   private final GyroIO gyroIO;
-  private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
+   private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
 
   // Alerts
   private final Alert gyroDisconnected;

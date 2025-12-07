@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.CatzConstants;
-import frc.robot.CatzSubsystems.CatzArm.ArmIOSim;
 // import frc.robot.CatzSubsystems.CatzLEDs.CatzLED;
 // import frc.robot.CatzSubsystems.CatzLEDs.CatzLED.WinchingState;
 // import frc.robot.CatzSubsystems.CatzOuttake.CatzOuttake;
@@ -39,7 +38,7 @@ public class CatzWrist extends SubsystemBase {
   static LoggedTunableNumber kA = new LoggedTunableNumber("Wrist/kA", 0);
 
   @RequiredArgsConstructor
-  public enum WristPosition { //In Rotations //TODO not real working numbers 
+  public enum WristPosition { //In Rotations //TODO not real working numbers
     RETRACT(() -> -100), //TBD
     HOME(() -> 0), //TBD
     EXTENDING(() -> 100), //TBD

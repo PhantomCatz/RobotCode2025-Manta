@@ -1,8 +1,8 @@
 package frc.robot.CatzSubsystems;
 
-import edu.wpi.first.math.geometry.Rotation2d;
 import frc.robot.CatzSubsystems.CatzArm.CatzArm;
-import frc.robot.CatzSubsystems.CatzElevator.CatzElevator;
+// import frc.robot.CatzSubsystems.CatzElevator.CatzElevator;
+// import frc.robot.CatzSubsystems.CatzIntakeRollers.RollerSubsytem;
 import frc.robot.CatzSubsystems.CatzWrist.CatzWrist;
 import frc.robot.Utilities.VirtualSubsystem;
 
@@ -11,7 +11,7 @@ public class CatzSuperstructure extends VirtualSubsystem{
 
     private final SubystemVisualizer setpointVisualizer = new SubystemVisualizer("Setpoint");
 
-    public static final CatzElevator elevator = CatzElevator.Instance;
+    // public static final CatzElevator elevator = CatzElevator.Instance;
     public static final CatzWrist wrist = CatzWrist.Instance;
     public static final CatzArm arm = CatzArm.Instance;
 
@@ -22,9 +22,12 @@ public class CatzSuperstructure extends VirtualSubsystem{
     @Override
     public void periodic() {
 
-        setpointVisualizer.update(elevator.getElevatorPositionMeters(), 
-                                  Rotation2d.fromDegrees(arm.getArmPos()), 
-                                  Rotation2d.fromDegrees(wrist.getWristPos()));
+        //setpointVisualizer.update(elevator.getElevatorPositionMeters(),
+                                  //Rotation2d.fromDegrees(arm.getArmPos()),
+                                  //Rotation2d.fromDegrees(wrist.getWristPos()));
     }
-    
+
+    // public Command setSpeed() {
+    //     return new RunCommand(() -> {RollerSubsytem.Instance.setSpeed(1);});
+    // }
 }

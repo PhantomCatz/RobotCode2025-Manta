@@ -9,13 +9,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Current;
-import edu.wpi.first.units.measure.Temperature;
-import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
-import frc.robot.Robot;
 import frc.robot.CatzSubsystems.SubystemVisualizer;
 import frc.robot.CatzSubsystems.CatzArm.ArmConstants;
 
@@ -45,7 +39,7 @@ public class WristIOSim implements WristIO {
   public void updateInputs(WristIOInputs inputs) {
     inputs.positionDegrees = Units.radiansToDegrees(m_wristMotorSim.getAngleRads());
     inputs.velocityRpm = Units.radiansPerSecondToRotationsPerMinute(m_wristMotorSim.getVelocityRadPerSec());
-  
+
     double setVoltage = simPidController.calculate(inputs.positionDegrees, targetDegreesFinalShaft) * 12.0;
     m_wristMotorSim.update(0.02);
     m_wristMotorSim.setInputVoltage(setVoltage);
