@@ -11,8 +11,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.CatzConstants;
 import frc.robot.CatzAbstractions.io.GenericMotorIO;
 import frc.robot.CatzAbstractions.io.ServoIOSim;
-import frc.robot.CatzAbstractions.io.ServoMotorIO;
-import frc.robot.CatzAbstractions.io.ServoMotorIOReal;
 import frc.robot.Utilities.LoggedTunableNumber;
 import lombok.RequiredArgsConstructor;
 import edu.wpi.first.math.util.Units;
