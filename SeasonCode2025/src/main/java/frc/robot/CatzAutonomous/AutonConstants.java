@@ -1,4 +1,4 @@
-package frc.robot.Autonomous;
+package frc.robot.CatzAutonomous;
 
 public class AutonConstants {
     public static final double ACCEPTABLE_DIST_METERS = 0.02;

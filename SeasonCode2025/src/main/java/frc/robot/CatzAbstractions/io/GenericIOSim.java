@@ -1,4 +1,4 @@
-package frc.robot.Bases;
+package frc.robot.CatzAbstractions.io;
 
 
 
@@ -13,11 +13,12 @@ import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc.robot.CatzSubsystems.CatzArm.ArmConstants;
 import frc.robot.CatzSubsystems.CatzDriveAndRobotOrientation.Drivetrain.DriveConstants;
 
-public class TalonFXIOSim implements MotorIO {
+public class GenericIOSim implements GenericMotorIO {
     // CTRE Motor + Sim State
     private final TalonFX LeaderTalon = new TalonFX(0); // CAN ID 0, adjust as needed
 
@@ -33,7 +34,7 @@ public class TalonFXIOSim implements MotorIO {
     private final DCMotorSim TalonFXSim = new DCMotorSim(plantIntakeMotorSys, GearBox, 0.025, 0.025);
 
 
-    public TalonFXIOSim() {
+    public GenericIOSim() {
         // Configure neutral mode, etc.
         LeaderTalon.setNeutralMode(NeutralModeValue.Brake);
     }
@@ -70,9 +71,9 @@ public class TalonFXIOSim implements MotorIO {
     }
 
     @Override
-    public void setPosition(double setpointRotations) {
+    public void setCurrentPosition(Angle setpointRotations) {
         // Adjust the target position for the intake ramp
-        targetDegreesFinalShaft = setpointRotations * 360.0; // Convert rotations to degrees
+        targetDegreesFinalShaft = setpointRotations.baseUnitMagnitude() * 360.0; // Convert rotations to degrees
     }
 
 }

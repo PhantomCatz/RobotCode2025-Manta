@@ -9,6 +9,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.CatzConstants;
+import frc.robot.CatzAbstractions.io.GenericMotorIO;
+import frc.robot.CatzAbstractions.io.ServoIOSim;
+import frc.robot.CatzAbstractions.io.ServoMotorIO;
+import frc.robot.CatzAbstractions.io.ServoMotorIOReal;
 import frc.robot.Utilities.LoggedTunableNumber;
 import lombok.RequiredArgsConstructor;
 import edu.wpi.first.math.util.Units;
@@ -73,7 +77,7 @@ public class CatzElevator extends SubsystemBase {
           System.out.println("Elevator Configured for Replayed simulation");
         break;
         case SIM:
-          io = new ElevatorIOSim();
+          io = new ServoIOSim();
           System.out.println("Elevator Configured for Simulation");
         break;
         default:

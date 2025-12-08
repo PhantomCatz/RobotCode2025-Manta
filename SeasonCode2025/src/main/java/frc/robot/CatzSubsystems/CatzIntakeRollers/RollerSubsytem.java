@@ -1,31 +1,40 @@
 package frc.robot.CatzSubsystems.CatzIntakeRollers;
 
-import frc.robot.Bases.TalonFXIOSim;
-import frc.robot.Bases.MotorIO;
-import frc.robot.Bases.MotorIONull;
-import frc.robot.Bases.MotorSubsystem;
-import frc.robot.Bases.SparkmaxIOReal;
-
 import static frc.robot.CatzSubsystems.CatzIntakeRollers.RollerConstants.*;
+
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import frc.robot.CatzConstants;
+import frc.robot.CatzAbstractions.Bases.GenericMotorSubsystem;
+import frc.robot.CatzAbstractions.io.GenericMotorIO;
+import frc.robot.CatzAbstractions.io.GenericMotorIONull;
+import frc.robot.CatzAbstractions.io.GenericTalonFXIOReal;
+import frc.robot.CatzAbstractions.io.GenericIOSim;
+import frc.robot.Utilities.MotorUtil.NeutralMode;
 
 
-public class RollerSubsytem extends MotorSubsystem{
-    private static final MotorIO io = getIOInstance();
+public class RollerSubsytem extends GenericMotorSubsystem {
+    private static final GenericMotorIO io = getIOInstance();
 
-    static MotorIO getIOInstance() {
+    static GenericMotorIO getIOInstance() {
         switch (CatzConstants.hardwareMode) {
             case REAL:
                 System.out.println("Roller Configured for Real");
-                return new SparkmaxIOReal(RollerMotor, Final_Ratio, s0g, IdleMode.kBrake);
+                return new GenericTalonFXIOReal(
+                    0.25,
+                    s0g,
+                    NeutralModeValue.Brake,
+                    new TalonFX(45),
+                    new TalonFX(46)
+                );
             case SIM:
                 // System.out.println("Roller Configured for Simulation");
-                return new TalonFXIOSim();
+                return new GenericIOSim();
             default:
                 // System.out.println("Roller Unconfigured");
-                return new MotorIONull();
+                return new GenericMotorIONull();
         }
     }
 
