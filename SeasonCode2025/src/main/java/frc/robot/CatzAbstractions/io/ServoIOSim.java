@@ -13,11 +13,8 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import frc.robot.CatzSubsystems.SubystemVisualizer;
 import frc.robot.CatzSubsystems.CatzElevator.ElevatorConstants;
-import frc.robot.CatzSubsystems.CatzElevator.ElevatorIO;
-import frc.robot.CatzSubsystems.CatzElevator.ElevatorIO.ElevatorIOInputs;
 
-public class ServoIOSim implements ElevatorIO{
-
+public class ServoIOSim implements GenericMotorIO {
 
   private final DCMotor m_elevatorGearbox = DCMotor.getKrakenX60Foc(2);
   private double targetRotations;
@@ -47,7 +44,7 @@ public class ServoIOSim implements ElevatorIO{
   // private final LoggedMechanismLigament2d mechanismElevator = mechanismRoot.append(new LoggedMechanismLigament2d("Elevator", m_elevatorSim.getPositionMeters(), 90));
 
   @Override
-  public void updateInputs(ElevatorIOInputs inputs) {
+  public void updateInputs( inputs) {
     currentRotations = inputs.positionInch / FINAL_RATIO;
     Logger.recordOutput("Elevator/SimTargetRotations", targetRotations);
     Logger.recordOutput("Elevator/SimRotations", currentRotations);
@@ -70,12 +67,6 @@ public class ServoIOSim implements ElevatorIO{
       double setpointRotations = setpointInches / FINAL_RATIO;
       targetRotations = setpointRotations;
     System.out.println("New elevator target: "+targetRotations);
-  }
-  @Override
-  public void runSetpointDown(double setpointInches) {
-      double setpointRotations = setpointInches / FINAL_RATIO;
-      targetRotations = setpointRotations;
-      System.out.println("New elevator target: "+targetRotations);
   }
 
   public Pose3d[] getElevatorPose3d() {

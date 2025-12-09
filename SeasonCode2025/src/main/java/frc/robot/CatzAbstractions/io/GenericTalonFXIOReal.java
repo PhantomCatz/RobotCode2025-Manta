@@ -21,6 +21,7 @@ import edu.wpi.first.units.measure.Dimensionless;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.Utilities.MotorUtil.Gains;
+import lombok.Getter;
 import frc.robot.Utilities.Setpoint;
 
 public class GenericTalonFXIOReal implements GenericMotorIO {
@@ -51,7 +52,6 @@ public class GenericTalonFXIOReal implements GenericMotorIO {
     private boolean enabled = true;
 
     private static double Final_Ratio;
-    
     
     /**
      * base for constructors
@@ -325,6 +325,22 @@ public class GenericTalonFXIOReal implements GenericMotorIO {
 			leaderTalon.setPosition(mechanismPosition);
 		});
 	}
+
+    /**
+     * Retrieves the number of motors in the system, including the primary motor and any follower motors.
+     * This is a special case where a getter is used as part of the IO abstraction to provide information
+     * about the hardware configuration. If there are no follower motors, the method returns 1 (for the primary motor).
+     *
+     * @return The total number of motors, including the primary motor and any followers.
+     */
+    @Override
+    public int getNumMotors() {
+        if (followerTalons == null) {
+            return 1;
+        } else {
+            return followerTalons.length + 1;
+        }
+    }
 
     public static class ControlRequestGetter {
 		public ControlRequest getVoltageRequest(Voltage voltage) {

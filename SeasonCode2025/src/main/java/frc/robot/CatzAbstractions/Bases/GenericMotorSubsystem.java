@@ -11,22 +11,25 @@ public abstract class GenericMotorSubsystem extends SubsystemBase {
     protected final GenericMotorIO io;
 	protected final String name;
 
-	protected final MotorIOInputsAutoLogged inputs = new MotorIOInputsAutoLogged();
+	protected final MotorIOInputsAutoLogged inputs[];
 
     public GenericMotorSubsystem(GenericMotorIO io, String name) {
 		super(name);
 		this.io = io; 
 
 		this.name = name;
+		this.inputs = new MotorIOInputsAutoLogged[io.getNumMotors()];
 	}
 
     @Override
 	public void periodic() {
-		io.updateInputs(inputs);
-		Logger.processInputs(name, inputs);
-
-
+		for (int i = 0; i < io.getNumMotors(); i++) {
+			io.updateInputs(inputs[i]);
+			Logger.processInputs(name + "[" + i + "]", inputs[i]);
+		}
 	}
+
+	
 
 
 

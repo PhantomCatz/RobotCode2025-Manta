@@ -81,5 +81,10 @@ public interface GenericMotorIO {
 
   public default void applySetpoint(Setpoint setpointToApply) {}
 
+  public default void useSoftLimits(boolean enable) {}
+
+  public default int getNumMotors() {
+    return 1;
+  }
 
 }
