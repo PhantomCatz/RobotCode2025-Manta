@@ -8,8 +8,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.CatzSubsystems.CatzArm.CatzArm;
-import frc.robot.CatzSubsystems.CatzElevator.CatzElevator;
 import frc.robot.CatzSubsystems.CatzIntakeRollers.RollerSubsytem;
 import frc.robot.CatzSubsystems.CatzWrist.CatzWrist;
 

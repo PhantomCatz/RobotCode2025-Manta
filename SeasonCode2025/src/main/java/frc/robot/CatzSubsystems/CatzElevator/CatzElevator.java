@@ -4,22 +4,15 @@ import static frc.robot.CatzSubsystems.CatzElevator.ElevatorConstants.*;
 import static frc.robot.CatzSubsystems.CatzIntakeRollers.RollerConstants.s0g;
 
 import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
 
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.CatzConstants;
 import frc.robot.CatzAbstractions.Bases.ServoMotorSubsystem;
 import frc.robot.CatzAbstractions.io.GenericIOSim;
 import frc.robot.CatzAbstractions.io.GenericMotorIO;
 import frc.robot.CatzAbstractions.io.GenericMotorIONull;
 import frc.robot.CatzAbstractions.io.GenericTalonFXIOReal;
-import frc.robot.CatzAbstractions.io.ServoIOSim;
 import frc.robot.Utilities.LoggedTunableNumber;
 import lombok.RequiredArgsConstructor;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DriverStation;
 
 import org.littletonrobotics.junction.Logger;

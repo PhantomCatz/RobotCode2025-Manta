@@ -4,7 +4,6 @@ import java.util.function.UnaryOperator;
 
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-import edu.wpi.first.units.AngleUnit;
 import edu.wpi.first.units.measure.*;
 import frc.robot.CatzAbstractions.io.GenericMotorIO;
 
@@ -185,4 +184,3 @@ public class Setpoint {
 		}
 	}
 }
-

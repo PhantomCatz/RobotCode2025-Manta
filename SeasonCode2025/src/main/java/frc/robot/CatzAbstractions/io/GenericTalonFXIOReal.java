@@ -12,16 +12,13 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 
-import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
-import edu.wpi.first.units.measure.Dimensionless;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.Utilities.MotorUtil.Gains;
-import lombok.Getter;
 import frc.robot.Utilities.Setpoint;
 
 public class GenericTalonFXIOReal implements GenericMotorIO {
@@ -52,7 +49,7 @@ public class GenericTalonFXIOReal implements GenericMotorIO {
     private boolean enabled = true;
 
     private static double Final_Ratio;
-    
+
     /**
      * base for constructors
      * 1 motor sets bare minimum to not kill itself
@@ -61,7 +58,7 @@ public class GenericTalonFXIOReal implements GenericMotorIO {
      * @param s0g slot 0 gains
      */
     public GenericTalonFXIOReal(double FL, Gains s0g, TalonFX motor) {
-    
+
         leaderTalon = motor;
         Final_Ratio = FL;
         slot0_gainsM = s0g;
@@ -90,7 +87,7 @@ public class GenericTalonFXIOReal implements GenericMotorIO {
         config.CurrentLimits.StatorCurrentLimit = 80.0;
         config.CurrentLimits.StatorCurrentLimitEnable = true;
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        
+
 
         config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
@@ -153,7 +150,7 @@ public class GenericTalonFXIOReal implements GenericMotorIO {
             .isOK();
 
         if(followerTalons != null) {
-            inputs.isFollowerConnected = 
+            inputs.isFollowerConnected =
                 BaseStatusSignal.refreshAll(
                     appliedVoltage.get(1),
                     supplyCurrent.get(1),
@@ -225,14 +222,14 @@ public class GenericTalonFXIOReal implements GenericMotorIO {
         config.Slot1.kG = kG;
         leaderTalon.getConfigurator().apply(config, 1.0);
     }
-     
+
     /**
-     * Sets the brake mode for the motor controllers. When brake mode is enabled, 
-     * the motor controllers will actively resist motion when no power is applied. 
-     * When disabled (coast mode), the motor controllers will allow the motors to 
+     * Sets the brake mode for the motor controllers. When brake mode is enabled,
+     * the motor controllers will actively resist motion when no power is applied.
+     * When disabled (coast mode), the motor controllers will allow the motors to
      * spin freely.
      *
-     * @param enabled If true, sets the motor controllers to brake mode. If false, 
+     * @param enabled If true, sets the motor controllers to brake mode. If false,
      *                sets the motor controllers to coast mode.
      */
     @Override

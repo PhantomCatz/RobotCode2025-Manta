@@ -50,7 +50,7 @@ public class ElevatorConstants {
             default -> Units.inchesToMeters(25.866);
         };
 
-    
+
   @RequiredArgsConstructor
   public static enum ElevatorPosition {
       //TO CHANGE HEIGHT GO TO ElevatorConstants.java

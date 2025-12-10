@@ -3,13 +3,12 @@ package frc.robot.CatzAbstractions.Bases;
 import frc.robot.CatzAbstractions.io.GenericMotorIO;
 import frc.robot.Utilities.DelayedBoolean;
 import frc.robot.Utilities.EpsilonEquals;
-import frc.robot.Utilities.LoggedTunableNumber;
 import frc.robot.Utilities.Setpoint;
 import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class ServoMotorSubsystem extends GenericMotorSubsystem {
-    
+
 	protected final GenericMotorIO io;
 	protected final String name;
 	protected final double epsilonThreshold;
@@ -37,7 +36,7 @@ public class ServoMotorSubsystem extends GenericMotorSubsystem {
 	}
 
 	public void customServoPeriodic() {
-		
+
 	}
 
 	/**

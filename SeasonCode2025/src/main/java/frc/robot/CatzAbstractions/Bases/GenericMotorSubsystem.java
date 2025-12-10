@@ -4,8 +4,8 @@ package frc.robot.CatzAbstractions.Bases;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Bases.MotorIOInputsAutoLogged;
 import frc.robot.CatzAbstractions.io.GenericMotorIO;
+import frc.robot.CatzAbstractions.io.MotorIOInputsAutoLogged;
 import frc.robot.Utilities.Setpoint;
 
 public abstract class GenericMotorSubsystem extends SubsystemBase {
@@ -16,7 +16,7 @@ public abstract class GenericMotorSubsystem extends SubsystemBase {
 
 	public GenericMotorSubsystem(GenericMotorIO io, String name) {
 		super(name);
-		this.io = io; 
+		this.io = io;
 
 		this.name = name;
 	}
@@ -28,7 +28,7 @@ public abstract class GenericMotorSubsystem extends SubsystemBase {
 		customGenericPeriodic();
 	}
 
-	
+
 	public void customGenericPeriodic() {
 
 	}

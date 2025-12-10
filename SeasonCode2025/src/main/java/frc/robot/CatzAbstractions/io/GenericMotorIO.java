@@ -1,18 +1,14 @@
 package frc.robot.CatzAbstractions.io;
 
-
 import org.littletonrobotics.junction.AutoLog;
 
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Dimensionless;
-import edu.wpi.first.units.measure.Voltage;
 import frc.robot.Utilities.Setpoint;
 
 public interface GenericMotorIO {
+
 
   @AutoLog
   public static class MotorIOInputs {
