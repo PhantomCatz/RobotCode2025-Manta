@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import frc.robot.CatzSubsystems.SubystemVisualizer;
 import frc.robot.CatzSubsystems.CatzElevator.ElevatorConstants;
@@ -21,8 +22,8 @@ public class ServoIOSim implements GenericMotorIO {
   private double currentRotations;
   private final int ELEVATOR_INDEX = 1;
   private Pose3d[] elevatorPose3d = {
-    new Pose3d(0.0, 0.0, Units.inchesToMeters(ElevatorConstants.START_HEIGHT_GROUND), new Rotation3d(0.0, Math.PI / 2, 0.0)),
-    new Pose3d(0.0, 0.0, Units.inchesToMeters(ElevatorConstants.START_HEIGHT_GROUND+1), new Rotation3d(0.0, Math.PI / 2, 0.0))
+      new Pose3d(0.0, 0.0, Units.inchesToMeters(ElevatorConstants.START_HEIGHT_GROUND), new Rotation3d(0.0, Math.PI / 2, 0.0)),
+      new Pose3d(0.0, 0.0, Units.inchesToMeters(ElevatorConstants.START_HEIGHT_GROUND+1), new Rotation3d(0.0, Math.PI / 2, 0.0))
   };
 
   private PIDController simPidController = new PIDController(0.1, 0.0, 0.0);
@@ -44,8 +45,8 @@ public class ServoIOSim implements GenericMotorIO {
   // private final LoggedMechanismLigament2d mechanismElevator = mechanismRoot.append(new LoggedMechanismLigament2d("Elevator", m_elevatorSim.getPositionMeters(), 90));
 
   @Override
-  public void updateInputs( inputs) {
-    currentRotations = inputs.positionInch / FINAL_RATIO;
+  public void updateInputs(MotorIOInputs inputs) {
+    currentRotations = inputs.relativeEncoderPosition / FINAL_RATIO;
     Logger.recordOutput("Elevator/SimTargetRotations", targetRotations);
     Logger.recordOutput("Elevator/SimRotations", currentRotations);
 
@@ -53,20 +54,22 @@ public class ServoIOSim implements GenericMotorIO {
     m_elevatorSim.setInputVoltage(setVoltage);
     m_elevatorSim.update(0.02);
 
-    inputs.velocityInchPerSec = Units.metersToInches(m_elevatorSim.getVelocityMetersPerSecond());
-    inputs.positionInch = Units.metersToInches(m_elevatorSim.getPositionMeters());
-    Logger.recordOutput("Elevator/SimCurrentSpeedInchesPerSecond", inputs.velocityInchPerSec);
-    Logger.recordOutput("Elevator/SimCurrentPositionInches", inputs.positionInch);
-    SubystemVisualizer.setSimPose(ELEVATOR_INDEX, new Pose3d(new Translation3d(0.0, 0.0, Units.inchesToMeters(inputs.positionInch/2)).plus(ElevatorConstants.ELEVATOR_SIM_OFFSET), new Rotation3d(0.0, Math.PI / 2, 0.0)));
+    inputs.velocityRPS = Units.metersToInches(m_elevatorSim.getVelocityMetersPerSecond());
+    inputs.relativeEncoderPosition = Units.metersToInches(m_elevatorSim.getPositionMeters());
+    SubystemVisualizer.setSimPose(ELEVATOR_INDEX, new Pose3d(new Translation3d(0.0, 0.0, Units.inchesToMeters(inputs.relativeEncoderPosition/2)).plus(ElevatorConstants.ELEVATOR_SIM_OFFSET), new Rotation3d(0.0, Math.PI / 2, 0.0)));
+
+
+    Logger.recordOutput("Elevator/SimCurrentSpeedInchesPerSecond", inputs.velocityRPS);
+    Logger.recordOutput("Elevator/SimCurrentPositionInches", inputs.relativeEncoderPosition);
     // mechanismElevator.setLength(0.5 + Units.inchesToMeters(inputs.positionInch));
     // Logger.recordOutput("Mechanism2d/Elevator", mechanism);
   }
 
   @Override
-  public void runSetpointUp(double setpointInches) {
+  public void setPositionSetpoint(double setpointInches) {
       double setpointRotations = setpointInches / FINAL_RATIO;
       targetRotations = setpointRotations;
-    System.out.println("New elevator target: "+targetRotations);
+      System.out.println("New elevator target: "+targetRotations);
   }
 
   public Pose3d[] getElevatorPose3d() {

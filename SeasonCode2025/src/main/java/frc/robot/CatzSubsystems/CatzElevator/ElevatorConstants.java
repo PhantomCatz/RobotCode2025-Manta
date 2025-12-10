@@ -1,12 +1,16 @@
 package frc.robot.CatzSubsystems.CatzElevator;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import frc.robot.CatzConstants;
+import frc.robot.CatzAbstractions.Bases.ServoMotorSubsystem.ServoHomingConfig;
 import frc.robot.Utilities.LoggedTunableNumber;
 import frc.robot.Utilities.MotorUtil.Gains;
 import frc.robot.Utilities.MotorUtil.MotionMagicParameters;
+import lombok.RequiredArgsConstructor;
 
 /** Add your docs here. */
 public class ElevatorConstants {
@@ -45,6 +49,32 @@ public class ElevatorConstants {
             case SN2 -> Units.inchesToMeters(24.8);
             default -> Units.inchesToMeters(25.866);
         };
+
+    
+  @RequiredArgsConstructor
+  public static enum ElevatorPosition {
+      //TO CHANGE HEIGHT GO TO ElevatorConstants.java
+      PosLimitSwitchStow(() -> 0.0),
+      PosStow(() -> STOW_HEIGHT),
+      PosCoastStow(() -> COAST_STOW_HEIGHT),
+      PosL1(() -> L1_HEIGHT),
+      PosL2(() -> L2_HEIGHT),
+      PosL3(() -> L3_HEIGHT),
+      PosL4(() -> L4_HEIGHT),
+      PosL4Adj(() -> L4_CORAL_ADJ),
+      AlgaeBotTransition(() -> ALGAE_BOT),
+      PosBotBot(() -> BOT_BOT_ALGAE),
+      PosBotTop(() -> BOT_TOP_ALGAE),
+      PosManual(new LoggedTunableNumber("Elevator/ScoreSourceSetpoint",0.0)),
+      PosNull(() -> -1.0);
+
+    private final DoubleSupplier elevatorSetpointSupplier;
+
+    private double getTargetPositionInch() {
+      return elevatorSetpointSupplier.getAsDouble();
+    }
+  }
+
 
     // Misc constants
     public static final boolean IS_LEADER_INVERTED = false;
@@ -101,5 +131,15 @@ public class ElevatorConstants {
     public static final LoggedTunableNumber mmJerk = new LoggedTunableNumber("Elevator/Gains/Magic Jerk", motionMagicParameters.mmJerk());
     public static final LoggedTunableNumber lowerLimitRotations = new LoggedTunableNumber("Elevator/LowerLimitInches", MIN_TRAVEL_INCHES);
     public static final LoggedTunableNumber upperLimitRotations = new LoggedTunableNumber("Elevator/UpperLimitInches", MAX_TRAVEL_INCHES);
+
+	public static ServoHomingConfig getServoConfig() {
+		ServoHomingConfig servoConfig = new ServoHomingConfig();
+		servoConfig.kHomePosition = 0.0;
+		servoConfig.kHomingTimeout = 0.5;
+		servoConfig.kHomingVoltage = -0.5;
+		servoConfig.kSetHomedVelocity = 1.0;
+
+		return servoConfig;
+	}
 
 }

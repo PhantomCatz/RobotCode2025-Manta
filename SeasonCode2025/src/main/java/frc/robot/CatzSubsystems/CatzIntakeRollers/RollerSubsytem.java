@@ -6,6 +6,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
+import edu.wpi.first.units.BaseUnits;
 import frc.robot.CatzConstants;
 import frc.robot.CatzAbstractions.Bases.GenericMotorSubsystem;
 import frc.robot.CatzAbstractions.io.GenericMotorIO;

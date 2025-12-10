@@ -71,9 +71,9 @@ public class GenericIOSim implements GenericMotorIO {
     }
 
     @Override
-    public void setCurrentPosition(Angle setpointRotations) {
+    public void setCurrentPosition(double setpointRotations) {
         // Adjust the target position for the intake ramp
-        targetDegreesFinalShaft = setpointRotations.baseUnitMagnitude() * 360.0; // Convert rotations to degrees
+        targetDegreesFinalShaft = setpointRotations * 360.0; // Convert rotations to degrees
     }
 
 }

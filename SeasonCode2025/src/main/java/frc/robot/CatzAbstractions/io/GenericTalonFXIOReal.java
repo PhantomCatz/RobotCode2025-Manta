@@ -295,71 +295,56 @@ public class GenericTalonFXIOReal implements GenericMotorIO {
 	}
 
     @Override
-	public void setVoltageSetpoint(Voltage voltage) {
+	public void setVoltageSetpoint(double voltage) {
 		setControl(requestGetter.getVoltageRequest(voltage));
 	}
 
 	@Override
-	public void setDutyCycleSetpoint(Dimensionless percent) {
+	public void setDutyCycleSetpoint(double percent) {
 		setControl(requestGetter.getDutyCycleRequest(percent));
 	}
 
 	@Override
-	public void setMotionMagicSetpoint(Angle mechanismPosition) {
+	public void setMotionMagicSetpoint(double mechanismPosition) {
 		setControl(requestGetter.getMotionMagicRequest(mechanismPosition));
 	}
 
 	@Override
-	public void setVelocitySetpoint(AngularVelocity mechanismVelocity) {
+	public void setVelocitySetpoint(double mechanismVelocity) {
 		setControl(requestGetter.getVelocityRequest(mechanismVelocity));
 	}
 
 	@Override
-	public void setPositionSetpoint(Angle mechanismPosition) {
+	public void setPositionSetpoint(double mechanismPosition) {
 		setControl(requestGetter.getPositionRequest(mechanismPosition));
 	}
 
 	@Override
-	public void setCurrentPosition(Angle mechanismPosition) {
+	public void setCurrentPosition(double mechanismPosition) {
 		threadPoolExecutor.submit(() -> {
 			leaderTalon.setPosition(mechanismPosition);
 		});
 	}
 
-    /**
-     * Retrieves the number of motors in the system, including the primary motor and any follower motors.
-     * This is a special case where a getter is used as part of the IO abstraction to provide information
-     * about the hardware configuration. If there are no follower motors, the method returns 1 (for the primary motor).
-     *
-     * @return The total number of motors, including the primary motor and any followers.
-     */
-    @Override
-    public int getNumMotors() {
-        if (followerTalons == null) {
-            return 1;
-        } else {
-            return followerTalons.length + 1;
-        }
-    }
 
     public static class ControlRequestGetter {
-		public ControlRequest getVoltageRequest(Voltage voltage) {
-			return new VoltageOut(voltage.in(Units.Volts)).withEnableFOC(false);
+		public ControlRequest getVoltageRequest(double voltage) {
+			return new VoltageOut(voltage);
 		}
 
-		public ControlRequest getDutyCycleRequest(Dimensionless percent) {
-			return new DutyCycleOut(percent.in(Units.Percent));
+		public ControlRequest getDutyCycleRequest(double percent) {
+			return new DutyCycleOut(percent);
 		}
 
-		public ControlRequest getMotionMagicRequest(Angle mechanismPosition) {
+		public ControlRequest getMotionMagicRequest(double mechanismPosition) {
 			return new MotionMagicExpoVoltage(mechanismPosition).withSlot(0).withEnableFOC(true);
 		}
 
-		public ControlRequest getVelocityRequest(AngularVelocity mechanismVelocity) {
+		public ControlRequest getVelocityRequest(double mechanismVelocity) {
 			return new VelocityTorqueCurrentFOC(mechanismVelocity).withSlot(1);
 		}
 
-		public ControlRequest getPositionRequest(Angle mechanismPosition) {
+		public ControlRequest getPositionRequest(double mechanismPosition) {
 			return new PositionTorqueCurrentFOC(mechanismPosition).withSlot(2);
 		}
 	}

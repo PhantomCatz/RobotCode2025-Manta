@@ -1,8 +1,6 @@
 package frc.robot.CatzAbstractions.io;
 
 
-import java.util.function.UnaryOperator;
-
 import org.littletonrobotics.junction.AutoLog;
 
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -65,19 +63,19 @@ public interface GenericMotorIO {
 
   public default void setNeutralOut() {}
 
-  public default void setCurrentPosition(Angle mechanismPosition) {}
+  public default void setCurrentPosition(double mechanismPosition) {}
 
   public default void setMotionMagicParameters(double cruiseVelocity, double acceleration, double jerk) {}
 
-  public default void setMotionMagicSetpoint(Angle mechanismPosition) {}
+  public default void setMotionMagicSetpoint(double mechanismPosition) {}
 
-  public default void setVelocitySetpoint(AngularVelocity mechanismVelocity) {}
+  public default void setVelocitySetpoint(double mechanismVelocity) {}
 
-  public default void setDutyCycleSetpoint(Dimensionless percent) {}
+  public default void setDutyCycleSetpoint(double percent) {}
 
-  public default void setPositionSetpoint(Angle mechanismPosition) {}
+  public default void setPositionSetpoint(double mechanismPosition) {}
 
-  public default void setVoltageSetpoint(Voltage voltage) {}
+  public default void setVoltageSetpoint(double voltage) {}
 
   public default void applySetpoint(Setpoint setpointToApply) {}
 

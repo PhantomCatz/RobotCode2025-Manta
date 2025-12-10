@@ -1,37 +1,43 @@
 package frc.robot.CatzAbstractions.Bases;
 
-import frc.robot.Bases.MotorIOInputsAutoLogged;
 import frc.robot.CatzAbstractions.io.GenericMotorIO;
 import frc.robot.Utilities.DelayedBoolean;
 import frc.robot.Utilities.EpsilonEquals;
+import frc.robot.Utilities.LoggedTunableNumber;
 import frc.robot.Utilities.Setpoint;
-import frc.robot.CatzConstants;
-
 import org.littletonrobotics.junction.Logger;
-
-import edu.wpi.first.units.BaseUnits;
-import edu.wpi.first.units.Unit;
-import edu.wpi.first.units.Units;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Time;
-import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ServoMotorSubsystem extends GenericMotorSubsystem {
     
 	protected final GenericMotorIO io;
 	protected final String name;
-	protected final Angle epsilonThreshold;
+	protected final double epsilonThreshold;
+	protected ServoHomingConfig homingConfig;
+	private Setpoint setpoint;
 
-	public ServoMotorSubsystem(GenericMotorIO io, String name, Angle epsilonThreshold) {
+	private boolean mHoming = false;
+	private boolean mNeedsToHome = true;
+	private DelayedBoolean mHomingDelay;
+
+	public ServoMotorSubsystem(GenericMotorIO io, String name, double epsilonThreshold, ServoHomingConfig homingConfig) {
 		super(io, name);
 		this.io = io;
 		this.name = name;
 		this.epsilonThreshold = epsilonThreshold;
+		this.homingConfig = homingConfig;
+	}
+
+
+	@Override
+	public final void customGenericPeriodic() {
+		io.updateInputs(inputs);
+		Logger.processInputs(name, inputs);
+
+	}
+
+	public void customServoPeriodic() {
+		
 	}
 
 	/**
@@ -42,8 +48,8 @@ public class ServoMotorSubsystem extends GenericMotorSubsystem {
 	public boolean setpointNearHome() {
 		return EpsilonEquals.epsilonEquals(
 						getSetpointDoubleInUnits(),
-						homingConfig.kHomePosition.in(io.unitType),
-						epsilonThreshold.in(io.unitType));
+						homingConfig.kHomePosition,
+						epsilonThreshold);
 	}
 
 	/**
@@ -65,17 +71,9 @@ public class ServoMotorSubsystem extends GenericMotorSubsystem {
 	 * @return True if currently near setpoint, false if not. Returns false if not in position control.
 	 */
 	public boolean nearPositionSetpoint() {
-		return nearPosition(Angle.ofRelativeUnits(inputs.absoluteEncoderPosition, BaseUnits.AngleUnit.getBaseUnit()));
+		return nearPosition(inputs.absoluteEncoderPosition);
 	}
 
-	/**
-	 * Gets the current setpoint value of the MotorIO using units of the MotorIO.
-	 *
-	 * @return Setpoint in mechanism units.
-	 */
-	public double getSetpointDoubleInUnits() {
-		return ;
-	}
 
 	/**
 	 * Determines whether the subsystem is near a given position.
@@ -83,18 +81,23 @@ public class ServoMotorSubsystem extends GenericMotorSubsystem {
 	 * @param mechanismPosition Position to compare to.
 	 * @return True if near provided position, false if not.
 	 */
-	public boolean nearPosition(Angle mechanismPosition) {
+	public boolean nearPosition(double mechanismPosition) {
 		return EpsilonEquals.epsilonEquals(
-				inputs.,
-				mechanismPosition.in(BaseUnits.AngleUnit),
-				epsilonThreshold.in(BaseUnits.AngleUnit));
+				inputs.absoluteEncoderPosition,
+				mechanismPosition,
+				epsilonThreshold);
 	}
 
-	public void setCurrentPosition(Angle position) {
+	public double getSetpointDoubleInUnits() {
+		return setpoint.baseUnits;
+	}
+
+	public void setCurrentPosition(double position) {
 		io.setCurrentPosition(position);
 	}
 
 	public void applySetpoint(Setpoint setpoint) {
+		this.setpoint = setpoint;
 		io.applySetpoint(setpoint);
 	}
 
@@ -103,11 +106,23 @@ public class ServoMotorSubsystem extends GenericMotorSubsystem {
 	}
 
 	public static class ServoHomingConfig {
-		public Angle kHomePosition;
-		public Voltage kHomingVoltage;
-		public Time kHomingTimeout;
-		public AngularVelocity kSetHomedVelocity;
+		public double kHomePosition;
+		public double kHomingVoltage;
+		public double kHomingTimeout;
+		public double kSetHomedVelocity;
 	}
+
+
+
+  public void setBrakeMode(boolean enabled) {
+	io.setBrakeMode(enabled);
+  }
+
+  public void setFullManual(double manualPower) {
+	io.runPercentOutput(manualPower);
+  }
+
+
 
 
 }
