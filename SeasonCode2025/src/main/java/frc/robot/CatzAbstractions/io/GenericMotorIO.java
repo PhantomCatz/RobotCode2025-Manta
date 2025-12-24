@@ -2,10 +2,10 @@ package frc.robot.CatzAbstractions.io;
 
 import org.littletonrobotics.junction.AutoLog;
 
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
-import frc.robot.Utilities.Setpoint;
+
 
 public interface GenericMotorIO {
 
@@ -29,56 +29,91 @@ public interface GenericMotorIO {
 
   public default void updateInputs(MotorIOInputs inputs) {}
 
-  public default void runMotor(double Speed) {}
+  public default void setCurrentPosition(double mechanismPosition) {}
 
-  public default void runMotorBck(double Speed) {}
+  /**
+   * Set's the mechanism's current location as zero.
+   */
+  public default void zeroSensors() {}
 
-  public default void runCurrent(double amps) {}
+  /**
+   * Sets the motor to brake or coast.
+   *
+   * @param wantsBrake Whether to brake or coast. True is brake, false is coast.
+   */
+  public default void setNeutralBrake(boolean wantsBrake) {}
 
-  public default void setGainsSlot0(double kP, double kI, double kD, double kS, double kV, double kA, double kG) {}
+  /**
+   * Sets whether to enable or disble soft limits.
+   *
+   * @param enable Whether to enable or disbale soft limits. True is enable, false is disable.
+   */
+  public default void useSoftLimits(boolean enable) {}
 
-  public default void setGainsSlot0(double kP, double kI, double kD) {}
+  /**
+   * Sets the motor to be idle. Should not be called directly, only applied through Setpoints.
+   */
+  public default void setNeutralSetpoint() {}
 
-  public default void setGainsSlot1(double kP, double kI, double kD, double kS, double kV, double kA, double kG) {}
+  /**
+   * Sets the motor to be coasting. Should not be called directly, only applied through Setpoints.
+   */
+  public default void setCoastSetpoint() {}
 
-  public default void setGainsSlot1(double kP, double kI, double kD) {}
+  /**
+   * Sets the motor to run at a given voltage. Should not be called directly, only applied through Setpoints.
+   *
+   * @param voltage Voltage to run at (volts).
+   */
+  public default void setVoltageSetpoint(double voltage) {}
 
-  public default void setFF(double kS, double kV, double kA) {}
+  /**
+   * Sets the motor to use motion magic control to go to a given position. Should not be called directly, only applied through Setpoints.
+   *
+   * @param mechanismPosition Mechanism position to go to (radians or degrees depending on implementation).
+   */
+  public default void setMotionMagicSetpoint(double mechanismPosition) {}
 
-  public default void runCharacterizationMotor(double input) {}
+  /**
+   * Sets the motor to go to a given velocity. Should not be called directly, only applied through Setpoints.
+   *
+   * @param mechanismVelocity Mechanism velocity to go to (rad/s or RPM depending on implementation).
+   */
+  public default void setVelocitySetpoint(double mechanismVelocity) {}
 
-  public default void runPercentOutput(double percent) {}
+  /**
+   * Sets the motor to run at a percentage of its max voltage. Should not be called directly, only applied through Setpoints.
+   *
+   * @param percent Percentage of max voltage to run at (0.0 to 1.0).
+   */
+  public default void setDutyCycleSetpoint(double percent) {}
 
-  public default void setBrakeMode(boolean enabled) {}
+  /**
+   * Sets the motor to use PID control to go to a given position. Should not be called directly, only applied through Setpoints.
+   *
+   * @param mechanismPosition Mechanism position to go to (radians or degrees depending on implementation).
+   */
+  public default void setPositionSetpoint(double mechanismPosition) {}
 
-  public default void setNeutralMode(NeutralModeValue mode) {}
+  /**
+   * Enables this MotorIO. Immediatly applies the last set Setpoint including Setpoints set when disabled. MotorIO is enabled by default.
+   */
+  public default void enable() {}
 
-  public default void setIdleMode(IdleMode mode) {}
+  public default void setGainsSlot0(double p, double i, double d, double s, double v, double a, double g) {}
+
+  public default void setGainsSlot1(double p, double i, double d, double s, double v, double a, double g) {}
+
+  public default void setMotionMagicParameters(double velocity, double acceleration, double jerk) {}
+
+  /**
+   * Disabled this MotorIO. Setpoints can still be set when disabled but will not be applied until re-enabled.
+   */
+  public default void disable() {}
 
   public default void stop() {}
 
-  public default void setNeutralOut() {}
+  public default void setNeutralMode(TalonFX fx, NeutralModeValue neutralMode) {}
 
-  public default void setCurrentPosition(double mechanismPosition) {}
-
-  public default void setMotionMagicParameters(double cruiseVelocity, double acceleration, double jerk) {}
-
-  public default void setMotionMagicSetpoint(double mechanismPosition) {}
-
-  public default void setVelocitySetpoint(double mechanismVelocity) {}
-
-  public default void setDutyCycleSetpoint(double percent) {}
-
-  public default void setPositionSetpoint(double mechanismPosition) {}
-
-  public default void setVoltageSetpoint(double voltage) {}
-
-  public default void applySetpoint(Setpoint setpointToApply) {}
-
-  public default void useSoftLimits(boolean enable) {}
-
-  public default int getNumMotors() {
-    return 1;
-  }
 
 }

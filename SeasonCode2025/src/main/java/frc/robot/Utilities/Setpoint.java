@@ -2,14 +2,11 @@ package frc.robot.Utilities;
 
 import java.util.function.UnaryOperator;
 
-import com.ctre.phoenix6.signals.NeutralModeValue;
 
-import edu.wpi.first.units.measure.*;
 import frc.robot.CatzAbstractions.io.GenericMotorIO;
 
 public class Setpoint {
     private final UnaryOperator<GenericMotorIO> genericMotorIOapplier;
-
 
     public final Mode mode;
     public final double baseUnits;
@@ -38,6 +35,21 @@ public class Setpoint {
      */
     public static Setpoint withCustomSetpoint(UnaryOperator<GenericMotorIO> applier, Mode mode, double baseUnits) {
         return new Setpoint(applier, mode, baseUnits);
+    }
+
+
+    /**
+     * Creates a setpoint to use motion magic control to go to a position.
+     *
+     * @param motionMagicSetpoint Posiiton to go to in mechanism units.
+     * @return A new Setpoint.
+     */
+    public static Setpoint withMotionMagicSetpoint(double motionMagicSetpoint) {
+        UnaryOperator<GenericMotorIO> applier = (GenericMotorIO io) -> {
+            io.setMotionMagicSetpoint(motionMagicSetpoint);
+            return io;
+        };
+        return new Setpoint(applier, Mode.MOTIONMAGIC, motionMagicSetpoint);
     }
 
 
@@ -102,9 +114,9 @@ public class Setpoint {
      *
      * @return A new Setpoint.
      */
-    public static Setpoint withNeutralSetpoint() {
+    public static Setpoint withBrakeSetpoint() {
         UnaryOperator<GenericMotorIO> applier = (GenericMotorIO io) -> {
-            io.setNeutralOut();
+            io.setNeutralBrake(true);
             return io;
         };
         return new Setpoint(applier, Mode.IDLE, 0.0);
@@ -117,7 +129,7 @@ public class Setpoint {
      */
     public static Setpoint withCoastSetpoint() {
         UnaryOperator<GenericMotorIO> applier = (GenericMotorIO io) -> {
-            io.setNeutralMode(NeutralModeValue.Coast);
+            io.setNeutralBrake(false);
             return io;
         };
         return new Setpoint(applier, Mode.IDLE, 0.0);

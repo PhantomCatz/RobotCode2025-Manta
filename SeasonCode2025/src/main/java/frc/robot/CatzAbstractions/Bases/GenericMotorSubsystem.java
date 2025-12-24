@@ -6,7 +6,6 @@ import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.CatzAbstractions.io.GenericMotorIO;
 import frc.robot.CatzAbstractions.io.MotorIOInputsAutoLogged;
-import frc.robot.Utilities.Setpoint;
 
 public abstract class GenericMotorSubsystem extends SubsystemBase {
 	protected final GenericMotorIO io;
@@ -17,26 +16,17 @@ public abstract class GenericMotorSubsystem extends SubsystemBase {
 	public GenericMotorSubsystem(GenericMotorIO io, String name) {
 		super(name);
 		this.io = io;
-
 		this.name = name;
 	}
 
 	@Override
-	public final void periodic() {
+	public void periodic() {
 		io.updateInputs(inputs);
 		Logger.processInputs(name, inputs);
-		customGenericPeriodic();
 	}
 
-
-	public void customGenericPeriodic() {
-
-	}
-
-
-
-	public void runSetpoint(Setpoint setpoint) {
-		io.applySetpoint(setpoint);
+	public void setDutyCycle(double dutyCycle) {
+		io.setDutyCycleSetpoint(dutyCycle);
 	}
 
 	public double getVelocityRPS() {

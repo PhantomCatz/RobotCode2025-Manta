@@ -1,63 +1,60 @@
 package frc.robot.CatzAbstractions.Bases;
 
 import frc.robot.CatzAbstractions.io.GenericMotorIO;
-import frc.robot.Utilities.DelayedBoolean;
 import frc.robot.Utilities.EpsilonEquals;
 import frc.robot.Utilities.Setpoint;
-import org.littletonrobotics.junction.Logger;
+
+import java.util.function.Supplier;
+
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 
-public class ServoMotorSubsystem extends GenericMotorSubsystem {
+public abstract class ServoMotorSubsystem extends GenericMotorSubsystem {
 
 	protected final GenericMotorIO io;
 	protected final String name;
 	protected final double epsilonThreshold;
-	protected ServoHomingConfig homingConfig;
 	private Setpoint setpoint;
+	private double manualSpeed = 0.0;
+	private final double slammingThreshold;
+	private boolean isFullManual = false;
 
-	private boolean mHoming = false;
-	private boolean mNeedsToHome = true;
-	private DelayedBoolean mHomingDelay;
 
-	public ServoMotorSubsystem(GenericMotorIO io, String name, double epsilonThreshold, ServoHomingConfig homingConfig) {
+	public ServoMotorSubsystem(GenericMotorIO io, String name, double epsilonThreshold, double slammingThreshold) {
 		super(io, name);
 		this.io = io;
 		this.name = name;
 		this.epsilonThreshold = epsilonThreshold;
-		this.homingConfig = homingConfig;
+		this.slammingThreshold = slammingThreshold;
 	}
 
 
 	@Override
-	public final void customGenericPeriodic() {
-		io.updateInputs(inputs);
-		Logger.processInputs(name, inputs);
+	public void periodic() {
+		super.periodic();
 
+		if(DriverStation.isDisabled()) {
+			// Disabled
+			io.stop();
+		} else if(setpoint.baseUnits <= slammingThreshold && getPosition() <= slammingThreshold) {  // Prevent slamming if our setpoint and current position is very low
+			io.stop();
+		}else if (setpoint.baseUnits > slammingThreshold) {
+			setpoint.apply(io);
+		} else if (isFullManual) {
+			runFullManual(manualSpeed);
+		} else {
+			// No action
+			io.stop();
+		}
 	}
 
-	public void customServoPeriodic() {
+	public void runFullManual(double speed) {
+		io.setDutyCycleSetpoint(speed);
 
-	}
+		if(Math.abs(speed) < 0.1) {
+			io.setMotionMagicSetpoint(getPosition());
+		}
 
-	/**
-	 * Determines whether the currently set setpoint is near subsystem's home position.
-	 *
-	 * @return True if setpoint is near the home position, false if not.
-	 */
-	public boolean setpointNearHome() {
-		return EpsilonEquals.epsilonEquals(
-						getSetpointDoubleInUnits(),
-						homingConfig.kHomePosition,
-						epsilonThreshold);
-	}
-
-	/**
-	 * Determines whether the subsystem is near it's homing position.
-	 *
-	 * @return True if currently near home position, false if not.
-	 */
-	public boolean nearHomingLocation() {
-		return nearPosition(homingConfig.kHomePosition);
 	}
 
 	public void useSoftLimits(boolean enable) {
@@ -72,7 +69,6 @@ public class ServoMotorSubsystem extends GenericMotorSubsystem {
 	public boolean nearPositionSetpoint() {
 		return nearPosition(inputs.absoluteEncoderPosition);
 	}
-
 
 	/**
 	 * Determines whether the subsystem is near a given position.
@@ -97,29 +93,28 @@ public class ServoMotorSubsystem extends GenericMotorSubsystem {
 
 	public void applySetpoint(Setpoint setpoint) {
 		this.setpoint = setpoint;
-		io.applySetpoint(setpoint);
 	}
 
+	/**
+	 * Creates a one time, instantaneus command for the subsystem to go to a given Setpoint.
+	 *
+	 * @param setpoint Setpoint to go to.
+	 * @return One time Command for the subsystem.
+	 */
 	public Command setpointCommand(Setpoint setpoint) {
 		return runOnce(() -> applySetpoint(setpoint));
 	}
 
-	public static class ServoHomingConfig {
-		public double kHomePosition;
-		public double kHomingVoltage;
-		public double kHomingTimeout;
-		public double kSetHomedVelocity;
+	/**
+	 * Creates a continous command for the subsystem to repeatedly go to a supplied setpoint.
+	 *
+	 * @param setpoint Supplier of setpoint to go to.
+	 * @return Continuous Command for the subsystem.
+	 */
+	public Command followSetpointCommand(Supplier<Setpoint> supplier) {
+		return run(() -> applySetpoint(supplier.get()));
 	}
 
-
-
-  public void setBrakeMode(boolean enabled) {
-	io.setBrakeMode(enabled);
-  }
-
-  public void setFullManual(double manualPower) {
-	io.runPercentOutput(manualPower);
-  }
 
 
 

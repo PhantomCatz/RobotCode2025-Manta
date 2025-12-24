@@ -1,10 +1,11 @@
 package frc.robot.CatzSubsystems;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import frc.robot.CatzSubsystems.CatzArm.CatzArm;
 import frc.robot.CatzSubsystems.CatzElevator.CatzElevator;
-import frc.robot.CatzSubsystems.CatzIntakeRollers.RollerSubsytem;
+import frc.robot.CatzSubsystems.CatzIntakeRollers.CatzRollers;
 import frc.robot.CatzSubsystems.CatzWrist.CatzWrist;
 import frc.robot.Utilities.VirtualSubsystem;
 
@@ -24,12 +25,12 @@ public class CatzSuperstructure extends VirtualSubsystem{
     @Override
     public void periodic() {
 
-        //setpointVisualizer.update(elevator.getElevatorPositionMeters(),
-                                  //Rotation2d.fromDegrees(arm.getArmPos()),
-                                  //Rotation2d.fromDegrees(wrist.getWristPos()));
+        setpointVisualizer.update(elevator.getPosition(),
+                                  Rotation2d.fromDegrees(0),
+                                  Rotation2d.fromDegrees(wrist.getWristPos()));
     }
 
     public Command setSpeed() {
-        return new RunCommand(() -> {RollerSubsytem.Instance.setSpeed(1);});
+        return new RunCommand(() -> {CatzRollers.Instance.setDutyCycle(0);});
     }
 }

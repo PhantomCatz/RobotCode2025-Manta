@@ -53,26 +53,25 @@ public class GenericIOSim implements GenericMotorIO {
 
     }
 
-    @Override
-    public void runMotor(double speed) {
-        // Set the motor speed in simulation
+    // @Override
+    // public void runMotor(double speed) {
+    //     // Set the motor speed in simulation
+    //     TalonFXSim.setInputVoltage(speed * 12.0); // Assuming speed is between -1 and 1
+    // }
 
-        TalonFXSim.setInputVoltage(speed * 12.0); // Assuming speed is between -1 and 1
-    }
+    // @Override
+    // public void setGainsSlot0(double kP, double kI, double kD, double kS, double kV, double kA, double kG) {
+    //     // Update the PID controller gains
+    //     simPIDController.setP(kP);
+    //     simPIDController.setI(kI);
+    //     simPIDController.setD(kD);
+    //     // Note: kF is not used in WPILib's PIDController, but can be implemented manually if needed
+    // }
 
-    @Override
-    public void setGainsSlot0(double kP, double kI, double kD, double kS, double kV, double kA, double kG) {
-        // Update the PID controller gains
-        simPIDController.setP(kP);
-        simPIDController.setI(kI);
-        simPIDController.setD(kD);
-        // Note: kF is not used in WPILib's PIDController, but can be implemented manually if needed
-    }
-
-    @Override
-    public void setCurrentPosition(double setpointRotations) {
-        // Adjust the target position for the intake ramp
-        targetDegreesFinalShaft = setpointRotations * 360.0; // Convert rotations to degrees
-    }
+    // @Override
+    // public void setCurrentPosition(double setpointRotations) {
+    //     // Adjust the target position for the intake ramp
+    //     targetDegreesFinalShaft = setpointRotations * 360.0; // Convert rotations to degrees
+    // }
 
 }

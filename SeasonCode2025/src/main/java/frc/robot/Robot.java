@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.CatzConstants.RobotHardwareMode;
 import frc.robot.CatzConstants.RobotID;
 import frc.robot.CatzSubsystems.CatzArm.CatzArm;
+import frc.robot.CatzSubsystems.CatzIntakeRollers.CatzRollers;
 import frc.robot.Utilities.VirtualSubsystem;
 import lombok.Getter;
 
@@ -191,6 +192,7 @@ public class Robot extends LoggedRobot {
     @Override
     public void autonomousPeriodic() {
         autoElapsedTime = Timer.getFPGATimestamp() - autoStart;
+        CatzRollers.Instance.setDutyCycle(3);
     }
 
     @Override

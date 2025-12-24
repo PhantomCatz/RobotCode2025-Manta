@@ -2,8 +2,9 @@ package frc.robot.CatzAbstractions.io;
 
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DigitalInput;
+import frc.robot.CatzAbstractions.Bases.GenericDigitalInOut;
 
-public class BeamBreakIODigitalIn extends BeamBreakIO {
+public class BeamBreakIODigitalIn extends GenericDigitalInOut {
 	private final DigitalInput mBreak;
 
 	public static BeamBreakIODigitalIn makeInverted(int channel, Time debounce, String name) {
@@ -24,4 +25,6 @@ public class BeamBreakIODigitalIn extends BeamBreakIO {
 	public boolean get() {
 		return mBreak.get();
 	}
+
+
 }

@@ -1,16 +1,20 @@
 package frc.robot.CatzSubsystems.CatzElevator;
 
-import java.util.function.DoubleSupplier;
+
+import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import frc.robot.CatzConstants;
-import frc.robot.CatzAbstractions.Bases.ServoMotorSubsystem.ServoHomingConfig;
+import frc.robot.Robot;
+import frc.robot.CatzAbstractions.io.GenericTalonFXIOReal.MotorIOTalonFXConfig;
 import frc.robot.Utilities.LoggedTunableNumber;
 import frc.robot.Utilities.MotorUtil.Gains;
 import frc.robot.Utilities.MotorUtil.MotionMagicParameters;
-import lombok.RequiredArgsConstructor;
+import frc.robot.Utilities.Setpoint;
 
 /** Add your docs here. */
 public class ElevatorConstants {
@@ -36,6 +40,9 @@ public class ElevatorConstants {
     public static final double BOT_BOT_ALGAE = 25.6; //15.6
     public static final double BOT_TOP_ALGAE = 42.7; //35.7
 
+	public static final Setpoint L4_SCORE = Setpoint.withMotionMagicSetpoint(L4_HEIGHT);
+	public static final Setpoint STOW = Setpoint.withMotionMagicSetpoint(STOW_HEIGHT);
+
     public static final Translation3d ELEVATOR_SIM_OFFSET = new Translation3d(0, 0, 0);
     // Motor ID
     public static final int LEFT_LEADER_ID  = 31;
@@ -51,33 +58,56 @@ public class ElevatorConstants {
         };
 
 
-  @RequiredArgsConstructor
-  public static enum ElevatorPosition {
-      //TO CHANGE HEIGHT GO TO ElevatorConstants.java
-      PosLimitSwitchStow(() -> 0.0),
-      PosStow(() -> STOW_HEIGHT),
-      PosCoastStow(() -> COAST_STOW_HEIGHT),
-      PosL1(() -> L1_HEIGHT),
-      PosL2(() -> L2_HEIGHT),
-      PosL3(() -> L3_HEIGHT),
-      PosL4(() -> L4_HEIGHT),
-      PosL4Adj(() -> L4_CORAL_ADJ),
-      AlgaeBotTransition(() -> ALGAE_BOT),
-      PosBotBot(() -> BOT_BOT_ALGAE),
-      PosBotTop(() -> BOT_TOP_ALGAE),
-      PosManual(new LoggedTunableNumber("Elevator/ScoreSourceSetpoint",0.0)),
-      PosNull(() -> -1.0);
+	public static final TalonFXConfiguration getFXConfig() {
+		TalonFXConfiguration FXConfig = new TalonFXConfiguration();
+		FXConfig.Slot0.kP = slot0_gains.kP();
+		FXConfig.Slot0.kD = slot0_gains.kD();
+		FXConfig.Slot0.kS = slot0_gains.kS();
+		FXConfig.Slot0.kG = slot0_gains.kG();
 
-    private final DoubleSupplier elevatorSetpointSupplier;
+		FXConfig.MotionMagic.MotionMagicCruiseVelocity = 20.0;
 
-    private double getTargetPositionInch() {
-      return elevatorSetpointSupplier.getAsDouble();
-    }
-  }
+		FXConfig.CurrentLimits.SupplyCurrentLimitEnable = Robot.isReal();
+		FXConfig.CurrentLimits.SupplyCurrentLimit = 80.0;
+		FXConfig.CurrentLimits.SupplyCurrentLowerLimit = 80.0;
+		FXConfig.CurrentLimits.SupplyCurrentLowerTime = 0.1;
+
+		FXConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+		FXConfig.CurrentLimits.StatorCurrentLimit = 120.0;
+
+		FXConfig.Voltage.PeakForwardVoltage = 12.0;
+		FXConfig.Voltage.PeakReverseVoltage = -12.0;
+
+		FXConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+		FXConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = MAX_TRAVEL_INCHES;
+
+		FXConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+		FXConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = MIN_TRAVEL_INCHES;
+
+		FXConfig.Feedback.SensorToMechanismRatio = ELEVATOR_GEAR_RATIO;
+
+		FXConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
+		return FXConfig;
+	}
+
+	public static MotorIOTalonFXConfig getIOConfig() {
+		MotorIOTalonFXConfig IOConfig = new MotorIOTalonFXConfig();
+		IOConfig.mainConfig = getFXConfig();
+		IOConfig.mainID = 40;
+		IOConfig.mainBus = "";
+		IOConfig.followerConfig = getFXConfig()
+				.withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
+						.withForwardSoftLimitEnable(false)
+						.withReverseSoftLimitEnable(false));
+		IOConfig.followerOpposeMain = new boolean[] {false};
+		IOConfig.followerBuses = new String[] {""};
+		IOConfig.followerIDs = new int[] {41, 42};
+		return IOConfig;
+	}
 
 
     // Misc constants
-    public static final boolean IS_LEADER_INVERTED = false;
     public static final double  MIN_TRAVEL_INCHES = 0.0;
     public static final double  MAX_TRAVEL_INCHES = 164.0;
     public static final Translation2d elevatorOrigin = new Translation2d(-0.238, 0.298);
@@ -131,15 +161,5 @@ public class ElevatorConstants {
     public static final LoggedTunableNumber mmJerk = new LoggedTunableNumber("Elevator/Gains/Magic Jerk", motionMagicParameters.mmJerk());
     public static final LoggedTunableNumber lowerLimitRotations = new LoggedTunableNumber("Elevator/LowerLimitInches", MIN_TRAVEL_INCHES);
     public static final LoggedTunableNumber upperLimitRotations = new LoggedTunableNumber("Elevator/UpperLimitInches", MAX_TRAVEL_INCHES);
-
-	public static ServoHomingConfig getServoConfig() {
-		ServoHomingConfig servoConfig = new ServoHomingConfig();
-		servoConfig.kHomePosition = 0.0;
-		servoConfig.kHomingTimeout = 0.5;
-		servoConfig.kHomingVoltage = -0.5;
-		servoConfig.kSetHomedVelocity = 1.0;
-
-		return servoConfig;
-	}
 
 }
