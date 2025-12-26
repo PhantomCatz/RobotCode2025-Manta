@@ -8,6 +8,7 @@ import com.ctre.phoenix6.controls.*;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -70,10 +71,35 @@ public class GenericTalonFXIOReal implements GenericMotorIO {
         internalPositionRotations = leaderTalon.getPosition();
         velocityRps = leaderTalon.getVelocity();
         acceleration = leaderTalon.getAcceleration();
-        appliedVoltage = List.of(leaderTalon.getMotorVoltage());
-        supplyCurrent = List.of(leaderTalon.getSupplyCurrent());
-        torqueCurrent = List.of(leaderTalon.getTorqueCurrent());
-        tempCelsius = List.of(leaderTalon.getDeviceTemp());
+
+		if (followerTalons == null || followerTalons.length == 0) {
+			appliedVoltage = List.of(leaderTalon.getMotorVoltage());
+			supplyCurrent = List.of(leaderTalon.getSupplyCurrent());
+			torqueCurrent = List.of(leaderTalon.getTorqueCurrent());
+			tempCelsius   = List.of(leaderTalon.getDeviceTemp());
+		} else {
+			var applied = new ArrayList<StatusSignal<Voltage>>();
+			var supply  = new ArrayList<StatusSignal<Current>>();
+			var torque  = new ArrayList<StatusSignal<Current>>();
+			var temps   = new ArrayList<StatusSignal<Temperature>>();
+
+			applied.add(leaderTalon.getMotorVoltage());
+			supply.add(leaderTalon.getSupplyCurrent());
+			torque.add(leaderTalon.getTorqueCurrent());
+			temps.add(leaderTalon.getDeviceTemp());
+
+			for (TalonFX talon : followerTalons) {
+				applied.add(talon.getMotorVoltage());
+				supply.add(talon.getSupplyCurrent());
+				torque.add(talon.getTorqueCurrent());
+				temps.add(talon.getDeviceTemp());
+			}
+
+			appliedVoltage = List.copyOf(applied);
+			supplyCurrent  = List.copyOf(supply);
+			torqueCurrent  = List.copyOf(torque);
+			tempCelsius    = List.copyOf(temps);
+		}
 
     }
 
@@ -91,17 +117,21 @@ public class GenericTalonFXIOReal implements GenericMotorIO {
                 tempCelsius.get(0))
             .isOK();
 
-        if(followerTalons != null) {
-            inputs.isFollowerConnected =
-                BaseStatusSignal.refreshAll(
-                    appliedVoltage.get(1),
-                    supplyCurrent.get(1),
-                    torqueCurrent.get(1),
-                    tempCelsius.get(1))
-                .isOK();
-        }
+		if (followerTalons != null && followerTalons.length > 0) {
+			inputs.isFollowerConnected = new boolean[followerTalons.length];
+			for (int i = 0; i < followerTalons.length; i++) {
+				inputs.isFollowerConnected[i] = BaseStatusSignal.refreshAll(
+					appliedVoltage.get(i + 1),
+					supplyCurrent.get(i + 1),
+					torqueCurrent.get(i + 1),
+					tempCelsius.get(i + 1)
+				).isOK();
+			}
+		} else {
+			inputs.isFollowerConnected = new boolean[0];
+		}
 
-        inputs.absoluteEncoderPosition = internalPositionRotations.getValueAsDouble() * Final_Ratio; //TODO Constants should be ALL_CAPS // Yuyhun said that because we get it from constructor that it should be lowercase
+        inputs.position = internalPositionRotations.getValueAsDouble() * Final_Ratio; //TODO Constants should be ALL_CAPS // Yuyhun said that because we get it from constructor that it should be lowercase
         inputs.velocityRPS = velocityRps.getValueAsDouble() * Final_Ratio;
         inputs.accelerationRPS = acceleration.getValueAsDouble() * Final_Ratio;
         inputs.appliedVolts = appliedVoltage.stream()

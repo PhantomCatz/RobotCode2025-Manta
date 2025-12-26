@@ -3,6 +3,7 @@ package frc.robot.CatzAbstractions.io;
 import org.littletonrobotics.junction.AutoLog;
 
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.hardware.TalonFXS;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 
@@ -14,10 +15,9 @@ public interface GenericMotorIO {
   public static class MotorIOInputs {
 
     public boolean isLeaderConnected = false;
-    public boolean isFollowerConnected = false;
+    public boolean[] isFollowerConnected = new boolean[] {};
 
-    public double relativeEncoderPosition = 0.0;
-    public double absoluteEncoderPosition = 0.0;
+    public double position = 0.0;
     public double velocityRPS = 0.0;
     public double accelerationRPS = 0.0;
     public double[] appliedVolts = new double[] {};
@@ -114,6 +114,9 @@ public interface GenericMotorIO {
   public default void stop() {}
 
   public default void setNeutralMode(TalonFX fx, NeutralModeValue neutralMode) {}
+
+  public default void setNeutralMode(TalonFXS fx, NeutralModeValue neutralMode) {}
+
 
 
 }

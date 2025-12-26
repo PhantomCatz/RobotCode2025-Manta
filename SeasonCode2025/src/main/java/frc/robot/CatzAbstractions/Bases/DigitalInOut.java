@@ -1,5 +1,7 @@
 package frc.robot.CatzAbstractions.Bases;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.units.Units;
@@ -7,20 +9,31 @@ import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Robot;
+import frc.robot.CatzAbstractions.io.DigitalInOutIO;
+import frc.robot.CatzAbstractions.io.DigitalInOutIOInputsAutoLogged;
 
-public abstract class GenericDigitalInOut {
+public class DigitalInOut {
 	private final Debouncer debouncer;
 	private final String name;
+	private final boolean isInverted;
 
-	public GenericDigitalInOut(Time debounce, String name) {
+	private final DigitalInOutIO io;
+	private final DigitalInOutIOInputsAutoLogged inputs = new DigitalInOutIOInputsAutoLogged();
+
+	public DigitalInOut(DigitalInOutIO io, Time debounce, boolean isInverted, String name) {
+		this.io = io;
 		debouncer = new Debouncer(debounce.in(Units.Seconds), DebounceType.kBoth);
+		this.isInverted = isInverted;
 		this.name = name;
 	}
 
-	public abstract boolean get();
+	public void periodic() {
+		io.updateInputs(inputs);
+		Logger.processInputs(name, inputs);
+	}
 
-	public boolean getInverted() {
-		return !get();
+	public boolean get() {
+		return isInverted ? !inputs.value : inputs.value;
 	}
 
 	public boolean getDebounced() {

@@ -1,9 +1,12 @@
 package frc.robot.CatzSubsystems.CatzElevator;
 
+import static edu.wpi.first.units.Units.Seconds;
 import static frc.robot.CatzSubsystems.CatzElevator.ElevatorConstants.*;
 
 import frc.robot.CatzConstants;
+import frc.robot.CatzAbstractions.Bases.DigitalInOut;
 import frc.robot.CatzAbstractions.Bases.ServoMotorSubsystem;
+import frc.robot.CatzAbstractions.io.DigitalInOutIOBeambreak;
 import frc.robot.CatzAbstractions.io.GenericIOSim;
 import frc.robot.CatzAbstractions.io.GenericMotorIO;
 import frc.robot.CatzAbstractions.io.GenericMotorIONull;
@@ -12,12 +15,22 @@ import frc.robot.Utilities.LoggedTunableNumber;
 
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.units.measure.Time;
+
 
 public class CatzElevator extends ServoMotorSubsystem {
 
+  private static final GenericMotorIO io = getIOInstance();
+
   public static final CatzElevator Instance = new CatzElevator();
 
-  private static final GenericMotorIO io = getIOInstance();
+
+  private DigitalInOut bottomLimitSwitch = new DigitalInOut(
+      new DigitalInOutIOBeambreak(3, false),
+      Time.ofBaseUnits(0.02, Seconds), // TODO find better debounce time
+      false,
+      "Elevator/BottomLimitSwitch"
+  );
 
   static GenericMotorIO getIOInstance() {
     if (io != null) {
@@ -29,7 +42,7 @@ public class CatzElevator extends ServoMotorSubsystem {
               return new GenericTalonFXIOReal(ElevatorConstants.getIOConfig());
           case SIM:
               System.out.println("Elevator Configured for Simulation");
-              return new GenericIOSim();
+              return new GenericIOSim(ELEVATOR_GEAR_RATIO, slot0_gains);
           default:
               System.out.println("Elevator Unconfigured");
               return new GenericMotorIONull();
@@ -44,7 +57,13 @@ public class CatzElevator extends ServoMotorSubsystem {
 
   @Override
   public void periodic() {
+    bottomLimitSwitch.periodic();
     super.periodic();
+
+    if(bottomLimitSwitch.get()) {
+      io.setCurrentPosition(0.0);
+    }
+
     //--------------------------------------------------------------------------------------------------------
     // Update controllers when user specifies
     //--------------------------------------------------------------------------------------------------------
@@ -101,6 +120,10 @@ public class CatzElevator extends ServoMotorSubsystem {
     // Logging
     //----------------------------------------------------------------------------------------------------------------------------
     Logger.recordOutput("Elevator/targetPosition", 0.0);
+  }
+
+  public boolean getBottomLimitSwitch() {
+    return bottomLimitSwitch.get();
   }
 
 

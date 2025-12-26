@@ -16,10 +16,10 @@ public class CatzRollers extends GenericMotorSubsystem {
 
     static GenericMotorIO getIOInstance() {
         switch (CatzConstants.hardwareMode) {
-            case SIM:
+            case REAL:
                 System.out.println("Roller Configured for Real");
                 return new GenericTalonFXIOReal(RollerConstants.getIOConfig());
-            case REAL:
+            case SIM:
                 System.out.println("Roller Configured for Simulation");
                 return new GenericIOSim();
             default:

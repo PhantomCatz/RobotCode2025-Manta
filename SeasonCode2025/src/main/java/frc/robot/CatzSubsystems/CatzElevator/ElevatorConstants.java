@@ -100,8 +100,8 @@ public class ElevatorConstants {
 				.withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
 						.withForwardSoftLimitEnable(false)
 						.withReverseSoftLimitEnable(false));
-		IOConfig.followerOpposeMain = new boolean[] {false};
-		IOConfig.followerBuses = new String[] {""};
+		IOConfig.followerOpposeMain = new boolean[] {false, false};
+		IOConfig.followerBuses = new String[] {"", ""};
 		IOConfig.followerIDs = new int[] {41, 42};
 		return IOConfig;
 	}
@@ -121,7 +121,7 @@ public class ElevatorConstants {
 
             case SN1 -> new Gains(3.0, 0.0, 0.0, 0.175, 0.3, 0.013, 0.4); //
 
-            case SN_TEST, SN1_2024 -> new Gains(4.0, 0.0, 0.0, 0.065, 0.379, 0.015, 0.0);
+            case SN_TEST, SN1_2024 -> new Gains(100.0, 0.0, 0.0, 0.065, 0.379, 0.015, 0.0);
         };
 
     public static final Gains slot1_gains =

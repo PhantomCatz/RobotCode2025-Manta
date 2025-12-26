@@ -3,6 +3,7 @@ package frc.robot.CatzAbstractions.Bases;
 
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.CatzAbstractions.io.GenericMotorIO;
 import frc.robot.CatzAbstractions.io.MotorIOInputsAutoLogged;
@@ -29,12 +30,16 @@ public abstract class GenericMotorSubsystem extends SubsystemBase {
 		io.setDutyCycleSetpoint(dutyCycle);
 	}
 
+	public Command setDutyCycleCommand(double dutyCycle) {
+		return runOnce(() -> setDutyCycle(dutyCycle));
+	}
+
 	public double getVelocityRPS() {
 		return inputs.velocityRPS;
 	}
 
 	public double getPosition() {
-		return inputs.relativeEncoderPosition;
+		return inputs.position;
 	}
 
 	public double[] getSupplyCurrent() {

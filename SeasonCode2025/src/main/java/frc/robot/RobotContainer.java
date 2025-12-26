@@ -21,7 +21,7 @@ public class RobotContainer {
 
     private final CatzRollers rollers = CatzRollers.Instance;
 
-    // private final CatzElevator CatzElevatorSubsystem = CatzElevator.Instance;
+    private final CatzElevator elevator = CatzElevator.Instance;
 
     // private final CatzArm CatzArmSubsystem = CatzArm.Instance;
 
@@ -44,6 +44,12 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        return Commands.print("No autonomous command configured");
+        return Commands.sequence(
+            elevator.setpointCommand(ElevatorConstants.L4_SCORE),
+            Commands.waitSeconds(3.0),
+            elevator.setpointCommand(ElevatorConstants.STOW),
+            Commands.print("Hi"),
+            rollers.setDutyCycleCommand(0.6)
+        );
     }
 }

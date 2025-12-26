@@ -14,7 +14,7 @@ public abstract class ServoMotorSubsystem extends GenericMotorSubsystem {
 	protected final GenericMotorIO io;
 	protected final String name;
 	protected final double epsilonThreshold;
-	private Setpoint setpoint;
+	private Setpoint setpoint = Setpoint.withBrakeSetpoint();
 	private double manualSpeed = 0.0;
 	private final double slammingThreshold;
 	private boolean isFullManual = false;
@@ -33,11 +33,17 @@ public abstract class ServoMotorSubsystem extends GenericMotorSubsystem {
 	public void periodic() {
 		super.periodic();
 
-		if(DriverStation.isDisabled()) {
+		if(DriverStation.isDisabled() || setpoint == null) {
 			// Disabled
 			io.stop();
-		} else if(setpoint.baseUnits <= slammingThreshold && getPosition() <= slammingThreshold) {  // Prevent slamming if our setpoint and current position is very low
-			io.stop();
+		} else if(setpoint.baseUnits <= slammingThreshold) {  // Prevent slamming if our setpoint and current position is very low
+			if(getPosition() <= slammingThreshold) {
+				io.stop();
+			} else {
+				setpoint.apply(io);
+
+			}
+
 		}else if (setpoint.baseUnits > slammingThreshold) {
 			setpoint.apply(io);
 		} else if (isFullManual) {
@@ -67,7 +73,7 @@ public abstract class ServoMotorSubsystem extends GenericMotorSubsystem {
 	 * @return True if currently near setpoint, false if not. Returns false if not in position control.
 	 */
 	public boolean nearPositionSetpoint() {
-		return nearPosition(inputs.absoluteEncoderPosition);
+		return nearPosition(inputs.position);
 	}
 
 	/**
@@ -78,7 +84,7 @@ public abstract class ServoMotorSubsystem extends GenericMotorSubsystem {
 	 */
 	public boolean nearPosition(double mechanismPosition) {
 		return EpsilonEquals.epsilonEquals(
-				inputs.absoluteEncoderPosition,
+				inputs.position,
 				mechanismPosition,
 				epsilonThreshold);
 	}
@@ -113,6 +119,16 @@ public abstract class ServoMotorSubsystem extends GenericMotorSubsystem {
 	 */
 	public Command followSetpointCommand(Supplier<Setpoint> supplier) {
 		return run(() -> applySetpoint(supplier.get()));
+	}
+
+	public Command fullManualCommand(Supplier<Double> speed) {
+		return runOnce(() -> {
+			isFullManual = true;
+			manualSpeed = speed.get();
+		}).until(() -> !isFullManual).andThen(runOnce(() -> {
+			isFullManual = false;
+			manualSpeed = 0.0;
+		}));
 	}
 
 

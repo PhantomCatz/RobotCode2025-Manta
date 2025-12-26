@@ -65,7 +65,7 @@ public abstract class FlywheelMotorSubsystem extends GenericMotorSubsystem {
 	 * @return True if currently near setpoint, false if not. Returns false if not in position control.
 	 */
 	public boolean nearPositionSetpoint() {
-		return nearPosition(inputs.absoluteEncoderPosition);
+		return nearPosition(inputs.position);
 	}
 
 
@@ -77,7 +77,7 @@ public abstract class FlywheelMotorSubsystem extends GenericMotorSubsystem {
 	 */
 	public boolean nearPosition(double mechanismPosition) {
 		return EpsilonEquals.epsilonEquals(
-				inputs.absoluteEncoderPosition,
+				inputs.position,
 				mechanismPosition,
 				epsilonThreshold);
 	}
