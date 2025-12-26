@@ -125,7 +125,7 @@ public class GenericSparkMaxIOReal implements GenericMotorIO {
     public void setMotionMagicSetpoint(double mechanismPosition) {
         // Map MotionMagic to REV SmartMotion (Slot 0)
         double targetRotations = mechanismPosition / gearRatio;
-        closedLoopController.setReference(targetRotations, ControlType.kSmartMotion, ClosedLoopSlot.kSlot0);
+        closedLoopController.setReference(targetRotations, ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot0);
     }
 
     @Override
