@@ -19,7 +19,7 @@ import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.RelativeEncoder;
 
-public class GenericSparkMaxIOReal implements GenericMotorIO {
+public class GenericSparkmaxIOReal implements GenericMotorIO {
 
     private final SparkMax leaderMotor;
     private final SparkMax[] followerMotors;
@@ -36,7 +36,7 @@ public class GenericSparkMaxIOReal implements GenericMotorIO {
     private final BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
     private final ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(1, 1, 5, TimeUnit.MILLISECONDS, queue);
 
-    public GenericSparkMaxIOReal(MotorIOSparkMaxConfig config) {
+    public GenericSparkmaxIOReal(MotorIOSparkMaxConfig config) {
         this.gearRatio = config.gearRatio;
 
         // 1. Initialize Leader
