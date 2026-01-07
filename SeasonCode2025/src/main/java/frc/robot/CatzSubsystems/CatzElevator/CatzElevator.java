@@ -5,7 +5,7 @@ import static frc.robot.CatzSubsystems.CatzElevator.ElevatorConstants.*;
 
 import frc.robot.CatzConstants;
 import frc.robot.CatzAbstractions.Bases.DigitalInOut;
-import frc.robot.CatzAbstractions.Bases.ServoMotorSubsystem;
+import frc.robot.CatzAbstractions.Bases.PivotMotorSubsystem;
 import frc.robot.CatzAbstractions.io.DigitalInOutIOBeambreak;
 import frc.robot.CatzAbstractions.io.GenericIOSim;
 import frc.robot.CatzAbstractions.io.GenericMotorIO;
@@ -18,7 +18,7 @@ import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.units.measure.Time;
 
 
-public class CatzElevator extends ServoMotorSubsystem {
+public class CatzElevator extends PivotMotorSubsystem {
 
   private static final GenericMotorIO io = getIOInstance();
 

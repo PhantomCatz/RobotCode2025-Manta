@@ -42,7 +42,6 @@ public class CatzDrivetrain extends SubsystemBase {
   public static final CatzDrivetrain Instance = new CatzDrivetrain();
 
   private double distanceError = 999999.9; //meters
-
   private Pose2d choreoGoal = new Pose2d();
   private double choreoDistanceError = 9999999.9; //meters //set this to a high number initially just in case the trajectory thinks it's at goal as soon as it starts
 

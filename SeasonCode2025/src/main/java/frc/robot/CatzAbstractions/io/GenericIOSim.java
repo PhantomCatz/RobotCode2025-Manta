@@ -94,10 +94,6 @@ public class GenericIOSim implements GenericMotorIO {
         // Clamp to battery voltage
         currentVoltage = MathUtil.clamp(currentVoltage, -12.0, 12.0);
 
-        // If in coast mode and voltage is near zero, the real Talon disconnects leads.
-        // DCMotorSim doesn't perfectly simulate coast vs brake, but we can simulate brake
-        // by applying 0 voltage (shorts leads) vs inputting 0 current (open leads).
-        // For simplicity, we just set input voltage.
         motorSim.setInputVoltage(currentVoltage);
 
         // Step the Simulation
@@ -160,9 +156,6 @@ public class GenericIOSim implements GenericMotorIO {
         // Reset the simulation state to a specific position
         // Sim uses Radians
         double rads = Units.rotationsToRadians(mechanismPosition);
-        // DCMotorSim stores state as [position, velocity]
-        // We can't set position directly easily without resetting,
-        // using setState is the standard way for this in newer WPILib versions:
         motorSim.setState(rads, motorSim.getAngularVelocityRadPerSec());
     }
 

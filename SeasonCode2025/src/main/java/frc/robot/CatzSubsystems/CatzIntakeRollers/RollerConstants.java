@@ -1,10 +1,8 @@
 package frc.robot.CatzSubsystems.CatzIntakeRollers;
 
-import com.revrobotics.spark.SparkMax;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import frc.robot.Robot;
 import frc.robot.CatzAbstractions.io.GenericTalonFXIOReal.MotorIOTalonFXConfig;
@@ -12,7 +10,7 @@ import frc.robot.Utilities.MotorUtil.Gains;
 
 public class RollerConstants {
     // TalonFX motor, double FL, Gains s0g, NeutralModeValue motorMode
-    public static final SparkMax RollerMotor = new SparkMax(3, MotorType.kBrushless );
+    // public static final SparkMax RollerMotor = new SparkMax(3, MotorType.kBrushless );
     public static final double Final_Ratio = 1.0;
     public static final Gains s0g = new Gains(0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2); // placeholder ofc
     public static final Gains s1g = new Gains(0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2); // placeholder ofcpublic
@@ -45,7 +43,7 @@ public class RollerConstants {
 	public static MotorIOTalonFXConfig getIOConfig() {
 		MotorIOTalonFXConfig IOConfig = new MotorIOTalonFXConfig();
 		IOConfig.mainConfig = getFXConfig();
-		IOConfig.mainID = 40;
+		IOConfig.mainID = 3;
 		IOConfig.mainBus = "";
 		IOConfig.followerConfig = getFXConfig()
 				.withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()

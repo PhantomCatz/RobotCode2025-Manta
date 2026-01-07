@@ -1,14 +1,14 @@
 package frc.robot.CatzSubsystems.CatzWrist;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.CatzConstants;
-// import frc.robot.CatzSubsystems.CatzLEDs.CatzLED;
-// import frc.robot.CatzSubsystems.CatzLEDs.CatzLED.WinchingState;
-// import frc.robot.CatzSubsystems.CatzOuttake.CatzOuttake;
-import frc.robot.Utilities.LoggedTunableNumber;
+import frc.robot.CatzAbstractions.Bases.GenericMotorSubsystem;
+import frc.robot.CatzAbstractions.io.GenericIOSim;
+import frc.robot.CatzAbstractions.io.GenericMotorIO;
+import frc.robot.CatzAbstractions.io.GenericMotorIONull;
+import frc.robot.CatzAbstractions.io.GenericTalonFXIOReal;
+
 
 import static frc.robot.CatzSubsystems.CatzWrist.WristConstants.*;
 
@@ -16,26 +16,30 @@ import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 import lombok.RequiredArgsConstructor;
-import org.littletonrobotics.junction.Logger;
 
-public class CatzWrist extends SubsystemBase {
+public class CatzWrist extends GenericMotorSubsystem {
+  private static final GenericMotorIO io = getIOInstance();
+
+  static GenericMotorIO getIOInstance() {
+    switch (CatzConstants.hardwareMode) {
+        case REAL:
+            System.out.println("Wrist Configured for Real");
+            return new GenericTalonFXIOReal(WristConstants.getIOConfig());
+        case SIM:
+            System.out.println("Wrist Configured for Simulation");
+            return new GenericIOSim();
+        default:
+            System.out.println("Wrist Unconfigured");
+            return new GenericMotorIONull();
+    }
+}
+
   public static final CatzWrist Instance = new CatzWrist();
-
-  private final WristIO io;
-  private final WristIOInputsAutoLogged inputs = new WristIOInputsAutoLogged();
 
   static double manualPow = 0;
   static boolean isManual = false;
   static final double MANUAL_SCALE = 2.0;
   static double position;
-  static LoggedTunableNumber tunnablePos = new LoggedTunableNumber("Wrist/TunnablePosition", 1);
-  static LoggedTunableNumber kP = new LoggedTunableNumber("Wrist/kP", 0.17);
-  static LoggedTunableNumber kI = new LoggedTunableNumber("Wrist/kI", 0.0);
-  static LoggedTunableNumber kD = new LoggedTunableNumber("Wrist/kD", 0.0006);
-
-  static LoggedTunableNumber kS = new LoggedTunableNumber("Wrist/kS", 0);
-  static LoggedTunableNumber kV = new LoggedTunableNumber("Wrist/kV", 0);
-  static LoggedTunableNumber kA = new LoggedTunableNumber("Wrist/kA", 0);
 
   @RequiredArgsConstructor
   public enum WristPosition { //In Rotations //TODO not real working numbers
@@ -56,65 +60,7 @@ public class CatzWrist extends SubsystemBase {
   private WristPosition targetPosition = WristPosition.HOME;
 
   private CatzWrist() {
-    if(isWristDisabled) { //Comes from Wrist Constants
-      io = new WristIONull();
-      System.out.println("Wrist Unconfigured");
-    } else {
-      switch (CatzConstants.hardwareMode) {
-        case REAL:
-          io = new WristIOReal();
-          System.out.println("Wrist Configured for Real");
-        break;
-        case REPLAY:
-          io = new WristIOReal() {};
-          System.out.println("Wrist Configured for Replayed simulation");
-        break;
-        case SIM:
-          io = new WristIOSim();
-          System.out.println("Arm Configured for Simulation");
-        break;
-        default:
-          io = new WristIONull();
-          System.out.println("Wrist Unconfigured");
-        break;
-      }
-    }
-  }
-
-  @Override
-  public void periodic() {
-    io.updateInputs(inputs);
-    Logger.processInputs("RealInputs/wrist", inputs);
-    if (DriverStation.isDisabled()) {
-      io.setPower(0.0);
-      manualPow = 0.0;
-      targetPosition = WristPosition.MANUAL;
-
-    } else {
-      if(isManual || targetPosition == WristPosition.FULL_MANUAL) {
-        io.setPower(manualPow);
-        System.out.println(manualPow);
-        //System.out.println("full");
-      } else if(targetPosition == WristPosition.MANUAL) {
-        io.setPosition(position);
-        // System.out.println("semi");
-      } else if(targetPosition != WristPosition.MANUAL && targetPosition != WristPosition.FULL_MANUAL) {
-        //System.out.println("Target + " + position);
-        io.setPosition(position);
-      } else {
-        io.setPower(0.0);
-      }
-
-      // if(inputs.commandedOutput > 0.1) {
-      //   CatzLED.Instance.setWristDirection(WinchingState.EXTENDING);
-      // } else if(inputs.commandedOutput < -0.1) {
-      //   CatzLED.Instance.setWristDirection(WinchingState.RETRACTING);
-      // } else {
-      //   CatzLED.Instance.setWristDirection(WinchingState.IDLE);
-      // }
-    }
-
-    Logger.recordOutput("Wrist/targetPosition", position);
+    super(io, "CatzWrist");
   }
 
   public Command Wrist_Home() {
@@ -139,7 +85,7 @@ public class CatzWrist extends SubsystemBase {
   }
 
   public double getWristPos() {
-    return inputs.positionDegrees;
+    return inputs.position;
   }
 
   public void wristSemiManual(double manualSemiPwr) {

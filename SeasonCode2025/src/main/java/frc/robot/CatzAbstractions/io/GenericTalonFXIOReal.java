@@ -175,6 +175,7 @@ public class GenericTalonFXIOReal implements GenericMotorIO {
 
 	@Override
 	public void setDutyCycleSetpoint(double percent) {
+		System.out.println("yo gurt ===================================================");
 		setControl(requestGetter.getDutyCycleRequest(percent));
 	}
 

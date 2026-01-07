@@ -45,9 +45,9 @@ public class RobotContainer {
 
     public Command getAutonomousCommand() {
         return Commands.sequence(
-            elevator.setpointCommand(ElevatorConstants.L4_SCORE),
-            Commands.waitSeconds(3.0),
-            elevator.setpointCommand(ElevatorConstants.STOW),
+            // elevator.setpointCommand(ElevatorConstants.L4_SCORE),
+            // Commands.waitSeconds(3.0),
+            // elevator.setpointCommand(ElevatorConstants.STOW),
             Commands.print("Hi"),
             rollers.setDutyCycleCommand(0.6)
         );

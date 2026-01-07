@@ -9,7 +9,7 @@ import java.util.function.Supplier;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 
-public abstract class ServoMotorSubsystem extends GenericMotorSubsystem {
+public abstract class PivotMotorSubsystem extends GenericMotorSubsystem {
 
 	protected final GenericMotorIO io;
 	protected final String name;
@@ -20,7 +20,7 @@ public abstract class ServoMotorSubsystem extends GenericMotorSubsystem {
 	private boolean isFullManual = false;
 
 
-	public ServoMotorSubsystem(GenericMotorIO io, String name, double epsilonThreshold, double slammingThreshold) {
+	public PivotMotorSubsystem(GenericMotorIO io, String name, double epsilonThreshold, double slammingThreshold) {
 		super(io, name);
 		this.io = io;
 		this.name = name;
@@ -38,14 +38,7 @@ public abstract class ServoMotorSubsystem extends GenericMotorSubsystem {
 			io.stop();
 		} else if (isFullManual) {
 			runFullManual(manualSpeed);
-		} else if(setpoint.baseUnits <= slammingThreshold) {  // Prevent slamming if our setpoint and current position is very low
-			if(getPosition() <= slammingThreshold) {
-				io.stop();
-			} else {
-				setpoint.apply(io);
-
-			}
-		}else if (setpoint.baseUnits > slammingThreshold) {
+		} else if (setpoint != null) {
 			setpoint.apply(io);
 		} else {
 			// No action
