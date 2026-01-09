@@ -38,10 +38,10 @@ public class CatzElevator extends PivotMotorSubsystem {
               return new ElevatorIOTalonFX(ElevatorConstants.getIOConfig());
           case SIM:
               System.out.println("Elevator Configured for Simulation");
-              return null;//new GenericIOSim(ELEVATOR_GEAR_RATIO, slot0_gains);
+              return new ElevatorIOSim(ELEVATOR_GEAR_RATIO, slot0_gains);
           default:
-              System.out.println("Elevator Unconfigured");
-              return null;
+              System.out.println("Elevator Unconfigured; defaulting to Simulation");
+              return new ElevatorIOSim(ELEVATOR_GEAR_RATIO, slot0_gains);
       }
     }
   }

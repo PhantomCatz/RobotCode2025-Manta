@@ -11,8 +11,6 @@ public class ElevatorIOTalonFX extends GenericTalonFXIOReal implements ElevatorI
     @Override
     public void updateInputs(MotorIOInputs inputs) {
         super.updateInputs(inputs);
-
-        System.out.println(inputs.position);
     }
 
 }
