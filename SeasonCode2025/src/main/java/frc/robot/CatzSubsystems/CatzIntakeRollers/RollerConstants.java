@@ -5,6 +5,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import frc.robot.Robot;
+import frc.robot.CatzAbstractions.io.GenericSparkmaxIOReal.MotorIOSparkMaxConfig;
 import frc.robot.CatzAbstractions.io.GenericTalonFXIOReal.MotorIOTalonFXConfig;
 import frc.robot.Utilities.MotorUtil.Gains;
 
@@ -53,6 +54,17 @@ public class RollerConstants {
 		IOConfig.followerBuses = new String[] {""};
 		IOConfig.followerIDs = new int[] {};
 		return IOConfig;
+	}
+
+	public static MotorIOSparkMaxConfig getSparkConfig() {
+		MotorIOSparkMaxConfig iConfig = new MotorIOSparkMaxConfig();
+		iConfig.mainID = 5;
+		iConfig.followerIDs = new int[] {};
+		iConfig.followerOpposeMain = new boolean[] {false};
+		iConfig.invertMotor = false;
+		iConfig.currentLimitAmps = 40;
+		iConfig.gearRatio = 1.0;
+		return iConfig;
 	}
 
 

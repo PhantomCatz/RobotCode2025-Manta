@@ -6,7 +6,7 @@ import java.util.function.UnaryOperator;
 import frc.robot.CatzAbstractions.io.GenericMotorIO;
 
 public class Setpoint {
-    private final UnaryOperator<GenericMotorIO> genericMotorIOapplier;
+    private final UnaryOperator<GenericMotorIO> applier;
 
     public final Mode mode;
     public final double baseUnits;
@@ -20,7 +20,7 @@ public class Setpoint {
      * @param baseUnits Setpoint's target in it's base form of units as a double.
      */
     private Setpoint(UnaryOperator<GenericMotorIO> applier, Mode mode, double baseUnits) {
-        this.genericMotorIOapplier = applier;
+        this.applier = applier;
         this.mode = mode;
         this.baseUnits = baseUnits;
     }
@@ -136,7 +136,7 @@ public class Setpoint {
     }
 
     public void apply(GenericMotorIO io) {
-        genericMotorIOapplier.apply(io);
+        applier.apply(io);
     }
 
     public enum Mode {

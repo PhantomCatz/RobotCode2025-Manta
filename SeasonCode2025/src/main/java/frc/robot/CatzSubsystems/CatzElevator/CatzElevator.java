@@ -7,10 +7,6 @@ import frc.robot.CatzConstants;
 import frc.robot.CatzAbstractions.Bases.DigitalInOut;
 import frc.robot.CatzAbstractions.Bases.PivotMotorSubsystem;
 import frc.robot.CatzAbstractions.io.DigitalInOutIOBeambreak;
-import frc.robot.CatzAbstractions.io.GenericIOSim;
-import frc.robot.CatzAbstractions.io.GenericMotorIO;
-import frc.robot.CatzAbstractions.io.GenericMotorIONull;
-import frc.robot.CatzAbstractions.io.GenericTalonFXIOReal;
 import frc.robot.Utilities.LoggedTunableNumber;
 
 import org.littletonrobotics.junction.Logger;
@@ -20,7 +16,7 @@ import edu.wpi.first.units.measure.Time;
 
 public class CatzElevator extends PivotMotorSubsystem {
 
-  private static final GenericMotorIO io = getIOInstance();
+  private static final ElevatorIO io = getIOInstance();
 
   public static final CatzElevator Instance = new CatzElevator();
 
@@ -32,20 +28,20 @@ public class CatzElevator extends PivotMotorSubsystem {
       "Elevator/BottomLimitSwitch"
   );
 
-  static GenericMotorIO getIOInstance() {
+  static ElevatorIO getIOInstance() {
     if (io != null) {
       return io;
     } else {
       switch (CatzConstants.hardwareMode) {
           case REAL:
               System.out.println("Elevator Configured for Real");
-              return new GenericTalonFXIOReal(ElevatorConstants.getIOConfig());
+              return new ElevatorIOTalonFX(ElevatorConstants.getIOConfig());
           case SIM:
               System.out.println("Elevator Configured for Simulation");
-              return new GenericIOSim(ELEVATOR_GEAR_RATIO, slot0_gains);
+              return null;//new GenericIOSim(ELEVATOR_GEAR_RATIO, slot0_gains);
           default:
               System.out.println("Elevator Unconfigured");
-              return new GenericMotorIONull();
+              return null;
       }
     }
   }
@@ -60,9 +56,9 @@ public class CatzElevator extends PivotMotorSubsystem {
     bottomLimitSwitch.periodic();
     super.periodic();
 
-    if(bottomLimitSwitch.get()) {
-      io.setCurrentPosition(0.0);
-    }
+    // if(bottomLimitSwitch.get()) {
+    //   io.setCurrentPosition(0.0);
+    // }
 
     //--------------------------------------------------------------------------------------------------------
     // Update controllers when user specifies

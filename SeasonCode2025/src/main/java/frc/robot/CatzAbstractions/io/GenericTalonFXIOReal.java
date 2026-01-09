@@ -22,10 +22,10 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 
-public class GenericTalonFXIOReal implements GenericMotorIO {
+public abstract class GenericTalonFXIOReal implements GenericMotorIO {
 
     // initialize follower if needed
-    private TalonFX leaderTalon;
+    protected TalonFX leaderTalon;
     private TalonFX[] followerTalons;
 
     private TalonFXConfiguration config = new TalonFXConfiguration();
@@ -175,7 +175,6 @@ public class GenericTalonFXIOReal implements GenericMotorIO {
 
 	@Override
 	public void setDutyCycleSetpoint(double percent) {
-		System.out.println("yo gurt ===================================================");
 		setControl(requestGetter.getDutyCycleRequest(percent));
 	}
 
@@ -335,7 +334,7 @@ public class GenericTalonFXIOReal implements GenericMotorIO {
 		}
 
 		public ControlRequest getMotionMagicRequest(double mechanismPosition) {
-			return new MotionMagicExpoVoltage(mechanismPosition).withSlot(0).withEnableFOC(true);
+			return new MotionMagicExpoVoltage(mechanismPosition).withSlot(0);//.withEnableFOC(true);
 		}
 
 		public ControlRequest getVelocityRequest(double mechanismVelocity) {

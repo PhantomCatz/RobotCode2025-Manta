@@ -19,7 +19,7 @@ import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.RelativeEncoder;
 
-public class GenericSparkmaxIOReal implements GenericMotorIO {
+public abstract class GenericSparkmaxIOReal implements GenericMotorIO {
 
     private final SparkMax leaderMotor;
     private final SparkMax[] followerMotors;
@@ -118,6 +118,7 @@ public class GenericSparkmaxIOReal implements GenericMotorIO {
 
     @Override
     public void setDutyCycleSetpoint(double percent) {
+        System.out.println("hiii");
         leaderMotor.set(percent);
     }
 

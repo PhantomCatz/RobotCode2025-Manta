@@ -66,6 +66,8 @@ public class ElevatorConstants {
 		FXConfig.Slot0.kG = slot0_gains.kG();
 
 		FXConfig.MotionMagic.MotionMagicCruiseVelocity = 20.0;
+        FXConfig.MotionMagic.MotionMagicAcceleration = 50.0;
+
 
 		FXConfig.CurrentLimits.SupplyCurrentLimitEnable = Robot.isReal();
 		FXConfig.CurrentLimits.SupplyCurrentLimit = 80.0;
@@ -94,7 +96,7 @@ public class ElevatorConstants {
 	public static MotorIOTalonFXConfig getIOConfig() {
 		MotorIOTalonFXConfig IOConfig = new MotorIOTalonFXConfig();
 		IOConfig.mainConfig = getFXConfig();
-		IOConfig.mainID = 40;
+		IOConfig.mainID = 4;
 		IOConfig.mainBus = "";
 		IOConfig.followerConfig = getFXConfig()
 				.withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
