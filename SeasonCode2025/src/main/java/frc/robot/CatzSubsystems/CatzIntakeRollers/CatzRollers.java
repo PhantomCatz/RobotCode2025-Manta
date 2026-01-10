@@ -17,10 +17,10 @@ public class CatzRollers extends GenericMotorSubsystem {
                 return new RollerIOTalonFX(RollerConstants.getIOConfig());
             case SIM:
                 System.out.println("Roller Configured for Simulation");
-                return new RollersIOSim();
+                return new RollersIOSimulator();
                 default:
                 System.out.println("Roller Unconfigured");
-                return new RollersIOSim();
+                return new RollersIOSimulator();
         }
     }
 
