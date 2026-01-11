@@ -1,6 +1,5 @@
 package frc.robot.CatzSubsystems.CatzElevator;
 
-import static edu.wpi.first.units.Units.Seconds;
 import static frc.robot.CatzSubsystems.CatzElevator.ElevatorConstants.*;
 
 import frc.robot.CatzConstants;
@@ -9,7 +8,6 @@ import frc.robot.Utilities.LoggedTunableNumber;
 
 import org.littletonrobotics.junction.Logger;
 
-import edu.wpi.first.units.measure.Time;
 
 
 public class CatzElevator extends PivotMotorSubsystem<ElevatorIO, ElevatorIO.ElevatorIOInputs> {
@@ -48,9 +46,9 @@ public class CatzElevator extends PivotMotorSubsystem<ElevatorIO, ElevatorIO.Ele
   public void periodic() {
     super.periodic();
 
-    // if(bottomLimitSwitch.get()) {
-    //   io.setCurrentPosition(0.0);
-    // }
+    if(inputs.forwardLimitSwitch) {
+      io.setCurrentPosition(0.0);
+    }
 
     //--------------------------------------------------------------------------------------------------------
     // Update controllers when user specifies

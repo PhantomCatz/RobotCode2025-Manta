@@ -26,25 +26,24 @@ public abstract class GenericTalonFXIOReal<T extends GenericMotorIO.MotorIOInput
 
     // initialize follower if needed
     protected TalonFX leaderTalon;
-    private TalonFX[] followerTalons;
+    protected TalonFX[] followerTalons;
 
     private TalonFXConfiguration config = new TalonFXConfiguration();
     private TalonFXConfiguration followerConfig = new TalonFXConfiguration();
 
-    private final StatusSignal<Angle> internalPositionRotations;
-    private final StatusSignal<AngularVelocity> velocityRps;
-    private final StatusSignal<AngularAcceleration> acceleration;
-    private final List<StatusSignal<Voltage>> appliedVoltage;
-    private final List<StatusSignal<Current>> supplyCurrent;
-    private final List<StatusSignal<Current>> torqueCurrent;
-    private final List<StatusSignal<Temperature>> tempCelsius;
+    protected final StatusSignal<Angle> internalPositionRotations;
+    protected final StatusSignal<AngularVelocity> velocityRps;
+    protected final StatusSignal<AngularAcceleration> acceleration;
+    protected final List<StatusSignal<Voltage>> appliedVoltage;
+    protected final List<StatusSignal<Current>> supplyCurrent;
+    protected final List<StatusSignal<Current>> torqueCurrent;
+    protected final List<StatusSignal<Temperature>> tempCelsius;
 
     private ControlRequestGetter requestGetter = new ControlRequestGetter();
 
     private BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
     private ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(1, 1, 5, java.util.concurrent.TimeUnit.MILLISECONDS, queue);
 
-    private static double Final_Ratio;
 
     /**
      * base for constructors
@@ -131,11 +130,10 @@ public abstract class GenericTalonFXIOReal<T extends GenericMotorIO.MotorIOInput
 			inputs.isFollowerConnected = new boolean[0];
 		}
 
-		System.out.println(inputs.position);
 
-        inputs.position = internalPositionRotations.getValueAsDouble() * Final_Ratio; //TODO Constants should be ALL_CAPS // Yuyhun said that because we get it from constructor that it should be lowercase
-        inputs.velocityRPS = velocityRps.getValueAsDouble() * Final_Ratio;
-        inputs.accelerationRPS = acceleration.getValueAsDouble() * Final_Ratio;
+        inputs.position = internalPositionRotations.getValueAsDouble(); //TODO Constants should be ALL_CAPS // Yuyhun said that because we get it from constructor that it should be lowercase
+        inputs.velocityRPS = velocityRps.getValueAsDouble();
+        inputs.accelerationRPS = acceleration.getValueAsDouble();
         inputs.appliedVolts = appliedVoltage.stream()
                                             .mapToDouble(StatusSignal::getValueAsDouble)
                                             .toArray();

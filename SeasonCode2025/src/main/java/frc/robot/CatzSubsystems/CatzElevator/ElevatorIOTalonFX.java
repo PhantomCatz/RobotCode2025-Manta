@@ -17,6 +17,8 @@ public class ElevatorIOTalonFX extends GenericTalonFXIOReal<ElevatorIO.ElevatorI
     public void updateInputs(ElevatorIOInputs inputs) {
         super.updateInputs(inputs);
         inputs.forwardLimitSwitch = forwardLimitSwitch.get();
+
+
     }
 
 }
