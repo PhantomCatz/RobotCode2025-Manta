@@ -85,7 +85,7 @@ public class CatzArm extends SubsystemBase {
         targetPosition = target;
     }
 
-    public double getArmPos() {
-        return inputs.positionDegreesFinalShaft;
-    }
+    //public double getArmPos() {
+    //    return inputs.positionDegreesFinalShaft;
+    //}
 }

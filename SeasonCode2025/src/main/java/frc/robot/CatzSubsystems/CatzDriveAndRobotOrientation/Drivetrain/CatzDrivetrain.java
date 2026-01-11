@@ -27,7 +27,7 @@ import frc.robot.CatzSubsystems.CatzDriveAndRobotOrientation.CatzRobotTracker;
 import frc.robot.CatzSubsystems.CatzDriveAndRobotOrientation.CatzRobotTracker.OdometryObservation;
 import frc.robot.Commands.DriveAndRobotOrientationCmds.HolonomicDriveController;
 import frc.robot.Robot;
-import frc.robot.Autonomous.AutonConstants;
+import frc.robot.CatzAutonomous.AutonConstants;
 import frc.robot.Utilities.Alert;
 import frc.robot.Utilities.EqualsUtil;
 import frc.robot.Utilities.SwerveSetpoint;
@@ -42,13 +42,12 @@ public class CatzDrivetrain extends SubsystemBase {
   public static final CatzDrivetrain Instance = new CatzDrivetrain();
 
   private double distanceError = 999999.9; //meters
-
   private Pose2d choreoGoal = new Pose2d();
   private double choreoDistanceError = 9999999.9; //meters //set this to a high number initially just in case the trajectory thinks it's at goal as soon as it starts
 
   // Gyro input/output interface
   private final GyroIO gyroIO;
-  private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
+   private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
 
   // Alerts
   private final Alert gyroDisconnected;
