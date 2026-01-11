@@ -19,7 +19,7 @@ import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.RelativeEncoder;
 
-public abstract class GenericSparkmaxIOReal implements GenericMotorIO {
+public abstract class GenericSparkmaxIOReal<T extends GenericMotorIO.MotorIOInputs> implements GenericMotorIO<T> {
 
     private final SparkMax leaderMotor;
     private final SparkMax[] followerMotors;
@@ -77,7 +77,7 @@ public abstract class GenericSparkmaxIOReal implements GenericMotorIO {
     }
 
     @Override
-    public void updateInputs(MotorIOInputs inputs) {
+    public void updateInputs(T inputs) {
         // Connectivity check (simulated)
         inputs.isLeaderConnected = true;
 

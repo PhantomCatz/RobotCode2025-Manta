@@ -9,9 +9,10 @@ import java.util.function.Supplier;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 
-public abstract class ServoMotorSubsystem extends GenericMotorSubsystem {
+public abstract class ServoMotorSubsystem<S extends GenericMotorIO<I>, I extends GenericMotorIO.MotorIOInputs> extends GenericMotorSubsystem<S, I>  {
 
-	protected final GenericMotorIO io;
+	protected final S io;
+	protected final I inputs;
 	protected final String name;
 	protected final double epsilonThreshold;
 	private Setpoint setpoint = Setpoint.withBrakeSetpoint();
@@ -20,9 +21,10 @@ public abstract class ServoMotorSubsystem extends GenericMotorSubsystem {
 	private boolean isFullManual = false;
 
 
-	public ServoMotorSubsystem(GenericMotorIO io, String name, double epsilonThreshold, double slammingThreshold) {
-		super(io, name);
+	public ServoMotorSubsystem(S io, I inputs, String name, double epsilonThreshold, double slammingThreshold) {
+		super(io, inputs, name);
 		this.io = io;
+		this.inputs = inputs;
 		this.name = name;
 		this.epsilonThreshold = epsilonThreshold;
 		this.slammingThreshold = slammingThreshold;

@@ -7,8 +7,9 @@ import frc.robot.CatzConstants;
 import frc.robot.CatzAbstractions.Bases.GenericMotorSubsystem;
 
 
-public class CatzRollers extends GenericMotorSubsystem {
+public class CatzRollers extends GenericMotorSubsystem<RollersIO, RollersIO.RollersIOInputs> {
     private static final RollersIO io = getIOInstance();
+        private static final RollersIOInputsAutoLogged inputs = new RollersIOInputsAutoLogged();
 
     static RollersIO getIOInstance() {
         switch (CatzConstants.hardwareMode) {
@@ -36,7 +37,7 @@ public class CatzRollers extends GenericMotorSubsystem {
     private IntakeRollersStates state = IntakeRollersStates.STOP;
 
     private CatzRollers() {
-        super(io, "CatzIntakeRollers");
+        super(io, inputs, "CatzIntakeRollers");
     }
 
     @Override

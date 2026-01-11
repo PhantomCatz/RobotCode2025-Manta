@@ -2,28 +2,28 @@ package frc.robot.CatzAbstractions.Bases;
 
 
 import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.inputs.LoggableInputs;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.CatzAbstractions.io.GenericMotorIO;
-import frc.robot.CatzAbstractions.io.MotorIOInputsAutoLogged;
 
-public abstract class GenericMotorSubsystem extends SubsystemBase {
-	protected final GenericMotorIO io;
+public abstract class GenericMotorSubsystem<S extends GenericMotorIO<I>, I extends GenericMotorIO.MotorIOInputs> extends SubsystemBase {
+	protected final S io;
+	protected final I inputs;
 	protected final String name;
 
-	protected final MotorIOInputsAutoLogged inputs = new MotorIOInputsAutoLogged();
-
-	public GenericMotorSubsystem(GenericMotorIO io, String name) {
+	public GenericMotorSubsystem(S io, I inputs, String name) {
 		super(name);
 		this.io = io;
+		this.inputs = inputs;
 		this.name = name;
 	}
 
 	@Override
 	public void periodic() {
 		io.updateInputs(inputs);
-		Logger.processInputs(name, inputs);
+		Logger.processInputs(name, (LoggableInputs) inputs);
 	}
 
 	public void setDutyCycle(double dutyCycle) {

@@ -22,7 +22,7 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 
-public abstract class GenericTalonFXSIOReal implements GenericMotorIO {
+public abstract class GenericTalonFXSIOReal<T extends GenericMotorIO.MotorIOInputs> implements GenericMotorIO<T> {
 
     // initialize follower if needed
     private TalonFXS leaderTalon;
@@ -105,7 +105,7 @@ public abstract class GenericTalonFXSIOReal implements GenericMotorIO {
 
 
     @Override
-    public void updateInputs(MotorIOInputs inputs) {
+    public void updateInputs(T inputs) {
         inputs.isLeaderConnected =
             BaseStatusSignal.refreshAll(
                 internalPositionRotations,

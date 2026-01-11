@@ -14,7 +14,7 @@ import frc.robot.Utilities.MotorUtil.Gains;
 
 import java.util.function.UnaryOperator;
 
-public class GenericIOSim implements GenericMotorIO {
+public class GenericIOSim<T extends GenericMotorIO.MotorIOInputs> implements GenericMotorIO<T> {
 
     // Defaults to 1 Kraken, but you can adjust the gearbox/motor count here
     private final DCMotor gearBox = DCMotor.getKrakenX60Foc(1);

@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.CatzConstants;
 import frc.robot.CatzAbstractions.Bases.GenericMotorSubsystem;
 
-
 import static frc.robot.CatzSubsystems.CatzWrist.WristConstants.*;
 
 import java.util.function.DoubleSupplier;
@@ -13,8 +12,9 @@ import java.util.function.Supplier;
 
 import lombok.RequiredArgsConstructor;
 
-public class CatzWrist extends GenericMotorSubsystem {
+public class CatzWrist extends GenericMotorSubsystem<WristIO, WristIO.WristIOInputs> {
   private static final WristIO io = getIOInstance();
+  private static final WristIOInputsAutoLogged inputs = new WristIOInputsAutoLogged();
 
   static WristIO getIOInstance() {
     switch (CatzConstants.hardwareMode) {
@@ -22,11 +22,11 @@ public class CatzWrist extends GenericMotorSubsystem {
             System.out.println("Wrist Configured for Real");
             return new WristIOTalonFX(WristConstants.getIOConfig());
         case SIM:
-            // System.out.println("Wrist Configured for Simulation");
-            // return new GenericIOSim();
+            System.out.println("Wrist Configured for Simulation");
+            return new WristIOSim();
         default:
             System.out.println("Wrist Unconfigured");
-            return null;//new GenericMotorIONull();
+            return new WristIOSim();
     }
 }
 
@@ -56,7 +56,7 @@ public class CatzWrist extends GenericMotorSubsystem {
   private WristPosition targetPosition = WristPosition.HOME;
 
   private CatzWrist() {
-    super(io, "CatzWrist");
+    super(io, inputs, "CatzWrist");
   }
 
   public Command Wrist_Home() {

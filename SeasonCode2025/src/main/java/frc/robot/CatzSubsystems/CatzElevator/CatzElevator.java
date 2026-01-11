@@ -4,9 +4,7 @@ import static edu.wpi.first.units.Units.Seconds;
 import static frc.robot.CatzSubsystems.CatzElevator.ElevatorConstants.*;
 
 import frc.robot.CatzConstants;
-import frc.robot.CatzAbstractions.Bases.DigitalInOut;
 import frc.robot.CatzAbstractions.Bases.PivotMotorSubsystem;
-import frc.robot.CatzAbstractions.io.DigitalInOutIOBeambreak;
 import frc.robot.Utilities.LoggedTunableNumber;
 
 import org.littletonrobotics.junction.Logger;
@@ -14,19 +12,14 @@ import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.units.measure.Time;
 
 
-public class CatzElevator extends PivotMotorSubsystem {
+public class CatzElevator extends PivotMotorSubsystem<ElevatorIO, ElevatorIO.ElevatorIOInputs> {
 
   private static final ElevatorIO io = getIOInstance();
+  private static final ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
 
   public static final CatzElevator Instance = new CatzElevator();
 
 
-  private DigitalInOut bottomLimitSwitch = new DigitalInOut(
-      new DigitalInOutIOBeambreak(3, false),
-      Time.ofBaseUnits(0.02, Seconds), // TODO find better debounce time
-      false,
-      "Elevator/BottomLimitSwitch"
-  );
 
   static ElevatorIO getIOInstance() {
     if (io != null) {
@@ -48,12 +41,11 @@ public class CatzElevator extends PivotMotorSubsystem {
 
 
   private CatzElevator() {
-    super(io, "CatzElevator", 0.5, 4.0);
+    super(io, inputs, "CatzElevator", 0.5);
   }
 
   @Override
   public void periodic() {
-    bottomLimitSwitch.periodic();
     super.periodic();
 
     // if(bottomLimitSwitch.get()) {
@@ -119,7 +111,7 @@ public class CatzElevator extends PivotMotorSubsystem {
   }
 
   public boolean getBottomLimitSwitch() {
-    return bottomLimitSwitch.get();
+    return inputs.forwardLimitSwitch;
   }
 
 

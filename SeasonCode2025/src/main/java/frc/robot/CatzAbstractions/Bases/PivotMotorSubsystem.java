@@ -6,26 +6,27 @@ import frc.robot.Utilities.Setpoint;
 
 import java.util.function.Supplier;
 
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 
-public abstract class PivotMotorSubsystem extends GenericMotorSubsystem {
+public abstract class PivotMotorSubsystem<S extends GenericMotorIO<I>, I extends GenericMotorIO.MotorIOInputs> extends GenericMotorSubsystem<S, I> {
 
-	protected final GenericMotorIO io;
+	protected final S io;
+	protected final I inputs;
 	protected final String name;
 	protected final double epsilonThreshold;
 	private Setpoint setpoint = Setpoint.withBrakeSetpoint();
 	private double manualSpeed = 0.0;
-	private final double slammingThreshold;
 	private boolean isFullManual = false;
 
 
-	public PivotMotorSubsystem(GenericMotorIO io, String name, double epsilonThreshold, double slammingThreshold) {
-		super(io, name);
+	public PivotMotorSubsystem(S io, I inputs, String name, double epsilonThreshold) {
+		super(io, inputs, name);
 		this.io = io;
+		this.inputs = inputs;
 		this.name = name;
 		this.epsilonThreshold = epsilonThreshold;
-		this.slammingThreshold = slammingThreshold;
 	}
 
 

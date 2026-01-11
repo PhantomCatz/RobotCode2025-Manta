@@ -1,6 +1,5 @@
 package frc.robot.CatzAbstractions.io;
 
-import org.littletonrobotics.junction.AutoLog;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.hardware.TalonFXS;
@@ -8,12 +7,10 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 
 
-public interface GenericMotorIO {
+public interface GenericMotorIO<T extends GenericMotorIO.MotorIOInputs> {
 
 
-  @AutoLog
   public static class MotorIOInputs {
-
     public boolean isLeaderConnected = false;
     public boolean[] isFollowerConnected = new boolean[] {};
 
@@ -27,7 +24,7 @@ public interface GenericMotorIO {
 
   }
 
-  public default void updateInputs(MotorIOInputs inputs) {}
+  public default void updateInputs(T inputs) {}
 
   public default void setCurrentPosition(double mechanismPosition) {}
 
